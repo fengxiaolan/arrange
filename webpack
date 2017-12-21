@@ -1,0 +1,171 @@
+webpack(模块打包，通过入口js文件，webpack将项目的所有依赖文件，使用loader处理他们）---提高开发效率
+babel让当前浏览器可以识别ES6的特性
+
+//全局安装（随处可调用它的命令）
+npm install -g webpack
+初始化npm init（package）
+Cd /Users/Mac/webpackset局部安装webpack （需要它的插件）
+//安装到你的项目目录
+npm install --save-dev webpack
+
+webpack.config.js配置
+//webpack.config.js
+var webpack = require('webpack')
+var UglifyJsPlugin = new webpack.optimize.UglifyJsPlugin(); //代码压缩
+var CommonsChunkPlugin = new webpack.optimize.CommonsChunkPlugin({name:'vendor'}); //公共依赖的库
+
+module.exports = { //暴露一个对象
+    //entry: __dirname+'/main.js', //单入口文件，加上全局变量就可以放在任何位置（“__dirname”是node.js中的一个全局变量，它指向当前执行脚本所在的目录。）
+    entry:{  //多入口文件
+    	main:__dirname + '/main.js',
+    	vendor:['jquery']  //依赖的文件
+    },
+    output:{
+    	path:__dirname + '/dist', //导进dist文件里面
+        // filename:'bound.js'  //打包输出的文件名
+        filename:'[name].bound.js'  //所有入口文件的名字
+    },
+    devtool:'source-map', //单独抽出来能调试
+    module:{ //配置loader的地方
+    	rules:[ //处理规则
+    	  {
+    	  	test:/\.css$/,
+    	    use:[ //使用哪个
+    	      	{loader:'style-loader'}, //插入样式（顺序先）
+    	      	{loader:'css-loader'} //样式
+    	    ] 
+    	   },
+    	   {
+    	   	test:/\.(png|jpeg)$/,
+    	   	use:[
+               {loader:"url-loader",
+               options:{limit:10000}} //限制大小才转化base64
+    	   	]
+    	   }
+    	]
+    },
+    resolve:{
+       extensions:['.less','.json'] //自动补全文件类型
+       alias:{  //别名(文件和路径)
+       	 "swiper":'static/swiper.min.js',
+       	 "@":'./bounds'
+       }
+    },
+    devServer:{  //本地服务器
+       contentBase:'./', //当前项目根目录
+       port:8864,//端口
+       historyApiFallback:true //所有跳转都到index
+    },
+    plugins:[UglifyJsPlugin,CommonsChunkPlugin]  //插件
+}
+include/exclude:手动添加必须处理的文件（文件夹）或屏蔽不需要处理的文件（文件夹）（可选）；
+
+运行在当前命令webpack
+webpack -w 随时监测
+webpack -p 打包
+
+调试工具devtool
+module放loaderd地方其中放规则
+
+全局安装服务：
+npm install --save-dev webpack-dev-server -g
+本地安装服务：
+npm install --save-dev webpack-dev-server 
+
+在package.json的scripts配置"dev": "webpack-dev-server --inline --hot”运行npm run dev  或者在当前命令框运行webpack-dev-server 
+运行服务webpack-dev-server
+默认端口访问http://localhost:8080/
+
+
+
+
+
+
+
+在webpack中，一个已命名的模块只能在本地使用。在Require.js中，一个命名模块是全局可用的。
+AMD和CommonJs指定了不同的方法来按需加载代码。两者都支持并充当分裂点：
+→CommonJS的： require.ensure
+require.ensure(dependencies, callback)
+该require.ensure方法确保每个依赖项在dependencies调用时可以同步需要callback。require函数的实现作为参数发送到回调函数。
+
+AMD： require
+AMD规范定义了一个require具有这个定义的异步方法：
+require(dependencies, callback)
+当被调用时，所有的dependencies都被加载，callback并被加载的输出调用dependencies。
+
+* webpack-dev-server：从内存中提供所有的webpack资源。最棒的表演。
+* webpack-dev-middleware：与高级用户的webpack-dev-server相同的性能。
+* webpack -watch或者：缓存东西，但是将资源写入磁盘。好的表现。watch: true
+
+“__dirname”是node.js中的一个全局变量，它指向当前执行脚本所在的目录。
+
+Loaders的配置包括以下几方面：
+* 
+* 
+* test：一个用以匹配loaders所处理文件的拓展名的正则表达式（必须）
+* 
+* loader：loader的名称（必须）
+* 
+* include/exclude:手动添加必须处理的文件（文件夹）或屏蔽不需要处理的文件（文件夹）（可选）；
+* 
+* query：为loaders提供额外的设置选项（可选）
+
+
+
+
+参考https://segmentfault.com/a/1190000009038067 
+1.webpack配置
+//全局安装
+npm install -g webpack
+初始化npm init 
+Cd /Users/Mac/webpackset局部安装webpack 
+//安装到你的项目目录
+npm install --save-dev webpack
+
+全局安装服务：
+npm install --save-dev webpack-dev-server -g
+本地安装服务：
+npm install --save-dev webpack-dev-server 
+
+在文件根目录建立配置文件：webpack.config.js
+var webpack = require('webpack');
+var path = require('path');
+module.exports = {
+    entry:'./index.js', //入口文件
+    output: {
+        path: path.resolve(__dirname ,'dist'), //__dirname”是node.js中的一个全局变量，它指向当前执行脚本所在的目录
+        filename:'boundle.js'  //输出文件
+    },
+    devtool: 'none',
+    /*devServer: {
+        contentBase: './index', //本地服务器所加载的页面所在的目录
+        historyApiFallback: true, //不跳转
+        inline:true,
+        hot:true
+    },*/
+    module: {
+        rules: [{
+            test: /\.js$/,
+            use: {
+                loader: "babel-loader"
+            },
+            exclude: /node_modules/
+        }, {
+            test: /\.css$/,
+            loader: "css-loader"
+        }
+    ]
+    },
+    plugins:[] //插件
+}
+
+在package.json的scripts配置"dev": "webpack-dev-server --inline --hot”运行npm run dev  或者在当前命令框运行webpack-dev-server 
+index.js—document.write('<div>webpack练习中</div>');
+index.html—<body>
+<script type="text/javascript" src="boundle.js"></script>
+   <img src="https://s3.amazonaws.com/github/ribbons/forkme_left_orange_ff7600.png 
+
+" class="imgsrc" />
+</body>
+
+默认端口访问http://localhost:8080/
