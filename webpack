@@ -1,3 +1,4 @@
+参考http://webpack.github.io/docs/motivation.html
 webpack(模块打包，通过入口js文件，webpack将项目的所有依赖文件，使用loader处理他们）---提高开发效率
 babel让当前浏览器可以识别ES6的特性
 
@@ -113,4 +114,4 @@ react相关webpack
 
 
 
-参考https://segmentfault.com/a/1190000009038067 
+参考练习https://segmentfault.com/a/1190000009038067 
