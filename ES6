@@ -1,0 +1,165 @@
+Es6学习
+参考http://es6.ruanyifeng.com/
+1.ECMA是European Computer Manufacturers Association的缩写，即欧洲计算机制造商协会。
+ECMAScript 和 JavaScript 的关系是，前者是后者的规格，后者是前者的一种实现（另外的 ECMAScript 方言还有 Jscript 和 ActionScript）。日常场合，这两个词是可以互换的。（ ES6 的地方，一般是指 ES2015 标准）
+Node 是 JavaScript 的服务器运行环境（runtime）。它对 ES6 的支持度更高。
+
+2.Babel 是一个广泛使用的 ES6 转码器，可以将 ES6 代码转为 ES5 代码，从而在现有环境执行。（不用考虑支持的问题了）
+Babel 的配置文件是.babelrc，存放在项目的根目录下。使用 Babel 的第一步，就是配置这个文件。
+网页实时将 ES6 代码转为 ES5，对性能会有影响。生产环境需要加载已经转码完成的脚本。
+
+3.let/const（块级作用域）
+如果区块中存在let和const命令，这个区块对这些命令声明的变量，从一开始就形成了封闭作用域。凡是在声明之前就使用这些变量，就会报错
+let不允许在相同作用域内，重复声明同一个变量。
+const声明的变量不得改变值，这意味着，const一旦声明变量，就必须立即初始化，不能留到以后赋值。
+const实际上保证的，并不是变量的值不得改动，而是变量指向的那个内存地址不得改动
+const只能保证这个指针是固定的，至于它指向的数据结构是不是可变的，就完全不能控制了。
+
+4.
+ES5 只有两种声明变量的方法：var命令和function命令。
+ES6 除了添加let和const命令，还有import和class声明变量
+顶层对象，在浏览器环境指的是window对象，在 Node 指的是global对象。ES5 之中，顶层对象的属性与全局变量是等价的。
+* 		全局环境中，this会返回顶层对象。但是，Node 模块和 ES6 模块中，this返回的是当前模块。
+* 		函数里面的this，如果函数不是作为对象的方法运行，而是单纯作为函数运行，this会指向顶层对象。但是，严格模式下，这时this会返回undefined。
+* 		不管是严格模式，还是普通模式，new Function('return this')()，总是会返回全局对象。但是，如果浏览器用了 CSP（Content Security Policy，内容安全政策），那么eval、new Function这些方法都可能无法使用。
+
+5.解构
+解构不仅可以用于数组，还可以用于对象。
+let { foo: baz } = { foo: "aaa", bar: "bbb" };
+baz // "aaa"
+foo // error: foo is not defined
+上面代码中，foo是匹配的模式，baz才是变量。真正被赋值的是变量baz，而不是模式foo。
+
+6.字符串的扩展
+console.log("\u{20BB7}")
+VM8106:1 𠮷
+charAt方法无法读取整个字符，charCodeAt方法只能分别返回前两个字节和后两个字节的值。
+ES5 提供String.fromCharCode方法，用于从码点返回对应字符，但是这个方法不能识别 32 位的 UTF-16 字符（Unicode 编号大于0xFFFF）。
+ES6 提供了String.fromCodePoint（xxx）方法，可以识别大于0xFFFF的字符
+模板字符串用反引号（`）标识 ，它可以当作普通字符串使用，也可以用来定义多行字符串，或者在字符串中嵌入变量（写在${}之中）。如果在模板字符串中需要使用反引号，则前面要用反斜杠转义。
+
+7.正则的扩展
+(1)var regex = new RegExp('xyz', 'i');
+// 等价于
+var regex = /xyz/i;
+(2)
+xvar regex = new RegExp(/xyz/i);
+// 等价于
+var regex = /xyz/i;
+
+8.数值的扩展
+从 ES5 开始，在严格模式之中，八进制就不再允许使用前缀0表示，ES6 进一步明确，要使用前缀0o表示。
+Number.isFinite()用来检查一个数值是否为有限的
+Number.isNaN()用来检查一个值是否为NaN
+Number.isInteger()用来判断一个值是否为整数。需要注意的是，在 JavaScript 内部，整数和浮点数是同样的储存方法，所以 3 和 3.0 被视为同一个值。
+Number.EPSILON实际上是 JavaScript 能够表示的最小精度
+Number.toFixed(num) 精确到多少位
+eg:let a = -4.1;
+Math.trunc(a); // => -4
+Math.floor(a); // => -5
+
+9.函数的扩展
+ES6 允许为函数的参数设置默认值，即直接写在参数定义的后面。
+function log(x, y = 'World') {
+  console.log(x, y);
+}
+参数变量是默认声明的，所以不能用let或const再次声明
+指定了默认值以后，函数的length属性，将返回没有指定默认值的参数个数。也就是说，指定了默认值后，length属性将失真。
+e.g.：(function (a, b, c = 5) {}).length // 2
+一旦设置了参数的默认值，函数进行声明初始化时，参数会形成一个单独的作用域（context）
+Rest参数（形式为...变量名）
+注意，rest 参数之后不能再有其他参数（即只能是最后一个参数），否则会报错。
+函数的length属性，不包括 rest 参数。
+ES6 允许使用“箭头”（=>）定义函数。
+箭头函数可以让this指向固定化，这种特性很有利于封装回调函数。
+箭头函数有几个使用注意点。
+（1）函数体内的this对象，就是定义时所在的对象，而不是使用时所在的对象。
+（2）不可以当作构造函数，也就是说，不可以使用new命令，否则会抛出一个错误。
+（3）不可以使用arguments对象，该对象在函数体内不存在。如果要用，可以用 rest 参数代替。
+（4）不可以使用yield命令，因此箭头函数不能用作 Generator 函数。
+// ES6
+function foo() {
+  setTimeout(() => {
+    console.log('id:', this.id);
+  }, 100);
+}
+
+// ES5
+function foo() {
+  var _this = this;
+  setTimeout(function () {
+    console.log('id:', _this.id);
+  }, 100);
+}
+另外，由于箭头函数没有自己的this，所以当然也就不能用call()、apply()、bind()这些方法去改变this的指向。
+尾调用:
+ES6 的尾调用优化只在严格模式下开启，正常模式是无效的。
+就是计算 Fibonacci 数列，也能充分说明尾递归优化的重要性。
+非尾递归的 Fibonacci 数列实现如下。
+function Fibonacci (n) {
+  if ( n <= 1 ) {return 1};
+
+  return Fibonacci(n - 1) + Fibonacci(n - 2);
+}
+
+Fibonacci(10) // 89
+Fibonacci(100) // 堆栈溢出
+Fibonacci(500) // 堆栈溢出
+尾递归优化过的 Fibonacci 数列实现如下。
+function Fibonacci2 (n , ac1 = 1 , ac2 = 1) {
+  if( n <= 1 ) {return ac2};
+
+  return Fibonacci2 (n - 1, ac2, ac1 + ac2);
+}
+Fibonacci2(100) // 573147844013817200000
+Fibonacci2(1000) // 7.0330367711422765e+208
+Fibonacci2(10000) // Infinity
+
+10.数组的扩展
+扩展运算符…[]
+// ES5 的写法
+Math.max.apply(null, [14, 3, 77])
+// ES6 的写法
+Math.max(...[14, 3, 77])
+// 等同于
+Math.max(14, 3, 77);
+
+Array.from方法将arrayLike类数组转为真正的数组。
+当slice()没有输入参数的时候，会创建一个新数组，然后把当前数组的所有元素扔进去，最后返回这个新数组。
+let arrayLike = {
+    '0': 'a',
+    '1': 'b',
+    '2': 'c',
+    length: 3
+};
+// ES5的写法
+var arr1 = [].slice.call(arrayLike); // ['a', 'b', 'c']
+// ES6的写法
+let arr2 = Array.from(arrayLike); // ['a', 'b', 'c']
+
+Array.of方法用于将一组值，转换为数组。
+e.g.:Array.of(3, 11, 8) // [3,11,8]
+includes表示某个数组是否包含给定的值，与字符串的includes方法类似
+* Map 结构的has方法，是用来查找键名的，比如Map.prototype.has(key)、WeakMap.prototype.has(key)、Reflect.has(target, propertyKey)。
+* Set 结构的has方法，是用来查找值的，比如Set.prototype.has(value)、WeakSet.prototype.has(value)。
+ES6 则是明确将空位转为undefined。
+
+11.对象的扩展
++0===-0  //true
+NaN==NaN  //false
+Object.is用来比较两个值是否严格相等，与严格比较运算符（===）的行为基本一致。其中特殊之处：
+Object.is(+0, -0) // false
+Object.is(NaN, NaN) // true
+
+Object.assign方法用于对象的合并，将源对象（source）的所有可枚举属性，复制到目标对象（target）
+Object.assign方法的第一个参数是目标对象，后面的参数都是源对象。（目标对象与源对象有同名属性，后面的覆盖）除了字符串会以数组形式，拷贝入目标对象，其他值都不会产生效果。
+undefined和null无法转为对象
+对象的扩展运算符，现在都不支持，必须通过 Babel 转码
+
+
+
+
+
+
+
+
