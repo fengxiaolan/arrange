@@ -77,11 +77,6 @@ npm install --save-dev webpack-dev-server
 默认端口访问http://localhost:8080/
 
 
-
-
-
-
-
 在webpack中，一个已命名的模块只能在本地使用。在Require.js中，一个命名模块是全局可用的。
 AMD和CommonJs指定了不同的方法来按需加载代码。两者都支持并充当分裂点：
 →CommonJS的： require.ensure
@@ -93,24 +88,9 @@ AMD规范定义了一个require具有这个定义的异步方法：
 require(dependencies, callback)
 当被调用时，所有的dependencies都被加载，callback并被加载的输出调用dependencies。
 
-* webpack-dev-server：从内存中提供所有的webpack资源。最棒的表演。
-* webpack-dev-middleware：与高级用户的webpack-dev-server相同的性能。
-* webpack -watch或者：缓存东西，但是将资源写入磁盘。好的表现。watch: true
 
-“__dirname”是node.js中的一个全局变量，它指向当前执行脚本所在的目录。
 
-Loaders的配置包括以下几方面：
-* 
-* 
-* test：一个用以匹配loaders所处理文件的拓展名的正则表达式（必须）
-* 
-* loader：loader的名称（必须）
-* 
-* include/exclude:手动添加必须处理的文件（文件夹）或屏蔽不需要处理的文件（文件夹）（可选）；
-* 
-* query：为loaders提供额外的设置选项（可选）
-
-react
+react相关webpack
 {
    	      	test:/\.(js|jsx)$/,
    	      	exclude:/node_modules/,//这个文件夹下面的js就不要使用babel-loader来转了
@@ -133,60 +113,4 @@ react
 
 
 
-
 参考https://segmentfault.com/a/1190000009038067 
-1.webpack配置
-//全局安装
-npm install -g webpack
-初始化npm init 
-Cd /Users/Mac/webpackset局部安装webpack 
-//安装到你的项目目录
-npm install --save-dev webpack
-
-全局安装服务：
-npm install --save-dev webpack-dev-server -g
-本地安装服务：
-npm install --save-dev webpack-dev-server 
-
-在文件根目录建立配置文件：webpack.config.js
-var webpack = require('webpack');
-var path = require('path');
-module.exports = {
-    entry:'./index.js', //入口文件
-    output: {
-        path: path.resolve(__dirname ,'dist'), //__dirname”是node.js中的一个全局变量，它指向当前执行脚本所在的目录
-        filename:'boundle.js'  //输出文件
-    },
-    devtool: 'none',
-    /*devServer: {
-        contentBase: './index', //本地服务器所加载的页面所在的目录
-        historyApiFallback: true, //不跳转
-        inline:true,
-        hot:true
-    },*/
-    module: {
-        rules: [{
-            test: /\.js$/,
-            use: {
-                loader: "babel-loader"
-            },
-            exclude: /node_modules/
-        }, {
-            test: /\.css$/,
-            loader: "css-loader"
-        }
-    ]
-    },
-    plugins:[] //插件
-}
-
-在package.json的scripts配置"dev": "webpack-dev-server --inline --hot”运行npm run dev  或者在当前命令框运行webpack-dev-server 
-index.js—document.write('<div>webpack练习中</div>');
-index.html—<body>
-<script type="text/javascript" src="boundle.js"></script>
-   <img src="https://s3.amazonaws.com/github/ribbons/forkme_left_orange_ff7600.png 
-
-" class="imgsrc" />
-</body>
-
-默认端口访问http://localhost:8080/
