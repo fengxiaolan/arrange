@@ -157,6 +157,21 @@ undefined和null无法转为对象
 对象的扩展运算符，现在都不支持，必须通过 Babel 转码
 
 
+12.symbol
+ES6 引入了一种新的原始数据类型Symbol，表示独一无二的值。它是 JavaScript 语言的第七种数据类型，
+前六种是：undefined、null、布尔值（Boolean）、字符串（String）、数值（Number）、对象（Object）。
+Symbol函数前不能使用new命令，否则会报错。
+Symbol函数的参数只是表示对当前 Symbol 值的描述，因此相同参数的Symbol函数的返回值是不相等的。
+Symbol 值可以显式转为字符串，布尔值，但不能转化为数值
+Symbol 值作为对象属性名时，不能用点运算符。
+Symbol 值作为属性名时，该属性还是公开属性，不是私有属性。
+有一个Object.getOwnPropertySymbols方法，可以获取指定对象的所有 Symbol 属性名
+let s1 = Symbol.for('foo');
+let s2 = Symbol.for('foo');
+s1 === s2 // true
+
+13.set和map
+
 
 
 
