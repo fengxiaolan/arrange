@@ -124,7 +124,16 @@ Math.max(...[14, 3, 77])
 // 等同于
 Math.max(14, 3, 77);
 
-Array.from方法将arrayLike类数组转为真正的数组。
+Array.from() 方法从一个类似数组或可迭代对象中创建一个新的数组实例。
+Array.from(arrayLike, mapFn, thisArg)
+参数
+arrayLike
+想要转换成数组的伪数组对象或可迭代对象。
+mapFn (可选参数)
+如果指定了该参数，新数组中的每个元素会执行该回调函数。
+thisArg (可选参数)
+可选参数，执行回调函数 mapFn 时 this 对象。
+
 当slice()没有输入参数的时候，会创建一个新数组，然后把当前数组的所有元素扔进去，最后返回这个新数组。
 let arrayLike = {
     '0': 'a',
@@ -170,11 +179,46 @@ let s1 = Symbol.for('foo');
 let s2 = Symbol.for('foo');
 s1 === s2 // true
 
-13.set和map
+13.set(集合）和map（键值对）
+ES6 提供了新的数据结构 Set。它类似于数组，但是成员的值都是唯一的，没有重复的值。
+Set.prototype.constructor：构造函数，默认就是Set函数。
+Set.prototype.size：返回Set实例的成员总数。
+下面先介绍四个操作方法。
+add(value)：添加某个值，返回 Set 结构本身。
+delete(value)：删除某个值，返回一个布尔值，表示删除是否成功。
+has(value)：返回一个布尔值，表示该值是否为Set的成员。
+clear()：清除所有成员，没有返回值。
+四个遍历方法，可以用于遍历成员。(遍历是插入排序）
+keys()：返回键名的遍历器
+values()：返回键值的遍历器
+entries()：返回键值对的遍历器
+forEach()：使用回调函数遍历每个成员
 
+这就提供了去除数组重复成员的另一种方法。
+function dedupe(array) {
+  return Array.from(new Set(array));
+}
+dedupe([1, 1, 2, 3]) // [1, 2, 3]
 
+ES6 提供了 Map 数据结构。它类似于对象，也是键值对的集合，但是“键”的范围不限于字符串，各种类型的值（包括对象）都可以当作键。
+也就是说，Object 结构提供了“字符串—值”的对应，Map 结构提供了“值—值”的对应，是一种更完善的 Hash 结构实现。如果你需要“键值对”的数据结构，
+Map 比 Object 更合适。Set的遍历顺序就是插入顺序。这个特性有时非常有用
+如果对同一个键多次赋值，后面的值将覆盖前面的值。
+Map 的键实际上是跟内存地址绑定的，只要内存地址不一样，就视为两个键。这就解决了同名属性碰撞（clash）的问题
+map的方法
+set方法设置键名key对应的键值为value，然后返回整个 Map 结构。如果key已经有值，则键值会被更新，否则就新生成该键。
+get方法读取key对应的键值，如果找不到key，返回undefined。
+has方法返回一个布尔值，表示某个键是否在当前 Map 对象之中。
+delete方法删除某个键，返回true。如果删除失败，返回false。
+clear方法清除所有成员，没有返回值。
+Map 结构原生提供三个遍历器生成函数和一个遍历方法。
 
+keys()：返回键名的遍历器。
+values()：返回键值的遍历器。
+entries()：返回所有成员的遍历器。
+forEach()：遍历 Map 的所有成员。
+需要特别注意的是，Map 的遍历顺序就是插入顺序。
 
-
+14.Promise 是异步编程的一种解决方案
 
 
