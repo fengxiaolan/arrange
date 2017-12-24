@@ -224,4 +224,13 @@ Promise对象有以下两个特点。
 （1）对象的状态不受外界影响
 （2）一旦状态改变，就不会再变，任何时候都可以得到这个结果.。Promise对象的状态改变，只有两种可能：从pending变为fulfilled和从pending变为rejected。
 调用resolve或reject并不会终结 Promise 的参数函数的执行。
+一般来说，调用resolve或reject以后，Promise 的使命就完成了，后继操作应该放到then方法里面，而不应该直接写在resolve或reject的后面。
+所以，最好在它们前面加上return语句，这样就不会有意外。
+Promise.all方法用于将多个 Promise 实例，包装成一个新的 Promise 实例。
+const p = Promise.all([p1, p2, p3]);  //状态是全fullfill才是fullfill
+
+
+学习了es6基本的内置对象的一些运用
+
+学习es6未完成的知识点，着重promise和module的加载实现
 
