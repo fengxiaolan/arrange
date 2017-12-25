@@ -229,8 +229,146 @@ Promise对象有以下两个特点。
 Promise.all方法用于将多个 Promise 实例，包装成一个新的 Promise 实例。
 const p = Promise.all([p1, p2, p3]);  //状态是全fullfill才是fullfill
 
+Promise 的状态一旦改变，就永久保持该状态，不会再变了。
+Promise 内部的错误不会影响到 Promise 外部的代码，通俗的说法就是“Promise 会吃掉错误”。
+Promise 对象后面要跟catch方法，这样可以处理 Promise 内部发生的错误。catch方法返回的还是一个 Promise 对象，因此后面还可以接着调用then方法。
 
-学习了es6基本的内置对象的一些运用
+Promise.race方法同样是将多个 Promise 实例，包装成一个新的 Promise 实例。
+const p = Promise.race([p1, p2, p3]);
+只要p1、p2、p3之中有一个实例率先改变状态，p的状态就跟着改变。那个率先改变的 Promise 实例的返回值，就传递给p的回调函数。
 
-学习es6未完成的知识点，着重promise和module的加载实现
+我们可以提供一个done方法，总是处于回调链的尾端，保证抛出任何可能出现的错误。
+finally方法用于指定不管 Promise 对象最后状态如何，都会执行的操作。它与done方法的最大区别，它接受一个普通的回调函数作为参数，该函数不管怎样都必须执行。
+
+for in遍历的是数组的索引（即键名），而for of遍历的是数组元素值。
+for...in循环有几个缺点。
+数组的键名是数字，但是for...in循环是以字符串作为键名“0”、“1”、“2”等等
+循环不仅遍历数字键名，还会遍历手动添加的其他键，甚至包括原型链上的键。
+某些情况下，for...in循环会以任意顺序遍历键名。
+for...of优点：
+有着同for...in一样的简洁语法，但是没有for...in那些缺点
+不同于forEach方法，它可以与break、continue和return配合使用。
+提供了遍历所有数据结构的统一操作接口。如：break跳出循环
+
+15.class
+ES6class写法
+class Point {
+  constructor() {
+    // ...
+  }
+  toString() {
+    // ...
+  }
+}
+
+// 等同于ES5写法
+function Point() {
+}
+Point.prototype = {
+  constructor() {},
+  toString() {}
+};
+
+constructor方法默认返回实例对象（即this），完全可以指定返回另外一个对象。
+一个比较简单的解决方法是，在构造方法中绑定this，这样就不会找不到print方法了。或者使用箭头函数或者proxy
+如果静态方法包含this关键字，这个this指的是类，而不是实例。
+
+生成类的实例对象的写法，与 ES5 完全一样，也是使用new命令。class Point { // ...}   var point = new Point(2, 3);
+与 ES5 一样，类的所有实例共享一个原型对象。
+var p1 = new Point(2,3);
+var p2 = new Point(3,2);
+p1.__proto__ === p2.__proto__
+//true（p1和p2都是Point的实例，它们的原型都是Point.prototype，所以__proto__属性是相等的）
+
+类不存在变量提升（hoist），这一点与 ES5 完全不同。
+需要注意的是，子类继承父类时，new.target会返回子类。在函数外部，使用new.target会报错。
+
+16.class继承
+es6通过extends关键字实现继承，ES5 的通过修改原型链实现继承
+子类必须在constructor方法中调用super方法，否则新建实例时会报错。
+这是因为子类没有自己的this对象，而是继承父类的this对象，然后对其进行加工。如果不调用super方法，子类就得不到this对象。
+由于super指向父类的原型对象，所以定义在父类实例上的方法或属性，是无法通过super调用的。ES6 规定，通过super调用父类的方法时，方法内部的this指向子类。
+
+1）子类的__proto__属性，表示构造函数的继承，总是指向父类。
+2）子类prototype属性的__proto__属性，表示方法的继承，总是指向父类的prototype属性。
+子类实例的__proto__属性的__proto__属性，指向父类实例的__proto__属性。也就是说，子类的原型的原型，是父类的原型。
+
+17.module语法
+在 ES6 之前，社区制定了一些模块加载方案，最主要的有 CommonJS 和 AMD 两种。前者用于服务器，后者用于浏览器。
+严格模式主要有以下限制：（es5引入的）
+  变量必须声明后再使用
+  函数的参数不能有同名属性，否则报错
+  不能使用with语句
+  不能对只读属性赋值，否则报错
+  不能使用前缀 0 表示八进制数，否则报错
+  不能删除不可删除的属性，否则报错
+  不能删除变量delete prop，会报错，只能删除属性delete global[prop]
+  eval不会在它的外层作用域引入变量
+  eval和arguments不能被重新赋值
+  arguments不会自动反映函数参数的变化
+  不能使用arguments.callee
+  不能使用arguments.caller
+  禁止this指向全局对象
+  不能使用fn.caller和fn.arguments获取函数调用的堆栈
+  增加了保留字（比如protected、static和interface
+  
+一个模块就是一个独立的文件。该文件内部的所有变量，外部无法获取
+模块功能主要由两个命令构成：export和import。export命令用于规定模块的对外接口，import命令用于输入其他模块提供的功能。
+export是对外的借口，在接口名与模块内部变量之间，建立了一一对应的关系。
+写法：（规定了对外的接口m）
+// 写法一
+export var m = 1;
+// 写法二
+var m = 1;
+export {m};
+// 写法三
+var n = 1;
+export {n as m};  //as是重命名
+
+export命令可以出现在模块的任何位置，只要处于模块顶层就可以。如果处于块级作用域内，就会报错
+
+import命令是编译阶段执行的，在代码运行之前，一个模块之中最早执行的。import是静态执行，所以不能使用表达式和变量（不允许运行时改变）
+import {firstName, lastName, year} from './profile';===》import 变量名  from  模块 --或者import 模块
+import命令接受一对大括号，里面指定要从其他模块导入的变量名。大括号里面的变量名，必须与被导入模块（profile.js）对外接口的名称相同。
+import命令也可以as关键字，将输入的变量重命名。
+import命令具有提升效果，会提升到整个模块的头部，首先执行
+可用星号（*）指定一个对象
+export default命令用于指定模块的默认输出
+import()的一些适用场合：
+（1）按需加载。
+（2）条件加载
+（3）动态的模块路径
+
+18.module加载与实现
+defer与async的区别是：defer要等到整个页面在内存中正常渲染结束（DOM 结构完全生成，以及其他脚本执行完成），才会执行；
+async一旦下载完，渲染引擎就会中断渲染，执行这个脚本以后，再继续渲染。一句话，defer是“渲染完再执行”，async是“下载完就执行”。
+另外，如果有多个defer脚本，会按照它们在页面出现的顺序加载，而多个async脚本是不能保证加载顺序的。
+代码是在模块作用域之中运行，而不是在全局作用域运行。模块内部的顶层变量，外部不可见。
+注意点：
+模块脚本自动采用严格模式，不管有没有声明use strict。
+模块之中，可以使用import命令加载其他模块（.js后缀不可省略，需要提供绝对 URL 或相对 URL），也可以使用export命令输出对外接口。
+模块之中，顶层的this关键字返回undefined，而不是指向window。也就是说，在模块顶层使用this关键字，是无意义的。
+同一个模块如果加载多次，将只执行一次。
+
+CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。
+CommonJS 模块是运行时加载，ES6 模块是编译时输出接口。
+（CommonJS 加载的是一个对象（即module.exports属性）---require调用加载代码，该对象只有在脚本运行完才会生成|
+|ES6 模块不是对象，它的对外接口只是一种静态定义，在代码静态解析阶段就会生成。export导出，import导入）
+Node 的import命令是异步加载，这一点与浏览器的处理方法相同。
+ES6 模块之中，顶层的this指向undefined；CommonJS 模块的顶层this指向当前模块
+CommonJS 的一个模块，就是一个脚本文件。require命令第一次加载该脚本，就会执行整个脚本，然后在内存生成一个对象。
+CommonJS 模块无论加载多少次，都只会在第一次加载时运行一次，以后再加载，就返回第一次运行的结果，除非手动清除系统缓存。
+
+浏览器目前还不支持 ES6 模块，为了现在就能使用，可以将转为 ES5 的写法。除了 Babel 可以用来转码之外，还有以下两个方法（ES6 module transpiler和SystemJS）
+
+null>=0 //true  null==0  //false
+”>="比较是先算出原始值：如果两个都是String类型进行字符串比较，否则转换成Number，之后比较。
+“==”比较步骤中只在，两数分别是String和Number类型或其中之一为Boolean进行数字转换外，其他类型都不转换成数字。
+undefined==null
+true
+Number(undefined)
+NaN
+Symbol.toPrimitive 指将被调用的指定函数值的属性转换为相对应的原始值
+
+  
 
