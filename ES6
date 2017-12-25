@@ -1,5 +1,7 @@
 Es6学习
 参考http://es6.ruanyifeng.com/
+ES6就是ES2015。
+let, const, class, extends, super, arrow functions, template string, destructuring, default, rest arguments
 1.ECMA是European Computer Manufacturers Association的缩写，即欧洲计算机制造商协会。
 ECMAScript 和 JavaScript 的关系是，前者是后者的规格，后者是前者的一种实现（另外的 ECMAScript 方言还有 Jscript 和 ActionScript）。日常场合，这两个词是可以互换的。（ ES6 的地方，一般是指 ES2015 标准）
 Node 是 JavaScript 的服务器运行环境（runtime）。它对 ES6 的支持度更高。
