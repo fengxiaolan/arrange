@@ -1,7 +1,11 @@
 Es6学习
 参考http://es6.ruanyifeng.com/
 ES6就是ES2015。
-let, const, class, extends, super, arrow functions, template string, destructuring, default, rest arguments
+重点：let, const, class, extends, super, arrow functions, template string, destructuring解构函数, default, rest arguments
+
+“具名实参”的概念。这允许你把传给一个方法的参数显式地命名，而不是通过实参的位置来识别它
+不具名参数(也叫做剩余参数）：
+
 1.ECMA是European Computer Manufacturers Association的缩写，即欧洲计算机制造商协会。
 ECMAScript 和 JavaScript 的关系是，前者是后者的规格，后者是前者的一种实现（另外的 ECMAScript 方言还有 Jscript 和 ActionScript）。日常场合，这两个词是可以互换的。（ ES6 的地方，一般是指 ES2015 标准）
 Node 是 JavaScript 的服务器运行环境（runtime）。它对 ES6 的支持度更高。
@@ -31,6 +35,7 @@ let { foo: baz } = { foo: "aaa", bar: "bbb" };
 baz // "aaa"
 foo // error: foo is not defined
 上面代码中，foo是匹配的模式，baz才是变量。真正被赋值的是变量baz，而不是模式foo。
+需要注意的是，当解构赋值表达式的右侧（ = 后面的表达式）的计算结果为 null 或 undefined 时，会抛出错误。
 
 6.字符串的扩展
 console.log("\u{20BB7}")
@@ -94,9 +99,11 @@ function foo() {
   }, 100);
 }
 另外，由于箭头函数没有自己的this，所以当然也就不能用call()、apply()、bind()这些方法去改变this的指向。
-尾调用:
+
+尾调用:（就是指某个函数的最后一步是调用另一个函数）
 ES6 的尾调用优化只在严格模式下开启，正常模式是无效的。
 就是计算 Fibonacci 数列，也能充分说明尾递归优化的重要性。
+尾递归：函数调用自身，称为递归。如果尾调用自身，就称为尾递归。
 非尾递归的 Fibonacci 数列实现如下。
 function Fibonacci (n) {
   if ( n <= 1 ) {return 1};
@@ -107,6 +114,7 @@ function Fibonacci (n) {
 Fibonacci(10) // 89
 Fibonacci(100) // 堆栈溢出
 Fibonacci(500) // 堆栈溢出
+
 尾递归优化过的 Fibonacci 数列实现如下。
 function Fibonacci2 (n , ac1 = 1 , ac2 = 1) {
   if( n <= 1 ) {return ac2};
@@ -230,6 +238,16 @@ Promise对象有以下两个特点。
 所以，最好在它们前面加上return语句，这样就不会有意外。
 Promise.all方法用于将多个 Promise 实例，包装成一个新的 Promise 实例。
 const p = Promise.all([p1, p2, p3]);  //状态是全fullfill才是fullfill
+
+const promise = new Promise(function(resolve, reject) {
+  throw new Error('test');
+});
+promise.then(function(posts) {
+  // ...
+}).catch(function(error) {
+  // 处理 getJSON 和 前一个回调函数运行时发生的错误
+});
+then方法返回的是一个新的Promise实例
 
 Promise 的状态一旦改变，就永久保持该状态，不会再变了。
 Promise 内部的错误不会影响到 Promise 外部的代码，通俗的说法就是“Promise 会吃掉错误”。
@@ -370,7 +388,24 @@ undefined==null
 true
 Number(undefined)
 NaN
-Symbol.toPrimitive 指将被调用的指定函数值的属性转换为相对应的原始值
+
+利用Symbol的一些属性，可以针对对象的一些内部行为进行操作。
+Symbol.iterator： 一个返回对象默认迭代器的方法,使用for...of
+Symbol.match： 一个用于对字符串进行匹配的方法，也用于确定一个对象是否可以作为正则表达式使用。使用String.prototype.match
+Symbol.replace：一个替换匹配字符串的子串的方法.使用String.prototype.replace
+Symbol.search
+Symbol.split
+Symbol.hasInstance: 一个确定一个构造器对象识别的对象是否为它的实例的方法。使用 instanceof.
+Symbol.isConcatSpreadable: 一个布尔值，表明一个对象是否应该flattened为它的数组元素。使用Array.prototype.concat().
+Symbol.unscopables: 拥有和继承属性名的一个对象的值被排除在与环境绑定的相关对象外。
+Symbol.species: 一个用于创建派生对象的构造器函数。.
+Symbol.toPrimitive: 一个将对象转化为基本数据类型的方法。
+Symbol.toStringTag： 用于对象的默认描述的字符串值。使用Object.prototype.toString().
+
+属性初始化：当对象的一个属性名称与本地变量名相同的时候，可以省略冒号和值 {name:name,age:age}==>{name,age}
+方法简写： getName() {return this.name;}
+     等同getName: function() {return this.name;} 
+
 
   
 
