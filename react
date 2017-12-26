@@ -1,0 +1,177 @@
+https://reactjs.org/docs/introducing-jsx.html
+http://www.css88.com/react/docs/hello-world.html
+菜鸟教程
+测试引入react,react-dom,babel就可以直接运行啦！
+
+一、react基础
+1.react特点：
+  1.声明式设计 −React采用声明范式，可以轻松描述应用。
+  2.高效 −React通过对DOM的模拟，最大限度地减少与DOM的交互。
+  3.灵活 −React可以与已知的库或框架很好地配合。
+  4.JSX − JSX 是 JavaScript 语法的扩展。React 开发不一定使用 JSX ，但我们建议使用它。
+  5.组件 − 通过 React 构建组件，使得代码更加容易得到复用，能够很好的应用在大项目的开发中。
+  6.单向响应的数据流 − React 实现了单向响应的数据流，从而减少了重复代码，这也是它为什么比传统数据绑定更简单。
+ 
+2.jsx特点
+ 我们不需要一定使用 JSX，但它有以下优点：
+  JSX 执行更快，因为它在编译为 JavaScript 代码后进行了优化。
+  它是类型安全的，在编译过程中就能发现错误。
+  使用 JSX 编写模板更加简单快速。
+语法：
+在reactDOM.render可以写html标签
+data-xx自定义属性，
+{}里面写表达式或者三目运算符
+React 推荐使用内联样式，React 会在指定元素数字后自动添加 px
+标签内部的注释需要写在花括号中,标签外部的注释不需要使用花括号
+JSX 允许在模板中插入数组，数组会自动展开所有成员：
+React 的 JSX 使用大、小写的约定来区分本地组件的类（大写字母开头）和 HTML 标签（小写标签）。
+React DOM 使用 className 和 htmlFor 来做对应的class和for属性。
+代码中嵌套多个 HTML 标签，需要使用一个标签元素包裹它
+var arr=[]
+ ReactDOM.render(
+        <div>
+           <h1>hello react! {arr}</h1>
+        </div>,
+        document.getElementById('box')
+    )
+    
+二、react组件
+React.createClass 方法用于生成一个组件类 HelloMessage。
+<HelloMessage /> 实例组件类并输出信息。
+ES5写法：
+var HelloMessage = React.createClass({
+  render: function() {     //可以采用ES6的写法哟
+    return <h1>Hello World！ {this.props.namea}</h1>;  //多个用括号，表整体 ,多个标签还是要一个包裹层-----this.props.namea是获取父级的属性
+  }
+});
+ 
+ReactDOM.render(
+  <HelloMessage  namea="小" />,  
+  document.getElementById('example')
+);
+
+自定义的 React 类名以大写字母开头，可以是单标签，也可以写成双标签，组件类只能包含一个顶层标签，否则也会报错。
+
+三。状态state
+通过与用户的交互，实现不同状态，然后渲染 UI，让用户界面和数据保持一致。 根据state 重新渲染用户界面（不要操作 DOM）。
+var HelloWorld = React.createClass({
+      getInitialState: function(){
+          return {isLike: false};
+      },
+      handleClick(){
+         this.setState({isLike: !this.state.isLike});
+      },
+      render(){
+          var text = this.state.isLike ? '哈哈hao' : '呵呵bu';
+          return (
+              <div>
+                  <h1>yes or no! 哈哈</h1>
+                  <p onClick={this.handleClick}> 点我切换状态,啦啦{text}</p>
+              </div>
+          )
+      }
+  });
+onClick 等事件，与原生 HTML 不同，on 之后第一个字母是大写的！
+
+四、props
+state 和 props 主要的区别在于 props 是不可变的，而 state 可以根据与用户交互来改变。
+这就是为什么有些容器组件需要定义 state 来更新和修改数据。 而子组件只能通过 props 来传递数据。
+一般使用this.props.xx 来获取数据来源
+ getDefaultProps() 方法为 props 设置默认值，通过this.props.xx获取
+ getInitialState（）方法初始化 ，通过this.state.xx获取
+ 
+ Props 验证使用 propTypes
+    // 用 enum 来限制 prop 只接受指定的值。
+    optionalEnum: React.PropTypes.oneOf(['News', 'Photos']),
+ 
+    // 可以是多个对象类型中的一个
+    optionalUnion: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number,
+      React.PropTypes.instanceOf(Message)
+    ]),
+    //属性 title 是必须的且是字符串，非字符串类型会自动转换为字符串 ：
+    propTypes: {
+    title: React.PropTypes.string.isRequired,
+  },
+
+五、react组件api
+设置状态：setState
+替换状态：replaceState
+设置属性：setProps
+替换属性：replaceProps
+强制更新：forceUpdate
+获取DOM节点：findDOMNode
+判断组件挂载状态：isMounted==>返回true或false
+
+setState(object nextState[, function callback]) ==》（将要设置的状态||可选参数回调函数，设置成功且组件渲染后调用）
+注：不能在组件内部通过this.state修改状态，因为该状态会在调用setState()后被替换。
+    setState()并不会立即改变this.state，而是创建一个即将处理的state。setState()并不一定是同步的，为了提升性能React会批量执行state和DOM渲染。
+    setState()总是会触发一次组件重绘，除非在shouldComponentUpdate()中实现了一些条件渲染逻辑
+
+六、react生命周期
+组件的生命周期可分成三个状态：
+Mounting：已插入真实 DOM
+Updating：正在被重新渲染
+Unmounting：已移出真实 DOM
+
+生命周期的方法有：
+componentWillMount 在渲染前调用,在客户端也在服务端。
+componentDidMount : 在第一次渲染后调用，只在客户端。之后组件已经生成了对应的DOM结构，可以通过this.getDOMNode()来进行访问。 如果你想和其他JavaScript框架一起使用，可以在这个方法中调用setTimeout, setInterval或者发送AJAX请求等操作(防止异部操作阻塞UI)。
+componentWillReceiveProps 在组件接收到一个新的prop时被调用。这个方法在初始化render时不会被调用。
+shouldComponentUpdate 返回一个布尔值。在组件接收到新的props或者state时被调用。在初始化时或者使用forceUpdate时不被调用。 
+可以在你确认不需要更新组件时使用。
+componentWillUpdate在组件接收到新的props或者state但还没有render时被调用。在初始化时不会被调用。
+componentDidUpdate 在组件完成更新后立即调用。在初始化时不会被调用。
+componentWillUnmount在组件从 DOM 中移除的时候立刻被调用。
+
+ES6写法：
+class Message extends React.Component {
+      constructor(){
+          super();
+          this.state = {
+              like:true
+          }
+          this.handlelike=this.handlelike.bind(this);  //或者函数写成箭头函数（绑定Message的this)
+      }
+
+      handlelike() {
+          this.setState({
+              like: !this.state.like
+          })
+      }
+
+      render(){
+          var islike = this.state.like ? '看你咯' : 'nono';
+          return (
+              <div>
+                  <h1>hello world</h1>
+                   <h2>it is a girl </h2>
+                  <h3 onClick={this.handlelike}>喜不喜欢呢?--{islike}</h3>
+              </div>
+          )
+      }
+  }
+  ReactDOM.render(
+      <Message />
+      ,document.getElementById('box')
+  )
+
+
+
+
+
+
+
+
+
+  
+ --save 会把依赖包名称添加到 package.json 文件 dependencies 键下，--save-dev 则添加到 package.json 文件 devDependencies 键下
+ npm自己的文档说dependencies是运行时依赖，devDependencies是开发时的依赖。即devDependencies 下列出的模块，是我们开发时用的，
+ 比如 我们安装 js的压缩包gulp-uglify 时，我们采用的是 “npm install –save-dev gulp-uglify ”命令安装，因为我们在发布后用不到它，
+ -save-dev 会把下载包的相关信息写到package.json的devDependencies里面方便以后发布，其他人使用的时候只需要npm install就可以把相关的依赖下载到当前的项目里面。
+ 而只是在我们开发才用到它。dependencies 下的模块，则是我们发布后还需要依赖的模块，
+  
+  
+  
+  http://es6-features.org/
