@@ -1,5 +1,6 @@
 Es6学习
 参考http://es6.ruanyifeng.com/
+   http://es6-features.org/
 ES6就是ES2015。
 重点：let, const, class, extends, super, arrow functions, template string, destructuring解构函数, default, rest arguments
 
