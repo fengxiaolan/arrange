@@ -52,14 +52,15 @@ ReactDOM.render(
 
 自定义的 React 类名以大写字母开头，可以是单标签，也可以写成双标签，组件类只能包含一个顶层标签，否则也会报错。
 
-三。状态state
+三、状态state
+一个组件可以选择将 state(状态) 向下传递，作为其子组件的 props(属性) （’单向‘数据流）
 通过与用户的交互，实现不同状态，然后渲染 UI，让用户界面和数据保持一致。 根据state 重新渲染用户界面（不要操作 DOM）。
 var HelloWorld = React.createClass({
       getInitialState: function(){
           return {isLike: false};
       },
       handleClick(){
-         this.setState({isLike: !this.state.isLike});
+         this.setState({isLike: !this.state.isLike});  //修改状态
       },
       render(){
           var text = this.state.isLike ? '哈哈hao' : '呵呵bu';
@@ -72,28 +73,63 @@ var HelloWorld = React.createClass({
       }
   });
 onClick 等事件，与原生 HTML 不同，on 之后第一个字母是大写的！
+//          this.setState({
+//               count:this.state.count++
+//            })  //不起作用，没有缓存上次的状态
+
+初始化是对象  info:{tel: '123456',valid: ''}
+//           this.setState({  //对象覆盖
+//               info:Object.assign(this.state.info,{tel:val})
+//           })  
+
+            this.setState((prev)=>{   //对于计算状态，需要匿名函数的参数状态赋值给下一次的状态
+                count: prev.count++
+            })
+            
+
 
 四、props
-state 和 props 主要的区别在于 props 是不可变的，而 state 可以根据与用户交互来改变。
+所有 React 组件都必须是纯函数，并禁止修改其自身 props （不会试图改变它们的输入，并且对于同样的输入,始终可以得到相同的结果。）
+1.state 和 props 主要的区别在于 props 是不可变的，而 state 可以根据与用户交互来改变。
 这就是为什么有些容器组件需要定义 state 来更新和修改数据。 而子组件只能通过 props 来传递数据。
 一般使用this.props.xx 来获取数据来源
  getDefaultProps() 方法为 props 设置默认值，通过this.props.xx获取
  getInitialState（）方法初始化 ，通过this.state.xx获取
  
- Props 验证使用 propTypes
-    // 用 enum 来限制 prop 只接受指定的值。
-    optionalEnum: React.PropTypes.oneOf(['News', 'Photos']),
- 
-    // 可以是多个对象类型中的一个
-    optionalUnion: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.number,
-      React.PropTypes.instanceOf(Message)
-    ]),
-    //属性 title 是必须的且是字符串，非字符串类型会自动转换为字符串 ：
+2.Props 验证使用 propTypes
+注意： 从 React v15.5 开始 ，React.PropTypes 助手函数已被弃用，我们建议使用 prop-types 库 来定义contextTypes。
+    eg://属性 title 是必须的且是字符串，非字符串类型会自动转换为字符串 ：
     propTypes: {
     title: React.PropTypes.string.isRequired,
-  },
+  }
+推荐使用库
+  import PropTypes from 'prop-types';
+class Greeting extends React.Component {
+  render() {
+    return (
+      <h1>Hello, {this.props.name}</h1>
+    );
+  }
+}
+Greeting.propTypes = {
+  name: PropTypes.string
+};
+
+3.子组件改变父组件的状态（数据是谁的，谁才有资格修改）
+组件’受控‘的方式
+父组件States里使用：
+<Mystate changeVal={()=>{this.handleval()}} tel={this.state.info.tel} />
+handleval(val){
+           this.setState((prev)=>{
+               this.state.info.tel=val
+           })
+       }
+子组件Mystates：
+<input onChange={(e)=>{this.handleprops(e)}}  value={this.props.tel} />
+handleprops(e){
+          this.props.changeVal(e.target.value)
+           // console.log(e.target.value)
+        }
 
 五、react组件api
 设置状态：setState
@@ -132,7 +168,7 @@ class Message extends React.Component {
           this.state = {
               like:true
           }
-          this.handlelike=this.handlelike.bind(this);  //或者函数写成箭头函数（绑定Message的this)
+          this.handlelike=this.handlelike.bind(this);  //或者函数写成箭头函数（绑定Message的this)  绑定函数执行的上下文
       }
 
       handlelike() {
@@ -157,13 +193,73 @@ class Message extends React.Component {
       ,document.getElementById('box')
   )
 
+七、表单与事件
+React 事件使用驼峰命名，而不是全部小写。
+通过 JSX , 你传递一个函数作为事件处理程序，而不是一个字符串。
+
+事件绑定的this指向,目的绑定函数执行的上下文
+（1）constructor中指定 
+<input type="text" value={this.state.value}  onChange={this.handlechange} />
+constructor中指定  this.handlechange = this.handlechange.bind(this);
+函数
+handleclick(e){
+            this.setState({
+                is:!this.state.is,
+                btn: this.state.is ? 'OK' : 'GO'
+            })
+        }
+（2）事件箭头函数arrow
+ <input type="button"  onClick={(e)=>{this.handleclick(e)}}  value={this.state.btn}
+ 函数
+handleclick(e){
+            this.setState({
+                is:!this.state.is,
+                btn: this.state.is ? 'OK' : 'GO'
+            })
+        }
+（3）事件函数内部绑定this
+<input type="button"  onClick={function(){this.handleclick()}.bind(this)}  value={this.state.btn}/>
+handleclick(e){
+            this.setState({
+                is:!this.state.is,
+                btn: this.state.is ? 'OK' : 'GO'
+            })
+        }
+（4）函数直接用箭头函数
+input type="button"  onClick={this.handleclick}  value={this.state.btn}/>
+ handleclick=(e)=>{
+            this.setState({
+                is:!this.state.is,
+                btn: this.state.is ? 'OK' : 'GO'
+            })
+        }
+        
+ （5）函数外部绑定this
+ <input type="button"  onClick={this.handleclick}  value={this.state.btn}/>
+ handleclick=function(e){
+            this.setState({
+                is:!this.state.is,
+                btn: this.state.is ? 'OK' : 'GO'
+            })
+        }.bind(this)
 
 
+八、react refs
+属性ref可以绑定到render（）输出的都任何组件上，通过this.refs.refname来获取实例
+使用<input type="text" ref="myInput" />
+    获取焦点this.refs.myInput.focus();
+或者<input type="text" ref={(input)=>{this.hao = input}} />
+   获取焦点 this.hao.focus()
 
+九、条件渲染-列表渲染和键
+渲染  判断或者逻辑语句在render函数中但必须在return之前
+列表渲染我们使用map函数来遍历数据并在回调函数中返回渲染的数据；
+key帮助 React 标识哪个项被修改、添加或者移除了。数组中的每一个元素都应该有一个唯一不变的键(Keys)来标识：
 
+？？？列表下面打印console会不断的打印，但渲染只渲染一次(render里return之前）
 
-
-
+组件嵌套
+在自定义组件中嵌套一些内容，需要在组件里写{this.props.children}  来达到直接传递
 
   
  --save 会把依赖包名称添加到 package.json 文件 dependencies 键下，--save-dev 则添加到 package.json 文件 devDependencies 键下
@@ -174,4 +270,3 @@ class Message extends React.Component {
   
   
   
-  http://es6-features.org/
