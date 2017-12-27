@@ -268,5 +268,15 @@ key帮助 React 标识哪个项被修改、添加或者移除了。数组中的�
  -save-dev 会把下载包的相关信息写到package.json的devDependencies里面方便以后发布，其他人使用的时候只需要npm install就可以把相关的依赖下载到当前的项目里面。
  而只是在我们开发才用到它。dependencies 下的模块，则是我们发布后还需要依赖的模块，
   
+this指向的问题去测试一次
+setState对于计算的话需要保存上一次状态
+props组件受控方式，子组件改变父组件的状态
+表单事件
+列表渲染
+组件嵌套
+webpack起服务开发react
+
+react中绑定this的问题，详细了解用setState动态修改状态，以及props组件受控方式，达到子组件改变父组件的状态
+表单事件和列表渲染和组件嵌套的知识点
   
   
