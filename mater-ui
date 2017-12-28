@@ -1,0 +1,23 @@
+参考http://www.material-ui.com/
+1.所需知识
+Material-UI是一组React组件，因此了解React如何适应Web开发是非常重要的。
+Node的核心是一个用C++编写的程序，它使用Chrome的V8 JavaScript引擎。因此，Node本质上是一个运行时环境。
+npm是一个命令行工具，可以用来将外部JavaScript合并到自己的项目中，npm install material-ui
+Material-UI是以Roboto 字体设计的。所以一定要把它包含在你的项目中。
+导入方式：import RaisedButton from 'material-ui/RaisedButton'; （构建过程更快，构建输出更小）
+代替
+import {RaisedButton} from 'material-ui';
+
+2.
+
+
+
+总结：
+学习了
+webpack服务下创建react
+创建react-app自动创建环境中react使用
+理解promise
+了解material-ui大致功能
+
+今天
+深入学习material-ui
