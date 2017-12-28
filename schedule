@@ -79,16 +79,84 @@ USD CHF 美元
 CQG
 用户—期货公司—交易所（规则）
 
+4.
+webpack配置
+以前require module.exports
+解决模块化 import  export (重点）
+*尽量不用（不确定性)
+Class—prototype
+扩展运算符—遍历
+promise
+
+es6-feature.org(规范）
+Let/const
+箭头函数
+一般不采用默认参数default parameter
+Extended parameter handing(…params ) 参数中少用，要明确参数
+setState—setTimeout(存在异步）——有回调
+this.setState({istrue:false})——setTimeout(function(){this.state.istrue:false},0)
+assert断定
+登录只是请求， 异步刷新
+计算机执行顺序
+希望程序是多任务的,协调—异步
+this.setState({istrue:false}，onsuccful(){})
+catch
+Promise.all返回promise
+
+异步操作和事件驱动 reactivex(队列)
+react
+style和lifecycle
 
 
 
-第一天任务
+5.
+this
+Props父->子
+State 外部因素，状态改变
+外部—内部因素（界面刷新有这两种改变）
+不能数据双向绑定，单向数据流—全局是双向绑定，所以尽量不用（不方便改）
+回调只能绑定一次，也可以实现双向绑定
+事件驱动绑定就是队列，获取属性，数据双向绑定
+
+使用全局变量的优点是：可以减少变量的个数，减少由于实际参数和形式参数的数据传递带来的时间消耗。但是，使用全局变量也有许多缺点：（1）全局变量保存在静态存贮区，程序开始运行时为其分配内存，程序结束释放该内存。与局部变量的动态分配、动态释放相比，生存期比较长，因此过多的全局变量会占用较多的内存单元。（2）全局变量破坏了函数的封装性能。前面的章节曾经讲过，函数象一个黑匣子，一般是通过函数参数和返回值进行输入输出，函数内部实现相对独立。但函数中如果使用了全局变量，那么函数体内的语句就可以绕过函数参数和返回值进行存取，这种情况破坏了函数的独立性，使函数对全局变量产生依赖。同时，也降低了该函数的可移植性。（3）全局变量使函数的代码可读性降低。由于多个函数都可能使用全局变量，函数执行时全局变量的值可能随时发生变化，对于程序的查错和调试都非常不利。因此，如果不是万不得已，最好不要使用全局变量。
+
+
+6.
+逻辑过程—Catch顶层捕获（应用层）
+
+先不学
+framework
+cordova
+react native
+
+先学
+webpack配置
+
+自学—不用知道先学什么，你可以先去看那是什么东西，再去判断，尝试写demo
+
+会则不难，难则不会
+
+分享—任务更新
+做了啥
+问题
+准备做啥
+
+
+
+
+
+
+-------------------------------------------------------------
+任务1
  提纲
  计划表
-第二天任务
+任务2
  期货
  熟悉webstorm
  学习webpack参考http://webpack.github.io/docs/motivation.html 
-第三天任务
+任务3
  ES6学习为react基础加油
+任务4
+ material ui
+
 
