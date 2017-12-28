@@ -274,6 +274,12 @@ for...of优点：
 提供了遍历所有数据结构的统一操作接口。如：break跳出循环
 参考例子：http://www.hangge.com/blog/cache/detail_1635.html
 
+Promise常用场景：
+   处理异步回调
+   多个异步函数同步处理
+   异步依赖异步回调
+   封装统一的入口办法或者错误处理
+
 
 15.class
 ES6class写法
