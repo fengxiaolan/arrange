@@ -248,13 +248,15 @@ promise.then(function(posts) {
 }).catch(function(error) {
   // 处理 getJSON 和 前一个回调函数运行时发生的错误
 });
-then方法返回的是一个新的Promise实例
+then方法返回的是一个新的Promise实例,目前的Promise实现中then几乎都是返回一个新的Promise(详情)对象，
+ 所以在我们的实现中，也让then返回一个新的Promise对象。
 
 Promise 的状态一旦改变，就永久保持该状态，不会再变了。
 Promise 内部的错误不会影响到 Promise 外部的代码，通俗的说法就是“Promise 会吃掉错误”。
 Promise 对象后面要跟catch方法，这样可以处理 Promise 内部发生的错误。catch方法返回的还是一个 Promise 对象，因此后面还可以接着调用then方法。
 
-Promise.race方法同样是将多个 Promise 实例，包装成一个新的 Promise 实例。
+Promise.race方法同样是将多个 Promise 实例，包装成一个新的 Promise 实例。race 的用法与 all 一样，
+只不过 all 是等所有异步操作都执行完毕后才执行 then 回调。而 race 的话只要有一个异步操作执行完毕，就立刻执行 then 回调。
 const p = Promise.race([p1, p2, p3]);
 只要p1、p2、p3之中有一个实例率先改变状态，p的状态就跟着改变。那个率先改变的 Promise 实例的返回值，就传递给p的回调函数。
 
@@ -270,6 +272,8 @@ for...of优点：
 有着同for...in一样的简洁语法，但是没有for...in那些缺点
 不同于forEach方法，它可以与break、continue和return配合使用。
 提供了遍历所有数据结构的统一操作接口。如：break跳出循环
+参考例子：http://www.hangge.com/blog/cache/detail_1635.html
+
 
 15.class
 ES6class写法
