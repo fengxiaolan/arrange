@@ -1,0 +1,37 @@
+参考http://www.material-ui.com/
+1.所需知识
+SPA是一个“网站”，主要由一个页面组成。也就是说，整个网站生活在一个文件（通常是一个JavaScript文件），从服务器发送到客户端一次。（提供流畅，响应快速web体验)
+Material-UI是一组React组件，因此了解React如何适应Web开发是非常重要的。
+Node的核心是一个用C++编写的程序，它使用Chrome的V8 JavaScript引擎。因此，Node本质上是一个运行时环境。
+npm是一个命令行工具，可以用来将外部JavaScript合并到自己的项目中，npm install material-ui
+Material-UI是以Roboto 字体设计的。所以一定要把它包含在你的项目中。
+导入方式：import RaisedButton from 'material-ui/RaisedButton'; （构建过程更快，构建输出更小）
+代替
+import {RaisedButton} from 'material-ui';
+
+2.启动和运行最快的方法是使用MuiThemeProvider将主题注入到应用程序上下文中，这应该最好在你的组件树的根
+自定义主题---要定制muiTheme你必须getMuiTheme()用来计算一个有效的muiTheme对象，并提供一个包含你想要自定义键的对象。
+然后，可以使用<MuiThemeProvider />它将树提供给组件。
+
+该muiTheme对象包含以下键：
+spacing：可以用来改变组件的间距。
+fontFamily 可以用来改变默认的字体系列。
+palette 可以用来改变组件的颜色。
+zIndex 可以用来改变每个组件的级别。
+isRtl 可以用来启用从右到左的模式。
+每个组件还有一个键，所以您可以使用它们分别进行自定义：
+appBar
+avatar
+
+Avatar使用图像，字体图标，SVG图标 和“字母”（字符串）的例子
+3.font icon该组件将呈现 项目中包含的任何样式表中定义的任何图标。您可以使用像IcoMoon这样的网站 来生成自定义字体文件，或者使用预先构建的字体，
+例如项目中包含的材质图标或 Font Awesome，或者从公共 内容交付网络提供
+svg icon该SvgIcon组件将SVG path元素作为其子元素，并将其转换为React组件，该组件显示路径并允许图标的样式和响应鼠标事件。
+可以按原样使用生成的图标，也可以将其作为使用图标的其他Material-UI组件的子项（如图标按钮）使用。
+
+学日期
+
+
+
+
+
