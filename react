@@ -86,7 +86,21 @@ onClick 等事件，与原生 HTML 不同，on 之后第一个字母是大写的
                 count: prev.count++
             })
             
-
+不能直接改变this.state.xx的值，需要this.setState
+    1.写法不对，但是对象，引用传值handleval(val){
+           this.setState((prev)=>{
+               this.state.info.tel = val  //是改变对象的值，可以传值，不推荐使用（函数上应该有个返回值）
+           })
+   2.handleval(val) {
+        this.setState({
+            good:val
+        })
+    }
+    3.// handleval(val) {
+    //     this.setState((pre) => {
+    //         this.state.good = val
+    //     })
+    // }  有误，因为这是直接赋值，没有给返回值 || 而且是值传递，不是对象传递，传值就没法改变
 
 四、props
 所有 React 组件都必须是纯函数，并禁止修改其自身 props （不会试图改变它们的输入，并且对于同样的输入,始终可以得到相同的结果。）
