@@ -11,7 +11,7 @@ import {RaisedButton} from 'material-ui';
 
 2.启动和运行最快的方法是使用MuiThemeProvider将主题注入到应用程序上下文中，这应该最好在你的组件树的根
 自定义主题---要定制muiTheme你必须getMuiTheme()用来计算一个有效的muiTheme对象，并提供一个包含你想要自定义键的对象。
-然后，可以使用<MuiThemeProvider />它将树提供给组件。
+然后，可以使用<MuiThemeProvider />它将树提供给组件。（所有material组件要用它包裹）
 
 该muiTheme对象包含以下键：
 spacing：可以用来改变组件的间距。
@@ -29,7 +29,7 @@ Avatar使用图像，字体图标，SVG图标 和“字母”（字符串）的�
 svg icon该SvgIcon组件将SVG path元素作为其子元素，并将其转换为React组件，该组件显示路径并允许图标的样式和响应鼠标事件。
 可以按原样使用生成的图标，也可以将其作为使用图标的其他Material-UI组件的子项（如图标按钮）使用。
 
-学日期
+
 
 
 
