@@ -101,6 +101,11 @@ onClick 等事件，与原生 HTML 不同，on 之后第一个字母是大写的
     //         this.state.good = val
     //     })
     // }  有误，因为这是直接赋值，没有给返回值 || 而且是值传递，不是对象传递，传值就没法改变
+    可以  this.setState((oldState) => {
+            return {
+                checked: !oldState.checked,
+            };
+        });
 
 四、props
 所有 React 组件都必须是纯函数，并禁止修改其自身 props （不会试图改变它们的输入，并且对于同样的输入,始终可以得到相同的结果。）
