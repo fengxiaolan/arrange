@@ -1,0 +1,285 @@
+
+/**
+ * Created by Mac on 2018/1/3.
+ */
+
+import React, { Component } from 'react';
+import './Space.css';
+
+import MuiThemProvider from 'material-ui/styles/MuiThemeProvider';
+import AppBar from 'material-ui/AppBar';
+import Drawer from 'material-ui/Drawer';
+import MenuItem from 'material-ui/MenuItem';
+import FlatButton from 'material-ui/FlatButton';
+import SvgIcon from 'material-ui/SvgIcon';
+import IconButton from 'material-ui/IconButton';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import Divider from 'material-ui/Divider';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import Paper from 'material-ui/Paper';
+import ContentFilter from 'material-ui/svg-icons/content/filter-list';
+import {deepOrange300, purple500} from 'material-ui/styles/colors';
+import {Tabs, Tab} from 'material-ui/Tabs';
+import Slider from 'material-ui/Slider';
+import TextField from 'material-ui/TextField';
+import Checkbox from 'material-ui/Checkbox';
+import ActionFavorite from 'material-ui/svg-icons/action/favorite';
+import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
+import Snackbar from 'material-ui/Snackbar';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
+import {
+    Step,
+    Stepper,
+    StepLabel,
+    StepButton,
+    StepContent,
+} from 'material-ui/Stepper';
+import RaisedButton from 'material-ui/RaisedButton';
+
+
+class Space extends Component {
+    constructor() {
+        super();
+        this.state = {
+            open: false,
+            open1: false,
+            value: 1,
+            tabindex: "1",
+            forget: false,
+            stepIndex: 0,
+            finished: false,
+            valueing: ''
+        };
+    }
+    render() {
+        const styles = {
+            title: {
+                cursor: 'pointer',
+            }
+        };
+        const dropMenu =
+            <DropDownMenu
+                value={this.state.value}
+                onChange={this.handleChange}
+                iconButton={<IconButton><ContentFilter /></IconButton>}
+                iconStyle={{lineHeight: '20px',height: '20px' }}
+
+                style={{height:20}}
+
+            >
+                <MenuItem value={1} label="EN" primaryText="英文" />
+                <MenuItem value={2} label="ZH" primaryText="中文 " />
+                <Divider />
+                <MenuItem value={3} label="han" primaryText="韩文" />
+                <MenuItem primaryText="Copy" disabled={true} />
+                <MenuItem value={4} label="japan" primaryText="日文" />
+            </DropDownMenu>
+        ;
+
+        return (
+            <div>
+               <h2>实例组件啦啦啦</h2>
+                <MuiThemProvider>
+                  <div className="appBar">
+                     <AppBar
+                       title={<span style={styles.title}>仓位</span>}
+                       iconElementLeft={<img style={{height: '20px'}} src="http://s1.bdstatic.com/r/www/cache/static/home/img/qrcode/zbios_efde696.png" alt="仓位图标"/>}
+                       onTitleClick={this.handleDrawer}
+                       style={{height: 34}}
+                       titleStyle={{fontSize: '12px',lineHeight: '34px',height: 34}}
+                       onRequestChange={(open) => this.setState({open})}
+                       iconElementRight={<FlatButton primary={true} style={{ top: 0,}}>{dropMenu}</FlatButton>}
+                       iconStyleRight={{ paddingTop: 0}}
+                      />
+                      <Drawer open={this.state.open}>
+                          <MenuItem>Menu Item</MenuItem>
+                          <MenuItem>Menu Item 2</MenuItem>
+                      </Drawer>
+
+
+
+                  </div>
+                   <br />
+                   <br />
+                    <div className="logo">
+                        <AppBar
+                            iconElementLeft={<IconButton><img style={{height: '30px'}} src="http://s1.bdstatic.com/r/www/cache/static/home/img/qrcode/zbios_efde696.png" alt="仓位图标"/></IconButton>}
+                            onLeftIconButtonClick={this.handleDrawer}
+                            onRequestChange={(open1) => this.setState({open1})}
+                            iconElementRight={<FlatButton><ContentFilter /></FlatButton>}
+                        />
+                        <Drawer open={this.state.open1}>
+                            <MenuItem>Menu Item</MenuItem>
+                            <MenuItem>Menu Item 2</MenuItem>
+                        </Drawer>
+
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <div className="tabs">
+                        <Tabs
+                            value={this.state.tabindex}
+                            onChange={this.handleTab}
+                            style={{width:'400px', margin: '0 auto',}}
+                            contentContainerStyle={{background: deepOrange300,}}
+                            inkBarStyle={{background: purple500,}}
+                        >
+                            <Tab label="登录" value="1">
+                                <div className='loginbox'>
+                                    <TextField
+                                        hintText="用户名"
+                                        floatingLabelText="account id"
+                                        type="text"
+                                    /><br />
+                                    <TextField
+                                        hintText="密码"
+                                        floatingLabelText="account password"
+                                        type="password"
+                                    /><br />
+                                    <FlatButton
+                                        label="forget password?"
+                                        primary={true}
+                                        onClick={this.handleForget}
+                                    />
+
+
+                                    <div className="forget">
+                                        忘记密码了，走步骤咯
+                                        <Snackbar
+                                            open={this.state.forget}
+                                            message={
+                                                <RefreshIndicator
+                                                    size={40}
+                                                    left={10}
+                                                    top={0}
+                                                    status="loading"
+                                                />
+                                            }
+                                            autoHideDuration={2000}
+                                            onRequestClose={this.handleRequestClose}
+                                        />
+
+                                        <FlatButton
+                                            label="<-返回登录状态"
+                                            default={true}
+                                            onClick={this.handleForget1}
+                                        />
+
+                                        <Stepper activeStep={this.state.stepIndex} orientation="vertical">
+                                            <Step>
+                                                <StepLabel>Select campaign settings</StepLabel>
+                                                <StepContent>
+                                                    <p>
+                                                       how on, and more.
+                                                    </p>
+                                                    <TextField
+                                                        hintText="邮箱"
+                                                        floatingLabelText="填写要找回密码的邮箱"
+                                                        type="email"
+                                                        value={this.state.valueing}
+                                                        onChange={this.handletextfile}
+                                                    />
+                                                </StepContent>
+                                            </Step>
+                                            <Step>
+                                                <StepLabel>Create an ad group</StepLabel>
+                                                <StepContent>
+                                                    <p>An ad group contains one o of keywords.</p>
+                                                </StepContent>
+                                            </Step>
+                                            <Step>
+                                                <StepLabel>Create an ad</StepLabel>
+                                                <StepContent>
+                                                    <p>
+                                                         resolve approval issues.
+                                                    </p>
+                                                </StepContent>
+                                            </Step>
+                                        </Stepper>
+
+                                        <div style={{marginTop: 12}}>
+                                            <FlatButton
+                                                label="Back"
+                                                disabled={this.state.stepIndex === 0}
+                                                onClick={this.handlePrev}
+                                                style={{marginRight: 12}}
+                                            />
+                                            <RaisedButton
+                                                label={this.state.stepIndex === 2 ? 'Finish' : 'Next'}
+                                                primary={true}
+                                                onClick={this.handleNext}
+                                            />
+                                        </div>
+
+                                    </div>
+                                    <br/>
+                                    <Checkbox
+                                        checkedIcon={<ActionFavorite />}
+                                        uncheckedIcon={<ActionFavoriteBorder />}
+                                        label="记住密码"
+                                    />
+                                    <FlatButton label="确定" fullWidth={true} />
+
+                              </div>
+                            </Tab>
+
+                            <Tab label="注册" value="2">
+                                <div>
+                                    <h2 >Controllable Tab B</h2>
+                                    <p>
+                                        Tabs are also controllable
+                                    </p>
+                                </div>
+                            </Tab>
+
+                        </Tabs>
+                    </div>
+
+
+
+                </MuiThemProvider>
+            </div>
+        );
+    }
+
+    handleDrawer = () =>{
+        this.setState({
+            open: !this.state.open
+        })
+    }
+
+    handleChange = (event, index, value) => this.setState({value});
+
+    handleTab = (value) => this.setState({tabindex:value});
+
+    handleForget = () => this.setState({forget: true});
+
+    handleForget1 = () => this.setState({forget: true});
+
+    handleRequestClose = () => {this.setState({forget: false})};
+
+    handleNext = () => {
+        if (this.state.stepIndex < 2) {
+            this.setState({
+                stepIndex: this.state.stepIndex + 1,
+                finished: this.state.stepIndex >= 2,
+            });
+        }
+    };
+
+    handlePrev = () => {
+        if (this.state.stepIndex > 0) {
+            this.setState({stepIndex: this.state.stepIndex - 1});
+        }
+    };
+
+    handletextfile = (e, value) => this.setState({valueing: e.target.value});
+
+
+}
+
+export default Space;
+
