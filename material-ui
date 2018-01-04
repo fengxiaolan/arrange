@@ -32,6 +32,14 @@ svg icon该SvgIcon组件将SVG path元素作为其子元素，并将其转换为
 
 
 
+问题：
+1.AppBar中 onTitleClick可以控制Drawer的开关，而onLeftIconButtonClick不能控制-----原因是自己没设置dock,有些点击原按钮才会来回出现
+2.stepper最后一步实现不了----原因是设置了边界，不能继续点击下一步
+3. FlatButton 嵌套 DropDownMenu样式控制不了
+
+
+
+
 
 
 
