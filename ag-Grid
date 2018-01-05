@@ -7,3 +7,232 @@ https://www.ag-grid.com/
 如何分页显示数据
 如何操作当个单元格
 如何在地编辑数据
+
+
+
+
+/**
+ * Created by Mac on 2018/1/4.
+ */
+
+import React, {Component} from 'react';
+import {AgGridColumn, AgGridReact } from 'ag-grid-react';
+import 'ag-grid/dist/styles/ag-grid.css';
+import 'ag-grid/dist/styles/ag-theme-dark.css';
+import 'ag-grid/dist/styles/ag-theme-fresh.css';
+import './AgGrid.css';
+
+function setText(selector, text) {
+    document.querySelector(selector).innerHTML = text;
+}
+function setLastButtonDisabled(disabled) {
+    document.querySelector("#btLast").disabled = disabled;
+}
+
+function rowDataFactory(data) {
+    const rowData = [];
+    for(let i = 0; i < data.length; i++){
+        rowData.push(
+            {
+                make:data[i],
+                model:Math.random(),
+                price: new Date()
+            }
+        );
+    }
+    console.log(rowData);
+    return rowData;
+}
+
+
+class AgGrid extends Component {
+    constructor() {
+        super();
+        this.state = {
+            rowData : [
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000}
+            ],
+            columnDefs : [
+                {headerName: "Make", field: "make"},
+                {headerName: "Model", field: "model"},
+                {headerName: "Price", field: "price"}
+            ],
+            refrow : [
+            "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
+            "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
+            "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
+            "Hayden", "Hudson", "Hunter", "Jacoby", "Jagger", "Jaxon", "Jett", "Kade", "Kane",
+            "Keating", "Keegan", "Kingston", "Kobe"
+            ],
+            defaultColDef: { editable: true }
+
+        };
+    }
+    render() {
+        return (
+            <div>
+              <h2>AgGrid表格</h2>
+              <div  style={{height:200}} className="ag-theme-dark">
+                  <AgGridReact
+                      rowData={rowDataFactory(this.state.refrow)} //行定义数组
+                      //columnDefs={this.state.columnDefs} //列定义数组
+                      suppressMovableColumns="false"  //true为列不能移动
+                      suppressMenuHide="false" //true为列菜单按钮始终显示
+                      enableColResize="true" //true为标题边缘处可拖动调整列
+                      enableSorting="true" //true启动行排序
+                      enableFilter="true"   //true启动行过滤
+                      suppressRowClickSelection={false}  //true为点击行不发生行选择
+                      singleClickEdit={true} //true为点击可编辑
+                      defaultColDef={this.state.defaultColDef}
+
+                      // suppressClickEdit={true}
+                      headerHeight="26" //头部的高度，不设置默认为25px
+                      rowSelection="multiple" //行选择类型
+                      suppressColumnVirtualisation={true} //true为网格不虚拟化，全部都呈现
+                      rowHeight="22" // 行高
+                      pagination={true} //true为开启分页
+                      paginationPageSize="15" //每页加载多少行
+                      onPaginationChanged={this.onPaginationChanged}
+                      maxBlocksInCache="5" //缓存多少页
+                      //suppressScrollOnNewData={true} //网格在页面更改时不滚动到顶部
+                      suppressPaginationPanel={true} //网格将不会显示用于分页的标准导航控件
+                      //icon自定义 icons={{'menu':'<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/plus.png" style="width: 12px;padding-right: 2px">'}}
+                      rowClassRules={{'breach': 'data.price > 60000'}} //包含某些CSS类
+                      overlayNoRowsTemplate={'<span>请稍后。。。</span>'}  //提供'无行'覆盖的模板
+                      onGridReady={this.onGridReady}
+                      valueCacheNeverExpires="true"  //数据更新后不会过期。
+                  >
+                      <AgGridColumn field="make"></AgGridColumn>
+                      <AgGridColumn field="model"></AgGridColumn>
+                      <AgGridColumn
+                          field="price"
+                          cellClass="price"
+                      ></AgGridColumn>
+                  </AgGridReact>
+              </div>
+                <div style={{heigth:'30px'}}>
+                    <button onClick={this.onBtFirst}>To First</button>
+                    <button onClick={this.onBtLast} id="btLast" disabled="true">
+                        To Last
+                    </button>
+                    <button onClick={this.onBtPrevious}>To Previous</button>
+                    <button onClick={this.onBtNext}>To Next</button>
+                    <button onClick={this.onBtPageFive}>To Page 5</button>
+                    <button onClick={this.onBtPageFifty}>To Page 10</button>
+                </div>
+                <div style={{ marginTop: "6px" }}>
+                    <span class="label">Last Page Found:</span>
+                    <span class="value" id="lbLastPageFound">
+              -
+            </span>
+                    <span class="label">Page Size:</span>
+                    <span class="value" id="lbPageSize">
+              -
+            </span>
+                    <span class="label">Total Pages:</span>
+                    <span class="value" id="lbTotalPages">
+              -
+            </span>
+                    <span class="label">Current Page:</span>
+                    <span class="value" id="lbCurrentPage">
+              -
+            </span>
+                </div>
+            </div>
+        );
+    }
+
+    onGridReady = (params) => {
+        this.gridApi = params.api;
+        this.columnApi = params.columnApi;
+        this.gridApi.sizeColumnsToFit(); //获取列的大小以适应网格水平。
+    };
+
+    onBtFirst = () => {
+        this.gridApi.paginationGoToFirstPage();
+    }
+    onBtLast = () => {
+        this.gridApi.paginationGoToLastPage();
+    }
+    onBtNext = () => {
+        this.gridApi.paginationGoToNextPage();
+    }
+    onBtPrevious = () => {
+        this.gridApi.paginationGoToPreviousPage();
+    }
+    onBtPageFive = () => {
+        this.gridApi.paginationGoToPage(4);
+    }
+    onBtPageFifty = () => {
+        this.gridApi.paginationGoToPage(9);
+    }
+
+
+
+    onPaginationChanged = () => {
+        if (this.gridApi) {
+            setText("#lbLastPageFound", this.gridApi.paginationIsLastPageFound());
+            setText("#lbPageSize", this.gridApi.paginationGetPageSize());
+            setText("#lbCurrentPage", this.gridApi.paginationGetCurrentPage() + 1);
+            setText("#lbTotalPages", this.gridApi.paginationGetTotalPages());
+            setLastButtonDisabled(!this.gridApi.paginationIsLastPageFound());
+        }
+     }
+
+}
+
+export default AgGrid;
+
