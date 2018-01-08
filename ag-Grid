@@ -44,7 +44,8 @@ function rowDataFactory(data) {
             {
                 make:data[i],
                 model:Math.random(),
-                price: new Date()
+                price: new Date(),
+                more: Math.random()
             }
         );
     }
@@ -52,12 +53,33 @@ function rowDataFactory(data) {
     return rowData;
 }
 
+function headerClassFunc(params) {  //失败
+    var foundA = false;
+    var foundB = false;
+    var item = params.column ? params.column : params.columnGroup;
+    while (item) {
+        if (item.getDefinition().groupId === "GroupA") {
+            foundA = true;
+        } else if (item.getDefinition().groupId === "GroupB") {
+            foundB= true;
+        }
+        item = item.getParent();
+    }
+    if (foundB) {
+        return "column-group-a";
+    } else if (foundA) {
+        return "column-group-b";
+    } else {
+        return null;
+    }
+}
+
 
 class AgGrid extends Component {
     constructor() {
         super();
         this.state = {
-            rowData : [
+            rowData: [
                 {make: "Toyota", model: "Celica", price: 35000},
                 {make: "Ford", model: "Mondeo", price: 32000},
                 {make: "Porsche", model: "Boxter", price: 72000},
@@ -111,30 +133,63 @@ class AgGrid extends Component {
                 {make: "Porsche", model: "Boxter", price: 72000},
                 {make: "Toyota", model: "Celica", price: 35000},
                 {make: "Ford", model: "Mondeo", price: 32000},
-                {make: "Porsche", model: "Boxter", price: 72000}
+                {make: "Porsche", model: "Boxter", price: 72000},
+                {make: 1234, model: "Boxter", price: 93000},
+                {make: 123, model: "Boxter", price: 80000}
             ],
-            columnDefs : [
+            columnDefs: [
+                {
+                    headerName: 'GROUP A',
+                    groupId: "GroupA",
+                    children: [{field: "make", pinned: 'left',filter: "agNumberColumnFilter", type: 'makeid'},
+                        {field: 'model', width: 120,filter: "agTextColumnFilter"},
+                        {field: 'price', width: 120,filter: "agTextColumnFilter"}}
+                    ] //可以展开组 suppressFilter: true
+                }, //列组定义
+                {
+                    headerName: 'GROUP B',
+                    groupId: "GroupB",
+                    marryChildren: true,  //始终让小组专栏粘在一起
+                    children: [
+                        {field: "make", filter: "number", type: 'makeid'},
+                        {field: "price", filter: "number", columnGroupShow: 'closed'},
+                        {field: 'model', width: 120, columnGroupShow: 'open'}] //可以展开组
+                },
                 {headerName: "Make", field: "make"},
                 {headerName: "Model", field: "model"},
                 {headerName: "Price", field: "price"}
             ],
-            refrow : [
-            "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
-            "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
-            "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
-            "Hayden", "Hudson", "Hunter", "Jacoby", "Jagger", "Jaxon", "Jett", "Kade", "Kane",
-            "Keating", "Keegan", "Kingston", "Kobe"
+            refrow: [
+                "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
+                "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
+                "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
+                "Hayden", "Hudson", "Hunter", "Jacoby", "Jagger", "Jaxon", "Jett", "Kade", "Kane",
+                "Keating", "Keegan", "Kingston", "Kobe"
             ],
-            defaultColDef: { editable: true }
-
+            defaultColDef: {editable: true, width: 200},
+            columnTypes: {
+                makeid: {
+                    width: 120,
+                    filter: "agNumberColumnFilter" //数字过滤
+                }
+            },
+            defaultColGroupDef: {headerClass: headerClassFunc},
+            defaultColDef: {headerClass: headerClassFunc,width: 90},
+            groupHeaderHeight: 35,
+            headerHeight: 60 ,
+            pivotGroupHeaderHeight: 50,
+            pivotHeaderHeight: 60
         };
+
     }
+
     render() {
         return (
             <div>
               <h2>AgGrid表格</h2>
-              <div  style={{height:200}} className="ag-theme-dark">
+              <div  style={{height:300}} className="ag-theme-dark">
                   <AgGridReact
+                      id="myGrid1"
                       rowData={rowDataFactory(this.state.refrow)} //行定义数组
                       //columnDefs={this.state.columnDefs} //列定义数组
                       suppressMovableColumns="false"  //true为列不能移动
@@ -142,9 +197,10 @@ class AgGrid extends Component {
                       enableColResize="true" //true为标题边缘处可拖动调整列
                       enableSorting="true" //true启动行排序
                       enableFilter="true"   //true启动行过滤
+                      enableRangeSelection={true}//鼠标拖拽可有范围选取
                       suppressRowClickSelection={false}  //true为点击行不发生行选择
-                      singleClickEdit={true} //true为点击可编辑
-                      defaultColDef={this.state.defaultColDef}
+                      //singleClickEdit={true} //true为点击可编辑和defaultColDef一起用
+                      //defaultColDef={this.state.defaultColDef}
 
                       // suppressClickEdit={true}
                       headerHeight="26" //头部的高度，不设置默认为25px
@@ -160,14 +216,27 @@ class AgGrid extends Component {
                       //icon自定义 icons={{'menu':'<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/plus.png" style="width: 12px;padding-right: 2px">'}}
                       rowClassRules={{'breach': 'data.price > 60000'}} //包含某些CSS类
                       overlayNoRowsTemplate={'<span>请稍后。。。</span>'}  //提供'无行'覆盖的模板
-                      onGridReady={this.onGridReady}
+                      onGridReady={this.onGridReady}  //ag-Grid已经初始化了,网格的API将列固定到大小
                       valueCacheNeverExpires="true"  //数据更新后不会过期。
+
+                      onBodyScroll={this.onbodyScroll}   //滚动事件
+                      onCellClicked={this.onCellClicked} //单击事件
+                      onRowDataChanged={this.onRowDataChange}
+                      animateRows={true} //点击排序有动画效果
                   >
                       <AgGridColumn field="make"></AgGridColumn>
                       <AgGridColumn field="model"></AgGridColumn>
                       <AgGridColumn
                           field="price"
                           cellClass="price"
+                      ></AgGridColumn>
+                      <AgGridColumn
+                          field="more"
+                          heardName='More'
+                          colId="1234"
+                          tooltipField="小提示"
+                          editable={true}  //该列可编辑
+
                       ></AgGridColumn>
                   </AgGridReact>
               </div>
@@ -199,36 +268,67 @@ class AgGrid extends Component {
               -
             </span>
                 </div>
+
+<br/>
+<br/>
+                <div  style={{height:300}} className="ag-theme-dark">
+                    <AgGridReact
+                        id="myGrid2"
+                        rowData={this.state.rowData} //行定义数组
+                        columnDefs={this.state.columnDefs} //列定义数组
+                        suppressMovableColumns="false"  //true为列不能移动
+                        suppressMenuHie="false" //true为列菜单按钮始终显示
+                        enableColResize="true" //true为标题边缘处可拖动调整列
+                        enableSorting="true" //true启动行排序
+                        enableFilter="true"   //true启动行过滤
+                        suppressRowClickSelection={false}  //true为点击行不发生行选择
+                        rowClassRules={{'breach': 'data.price > 75000'}}
+                        rowHeight="22" // 行高
+                        pagination={true} //true为开启分页
+                        paginationPageSize="12" //每页加载多少行
+                        groupHeaderHeight={this.state.groupHeaderHeight}
+                        headerHeight={this.state.headerHeight}
+                        pivotGroupHeaderHeight={this.state.pivotGroupHeaderHeight}
+                        pivotHeaderHeight={this.state.pivotHeaderHeight}
+
+                    >
+                    </AgGridReact>
+                </div>
+
+                <div style={{heigth:'30px'}}>
+                    <button onClick={this.showMedals.bind(this, true)}>Show All Medals</button>
+                    <button onClick={this.showMedals.bind(this, false)}>Hide All Medals</button>
+                    <button onClick={this.setPivotOn}>on</button>
+                    <button onClick={this.setPivotOff}>off</button>
+                </div>
             </div>
         );
     }
 
     onGridReady = (params) => {
         this.gridApi = params.api;
-        this.columnApi = params.columnApi;
+        this.gridColumnApi = params.columnApi;
         this.gridApi.sizeColumnsToFit(); //获取列的大小以适应网格水平。
     };
 
     onBtFirst = () => {
         this.gridApi.paginationGoToFirstPage();
-    }
+    };
     onBtLast = () => {
         this.gridApi.paginationGoToLastPage();
-    }
+    };
     onBtNext = () => {
         this.gridApi.paginationGoToNextPage();
-    }
+    };
     onBtPrevious = () => {
         this.gridApi.paginationGoToPreviousPage();
-    }
+    };
     onBtPageFive = () => {
         this.gridApi.paginationGoToPage(4);
-    }
+    };
     onBtPageFifty = () => {
         this.gridApi.paginationGoToPage(9);
-    }
-
-
+    };
 
     onPaginationChanged = () => {
         if (this.gridApi) {
@@ -238,7 +338,29 @@ class AgGrid extends Component {
             setText("#lbTotalPages", this.gridApi.paginationGetTotalPages());
             setLastButtonDisabled(!this.gridApi.paginationIsLastPageFound());
         }
-     }
+     };
+
+    onbodyScroll = () =>{
+       console.info('滚动');
+    };
+
+    onCellClicked = () => {
+      console.info('点击单元格');
+      var data = [{make: "123", model: "123", price: 3214532}];
+      //this.gridApi.setRowData(data);
+     // var col = this.gridApi.columnApi.getColumn('colId');  //失败了
+       // console.log(col);
+    };
+
+    onRowDataChange = () => {
+
+    };
+
+    showMedals(show) {
+        this.gridColumnApi.setColumnsVisible(["price", "model","make"], show); //失败
+    };
+
+
 
 }
 
