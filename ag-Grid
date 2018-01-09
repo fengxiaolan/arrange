@@ -2,20 +2,22 @@
 
 ag-grid是Grid控件，系统模块中的表单是通过这个控件实现的。必须非常了解这个控件
 https://www.ag-grid.com/
-如何显示记录
-如何更新数据之后刷新界面
-如何分页显示数据
-如何操作当个单元格
-如何在地编辑数据
+如何显示记录---rowdata,columndefs
+如何更新数据之后刷新界面----更新RowNodes数据/批量更新/样式
+如何分页显示数据--page
+如何操作当个单元格---event
+如何在地编辑数据----edit
 
 1.事件函数通过在“on”前加上事件名称（驼峰命名法）
 2.列中定义filter在可筛选想要的,pinned列固定
+3.该方法仅api.setRowData()适用 于内存行模型
 
 ?
 列组定义时不能合并行
 defaultColGroupDef没改掉
-
-
+一个按钮不能操作多个表？
+折叠组https://www.ag-grid.com/javascript-grid-data-update/#gsc.tab=0
+不能实现按组打开
 
 
 
@@ -53,6 +55,44 @@ function rowDataFactory(data) {
     return rowData;
 }
 
+const newCount = 1;
+function createNewRowData() {
+    var newData = {
+        make: "Toyota " + newCount,
+        model: "Celica " + newCount,
+        price: 35000 + newCount * 17,
+    };
+    return newData;
+}
+
+function printResult(res) {
+    console.log("---------------------------");
+    if (res.add) {
+        res.add.forEach(function(rowNode) {
+            console.log("Added Row Node", rowNode);
+        });
+    }
+    if (res.remove) {
+        res.remove.forEach(function(rowNode) {
+            console.log("Removed Row Node", rowNode);
+        });
+    }
+    if (res.update) {
+        res.update.forEach(function(rowNode) {
+            console.log("Updated Row Node", rowNode);
+        });
+    }
+}
+
+function createNewRowDatacat(category) {
+    var newData = {
+        model: category,
+        make: (new Date()).getTime(),
+        price: Math.floor(Math.random() * 800000) + 20000
+    };
+    return newData;
+}
+
 function headerClassFunc(params) {  //失败
     var foundA = false;
     var foundB = false;
@@ -74,13 +114,75 @@ function headerClassFunc(params) {  //失败
     }
 }
 
+function poundFormatter(params) {
+    return (
+        "\xA3" +
+        Math.floor(params.value)
+            .toString()
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    );
+}
+
+var categories = ["make", "model", "price"];
+function getInitialRowData() {
+    var rowData = [];
+    for (var i = 0; i < 12; i++) {
+        var category = categories[i % categories.length];
+        rowData.push(createNewRowDatacat(category));
+    }
+    return rowData;
+}
+
+
+var data = [];
+var topRowData = [];
+var bottomRowData = [];
+function createData(count) {
+    var result = [];
+    for (var i = 1; i <= count; i++) {
+        result.push({
+            make: (i * 863) % 100,
+            model: (i * 811) % 100,
+            price: (i * 743) *100
+        });
+    }
+    return result;
+}
+
+function scramble() {
+    data.forEach(scrambleItem);
+    topRowData.forEach(scrambleItem);
+    bottomRowData.forEach(scrambleItem);
+}
+
+function scrambleItem(item) {
+    ["make", "model", "price"].forEach(function(colId) {
+        if (Math.random() > 0.5) {
+            return;
+        }
+        item[colId] = Math.floor(Math.random() * 100);
+    });
+}
+
+function isForceRefreshSelected() {
+    return document.querySelector("#forceRefresh").checked;
+}
+function callRefreshAfterMillis(params, millis, gridApi) {
+    setTimeout(function() {
+        gridApi.refreshCells(params);
+    }, millis);
+}
+
+
+
+
 
 class AgGrid extends Component {
     constructor() {
         super();
         this.state = {
             rowData: [
-                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Toyota", model: "Celica", price: 35000, id:'a'},
                 {make: "Ford", model: "Mondeo", price: 32000},
                 {make: "Porsche", model: "Boxter", price: 72000},
                 {make: "Toyota", model: "Celica", price: 35000},
@@ -139,11 +241,24 @@ class AgGrid extends Component {
             ],
             columnDefs: [
                 {
+                    headerName: "model",
+                    field: "model",
+                    rowGroupIndex: 1,
+                    hide: true,
+
+                },
+                {
+                    headerName: "Price",
+                    field: "price",
+                    aggFunc: "sum",
+                    valueFormatter: poundFormatter
+                },
+                {
                     headerName: 'GROUP A',
                     groupId: "GroupA",
-                    children: [{field: "make", pinned: 'left',filter: "agNumberColumnFilter", type: 'makeid'},
+                    children: [{field: "make", filter: "agNumberColumnFilter", type: 'makeid'},
                         {field: 'model', width: 120,filter: "agTextColumnFilter"},
-                        {field: 'price', width: 120,filter: "agTextColumnFilter"}}
+                        {field: 'price', width: 120,filter: "agTextColumnFilter"}
                     ] //可以展开组 suppressFilter: true
                 }, //列组定义
                 {
@@ -153,11 +268,12 @@ class AgGrid extends Component {
                     children: [
                         {field: "make", filter: "number", type: 'makeid'},
                         {field: "price", filter: "number", columnGroupShow: 'closed'},
-                        {field: 'model', width: 120, columnGroupShow: 'open'}] //可以展开组
+                        {field: 'model', width: 120, columnGroupShow: 'open'}
+                    ] //可以展开组
                 },
                 {headerName: "Make", field: "make"},
                 {headerName: "Model", field: "model"},
-                {headerName: "Price", field: "price"}
+                {headerName: "Price", field: "price",pinned: 'right',}
             ],
             refrow: [
                 "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
@@ -168,17 +284,51 @@ class AgGrid extends Component {
             ],
             defaultColDef: {editable: true, width: 200},
             columnTypes: {
-                makeid: {
+                valueColumn: {
                     width: 120,
                     filter: "agNumberColumnFilter" //数字过滤
                 }
             },
             defaultColGroupDef: {headerClass: headerClassFunc},
-            defaultColDef: {headerClass: headerClassFunc,width: 90},
+            defaultColDef: {
+                headerClass: headerClassFunc,
+                width: 90,
+
+            },
             groupHeaderHeight: 35,
-            headerHeight: 60 ,
-            pivotGroupHeaderHeight: 50,
-            pivotHeaderHeight: 60
+            headerHeight: 50 ,
+            pivotGroupHeaderHeight: 40,
+            pivotHeaderHeight:50,
+            getRowNodeId: function(data){
+                return data.id;
+            },
+            groupDefaultExpanded: 1,
+            autoGroupColumnDef: {
+                headerName: "Group",
+                field: "group",
+                rowGroupIndex: 1,
+                cellRenderer: "agGroupCellRenderer",
+                cellRendererParams: { checkbox: true }
+            },
+            getRowClass: function(params){
+                var rowNode = params.node;
+                if (rowNode.group) {
+                    switch (rowNode.key) {
+                        case "In make":
+                            return "category-one";
+                        case "In model":
+                            return "category-two";
+                        case "In price":
+                            return "category-three";
+                        default:
+                            return null;
+                    }
+                } else {
+                    return null;
+                }
+            },
+            pinnedTopRowData: [],
+            pinnedBottomRowData: []
         };
 
     }
@@ -187,7 +337,7 @@ class AgGrid extends Component {
         return (
             <div>
               <h2>AgGrid表格</h2>
-              <div  style={{height:300}} className="ag-theme-dark">
+              <div  style={{height:300}} className="ag-theme-fresh">
                   <AgGridReact
                       id="myGrid1"
                       rowData={rowDataFactory(this.state.refrow)} //行定义数组
@@ -214,7 +364,7 @@ class AgGrid extends Component {
                       //suppressScrollOnNewData={true} //网格在页面更改时不滚动到顶部
                       suppressPaginationPanel={true} //网格将不会显示用于分页的标准导航控件
                       //icon自定义 icons={{'menu':'<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/plus.png" style="width: 12px;padding-right: 2px">'}}
-                      rowClassRules={{'breach': 'data.price > 60000'}} //包含某些CSS类
+                      rowClassRules={{'breach': 'data.more > 0.9'}} //包含某些CSS类
                       overlayNoRowsTemplate={'<span>请稍后。。。</span>'}  //提供'无行'覆盖的模板
                       onGridReady={this.onGridReady}  //ag-Grid已经初始化了,网格的API将列固定到大小
                       valueCacheNeverExpires="true"  //数据更新后不会过期。
@@ -271,26 +421,37 @@ class AgGrid extends Component {
 
 <br/>
 <br/>
-                <div  style={{height:300}} className="ag-theme-dark">
+                <div  style={{height:400}} className="ag-theme-dark">
                     <AgGridReact
                         id="myGrid2"
-                        rowData={this.state.rowData} //行定义数组
+                        //rowData={this.state.rowData} //行定义数组
+                        rowData={getInitialRowData()}
                         columnDefs={this.state.columnDefs} //列定义数组
                         suppressMovableColumns="false"  //true为列不能移动
                         suppressMenuHie="false" //true为列菜单按钮始终显示
                         enableColResize="true" //true为标题边缘处可拖动调整列
                         enableSorting="true" //true启动行排序
                         enableFilter="true"   //true启动行过滤
-                        suppressRowClickSelection={false}  //true为点击行不发生行选择
-                        rowClassRules={{'breach': 'data.price > 75000'}}
+                        rowClassRules={{'breach': 'data.price < 2000'}}
                         rowHeight="22" // 行高
                         pagination={true} //true为开启分页
-                        paginationPageSize="12" //每页加载多少行
+                        paginationPageSize="15" //每页加载多少行
                         groupHeaderHeight={this.state.groupHeaderHeight}
                         headerHeight={this.state.headerHeight}
                         pivotGroupHeaderHeight={this.state.pivotGroupHeaderHeight}
                         pivotHeaderHeight={this.state.pivotHeaderHeight}
-
+                        getRowNodeId={this.state.getRowNodeId}
+                        animateRows={true}
+                        onGridReady={this.onGridReady}
+                        rowSelection="multiple"
+                        getRowClass={this.state.getRowClass}
+                        groupDefaultExpanded={this.state.groupDefaultExpanded}
+                        autoGroupColumnDef={this.state.autoGroupColumnDef}
+                        groupSelectsChildren={true}
+                        rememberGroupStateWhenNewData={true}
+                        pinnedTopRowData={this.state.pinnedTopRowData}
+                        pinnedBottomRowData={this.state.pinnedBottomRowData}
+                        enableCellChangeFlash={true} //刷新的单元格会闪烁
                     >
                     </AgGridReact>
                 </div>
@@ -298,8 +459,41 @@ class AgGrid extends Component {
                 <div style={{heigth:'30px'}}>
                     <button onClick={this.showMedals.bind(this, true)}>Show All Medals</button>
                     <button onClick={this.showMedals.bind(this, false)}>Hide All Medals</button>
-                    <button onClick={this.setPivotOn}>on</button>
-                    <button onClick={this.setPivotOff}>off</button>
+                    <button onClick={this.updateSort}>Sort</button>
+                    <button onClick={this.updateFilter}>Filter</button>
+                    <button onClick={this.setPrice}>setPrice</button>
+                    <br/>
+                    <button onClick={this.onAddRow}>Add Row</button>
+                    <button onClick={this.onInsertRowAt2}>Insert Row @ 2</button>
+                    <button onClick={this.onRemoveSelected}>Remove Selected</button>
+                    <button onClick={this.getRowData}>Get Row Data</button>
+                    <button onClick={this.clearData}>Clear Data</button>
+                    <button onClick={this.addItems}>Add Items</button>
+                    <br/>
+                    <button  onClick={this.onAddRowcat.bind(this, "make")}>
+                        Add For make
+                    </button>
+                    <button onClick={this.onAddRowcat.bind(this, "make")}>
+                        Add In make
+                    </button>
+                    <button  onClick={this.onMoveToGroup.bind(this, "price")}>
+                        Move to For price
+                    </button>
+                    <button  onClick={this.onMoveToGroup.bind(this, "make")}>
+                        Move to In make
+                    </button>
+                    <button  onClick={this.onMoveToGroup.bind(this, "model")}>
+                        Move to model
+                    </button>
+                    <br/>
+                    <button onClick={this.scrambleAndRefreshAll}>Scramble &amp; Refresh All</button>
+                    <button onClick={this.scrambleAndRefreshTopToBottom}>Scramble &amp; Refresh Top to Bottom</button>
+                    <button onClick={this.scrambleAndRefreshLeftToRight}>Scramble &amp; Refresh Left to Right</button>
+                    <label>
+                        <input type="checkbox" id="forceRefresh" />
+                        Force Refresh
+                    </label>
+
                 </div>
             </div>
         );
@@ -309,6 +503,11 @@ class AgGrid extends Component {
         this.gridApi = params.api;
         this.gridColumnApi = params.columnApi;
         this.gridApi.sizeColumnsToFit(); //获取列的大小以适应网格水平。
+
+        data = createData(14);
+        topRowData = createData(2);
+        bottomRowData = createData(2);
+
     };
 
     onBtFirst = () => {
@@ -356,13 +555,154 @@ class AgGrid extends Component {
 
     };
 
-    showMedals(show) {
-        this.gridColumnApi.setColumnsVisible(["price", "model","make"], show); //失败
+    showMedals = (show) => {
+        this.gridColumnApi.setColumnsVisible(["price", "model","make"], show); //可控制这几列显示或隐藏
     };
 
+    updateSort = () => {
+        this.gridApi.refreshInMemoryRowModel("sort");
+    };
+
+    updateFilter = () => {
+        this.gridApi.refreshInMemoryRowModel("filter");
+    };
+
+    setPrice = () => {
+        const rowNode = this.gridApi.getRowNode("a");
+        const newPrice = Math.floor(Math.random() * 100000);
+        rowNode.setDataValue("price", newPrice);
+    };  //失败
+
+    clearData = () => { //ok
+        this.gridApi.setRowData([]);
+    };
+
+    onAddRow = () => { //ok
+        var newItem = createNewRowData();
+        var res = this.gridApi.updateRowData({ add: [newItem] });
+        printResult(res);
+    };
+
+
+    onInsertRowAt2 = () => { //ok
+        var newItem = createNewRowData();
+        var res = this.gridApi.updateRowData({
+            add: [newItem],
+            addIndex: 2
+        });
+        printResult(res);
+    };
+
+    onRemoveSelected = () => { //ok
+        var selectedData = this.gridApi.getSelectedRows();
+        var res = this.gridApi.updateRowData({ remove: selectedData });
+        printResult(res);
+    };
+
+    getRowData = () => {
+        var rowData = [];
+        this.gridApi.forEachNode(function(node) {
+            rowData.push(node.data);
+        });
+        console.log("Row Data:");
+        console.log(rowData);
+    };
+
+    addItems = () => {
+        var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
+        var res = this.gridApi.updateRowData({ add: newItems });
+        printResult(res);
+    }
+
+    getRowClass = (params) => {
+        var rowNode = params.node;
+        if (rowNode.group) {
+            switch (rowNode.key) {
+                case "make":
+                    return "category-one";
+                case "model":
+                    return "category-two";
+                case "price":
+                    return "category-three";
+                default:
+                    return null;
+            }
+        } else {
+            return null;
+        }
+    };
+
+    onMoveToGroup = (category) => {
+        const selectedRowData = this.gridApi.getSelectedRows();
+        selectedRowData.forEach(function(dataItem) {
+            dataItem.category = category;
+        });
+        this.gridApi.updateRowData({ update: selectedRowData });
+    };
+
+    onAddRowcat = (category) => {
+        var rowDataItem = createNewRowDatacat(category);
+        this.gridApi.updateRowData({ add: [rowDataItem] });
+    };
+
+
+
+    scrambleAndRefreshLeftToRight = () => {
+        scramble();
+        var api = this.gridApi;
+        ["a", "b", "c", "d", "e", "f"].forEach(function(col, index) {
+            var millis = index * 100;
+            var params = {
+                force: isForceRefreshSelected(),
+                columns: [col]
+            };
+            callRefreshAfterMillis(params, millis, api);
+        });
+    };
+
+    scrambleAndRefreshAll = () => {
+        scramble();
+        var params = { force: isForceRefreshSelected() };
+        this.gridApi.refreshCells(params);
+    };
+
+
+    scrambleAndRefreshTopToBottom = () => {
+        scramble();
+        var frame = 0;
+        var i;
+        var rowNode;
+        var api = this.gridApi;
+        for (i = 0; i < api.getPinnedTopRowCount(); i++) {
+            rowNode = api.getPinnedTopRow(i);
+            refreshRow(rowNode, api);
+        }
+        for (i = 0; i < this.gridApi.getDisplayedRowCount(); i++) {
+            rowNode = this.gridApi.getDisplayedRowAtIndex(i);
+            refreshRow(rowNode, api);
+        }
+        for (i = 0; i < this.gridApi.getPinnedBottomRowCount(); i++) {
+            rowNode = this.gridApi.getPinnedBottomRow(i);
+            refreshRow(rowNode, api);
+        }
+        function refreshRow(rowNode, api) {
+            var millis = frame++ * 100;
+            var rowNodes = [rowNode];
+            var params = {
+                force: isForceRefreshSelected(),
+                rowNodes: rowNodes
+            };
+            callRefreshAfterMillis(params, millis, api);
+        };
+    }
 
 
 }
 
 export default AgGrid;
+
+
+
+
+
 
