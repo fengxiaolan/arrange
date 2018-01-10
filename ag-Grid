@@ -1,4 +1,5 @@
 查找源代码--光标移到单词，再command加左键
+!!一般用来将后面的表达式强制转换为布尔类型的数据（boolean），也就是只能是true或者false;
 
 ag-grid是Grid控件，系统模块中的表单是通过这个控件实现的。必须非常了解这个控件
 https://www.ag-grid.com/
@@ -18,8 +19,11 @@ valueFormatter是文本格式/值转换。 cellRenderer当你想要包含HTML标
 列组定义时不能合并行
 defaultColGroupDef没改掉
 一个按钮不能操作多个表？
-折叠组https://www.ag-grid.com/javascript-grid-data-update/#gsc.tab=0
+折叠组https://www.ag-grid.com/javascript-grid-data-update/#gsc.tab=0 
+刷新
 不能实现按组打开
+动画函数
+
 
 
 
