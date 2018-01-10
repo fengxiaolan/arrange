@@ -11,6 +11,8 @@ https://www.ag-grid.com/
 1.事件函数通过在“on”前加上事件名称（驼峰命名法）
 2.列中定义filter在可筛选想要的,pinned列固定
 3.该方法仅api.setRowData()适用 于内存行模型
+所有的valueGetter都必须是纯函数（给定相同的数据状态，它应该始终返回相同的结果）
+valueFormatter是文本格式/值转换。 cellRenderer当你想要包含HTML标记和潜在的功能到单元格的时候
 
 ?
 列组定义时不能合并行
@@ -700,6 +702,254 @@ class AgGrid extends Component {
 }
 
 export default AgGrid;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Created by Mac on 2018/1/9.
+ */
+//不能实现按组打开
+
+import React, {Component} from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid/dist/styles/ag-grid.css';
+import 'ag-grid/dist/styles/ag-theme-dark.css';
+import 'ag-grid/dist/styles/ag-theme-fresh.css';
+import './AgGrid3.css';
+
+function poundFormatter(params) {
+    return (
+        "\xA3" +
+        Math.floor(params.value)
+            .toString()
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    );
+}
+function getInitialRowData() {
+    var rowData = [];
+    for (var i = 0; i < 12; i++) {
+        var category = categories[i % categories.length];
+        rowData.push(createNewRowData(category));
+    }
+    return rowData;
+}
+var names = ["Elly", "Shane", "Niall", "Rob", "John", "Sean", "Dicky", "Willy", "Shaggy", "Spud", "Sugar", "Spice"];
+var models = [
+    "Mondeo",
+    "Celica",
+    "Boxter",
+    "Minty",
+    "Snacky",
+    "FastCar",
+    "Biscuit",
+    "Whoooper",
+    "Scoooper",
+    "Jet Blaster"
+];
+var categories = ["Sold", "For Sale", "In Workshop"];
+function createNewRowData(category) {
+    var newData = {
+        category: category,
+        model: models[Math.floor(Math.random() * models.length)],
+        price: Math.floor(Math.random() * 800000) + 20000,
+        zombies: names[Math.floor(Math.random() * names.length)],
+        style: "Smooth",
+        clothes: "Jeans",
+        created: new Date().getTime()
+    };
+    return newData;
+}
+
+
+class AgGrid3 extends Component {
+    constructor() {
+        super();
+        this.state = {
+            columnDefs: [
+                {
+                    headerName: "Category",
+                    field: "category",
+                    rowGroupIndex: 1,
+                    hide: true ,
+                    rowGroup: true
+                },
+                {
+                    headerName: "Price",
+                    field: "price",
+                    aggFunc: "sum",
+                    valueFormatter: poundFormatter,
+                    rowGroup: true
+                },
+                {
+                    headerName: "Zombies",
+                    field: "zombies"
+                },
+                {
+                    headerName: "Style",
+                    field: "style"
+                },
+                {
+                    headerName: "Clothes",
+                    field: "clothes"
+                },
+                {
+                    headerName: "Created",
+                    field: "created"
+                }
+            ],
+            groupDefaultExpanded: 1,
+            rowData: getInitialRowData(),
+            rowSelection: "multiple",
+            getRowClass: function (params) {
+                var rowNode = params.node;
+                if (rowNode.group) {
+                    switch (rowNode.key) {
+                        case "In Workshop":
+                            return "category-in-workshop";
+                        case "Sold":
+                            return "category-sold";
+                        case "For Sale":
+                            return "category-for-sale";
+                        default:
+                            return null;
+                    }
+                } else {
+                    return null;
+                }
+            },
+            autoGroupColumnDef: {
+                headerName: "Group",
+                field: "model",
+                rowGroupIndex: 1,
+                cellRenderer: "agGroupCellRenderer",
+                cellRendererParams: {
+                    checkbox: true,
+                    suppressCount: true
+                }
+            }
+
+        };
+
+    }
+
+    render() {
+        return (
+            <div>
+                <h2>AgGrid表格3</h2>
+                <div style={{height: 400}} className="ag-theme-dark">
+                    <AgGridReact
+                        id="myGrid4"
+                        columnDefs={this.state.columnDefs}
+                        groupDefaultExpanded={this.state.groupDefaultExpanded}
+                        rowData={this.state.rowData}
+                        rememberGroupStateWhenNewData={true}
+                        enableSorting={true}
+                        suppressRowClickSelection={true}
+                        rowSelection={this.state.rowSelection}
+                        animateRows={true}
+                        groupSelectsChildren={true}
+                        getRowClass={this.state.getRowClass}
+                        autoGroupColumnDef={this.state.autoGroupColumnDef}
+                        onGridReady={this.onGridReady}
+                    >
+                    </AgGridReact>
+                </div>
+
+                <div style={{heigth: '30px'}}>
+                    <button class="bt-action" onClick={this.onAddRow.bind(this, "For Sale")}>
+                        Add For Sale
+                    </button>
+                    <button class="bt-action" onClick={this.onAddRow.bind(this, "In Workshop")}>
+                        Add In Workshop
+                    </button>
+                    <button class="bt-action" onClick={this.onRemoveSelected.bind(this)}>
+                        Remove Selected
+                    </button>
+                    <button class="bt-action" onClick={this.onMoveToGroup.bind(this, "For Sale")}>
+                        Move to For Sale
+                    </button>
+                    <button class="bt-action" onClick={this.onMoveToGroup.bind(this, "In Workshop")}>
+                        Move to In Workshop
+                    </button>
+                    <button class="bt-action" onClick={this.onMoveToGroup.bind(this, "Sold")}>
+                        Move to Sold
+                    </button>
+                    <button class="bt-action" onClick={this.getRowData.bind(this)}>
+                        Get Row Data
+                    </button>
+
+                </div>
+            </div>
+        );
+    }
+
+    onGridReady = (params) => {
+        this.gridApi = params.api;
+        this.gridColumnApi = params.columnApi;
+        params.api.sizeColumnsToFit();
+    };
+
+
+    getRowData = () => {
+        var rowData = [];
+        this.gridApi.forEachNode(function(node) {
+            rowData.push(node.data);
+        });
+        console.log("Row Data:");
+        console.log(rowData);
+    };
+
+    onAddRow = (category) => {
+        var rowDataItem = createNewRowData(category);
+        this.gridApi.updateRowData({ add: [rowDataItem] });
+    };
+
+    onMoveToGroup = (category) => {
+        var selectedRowData = this.gridApi.getSelectedRows();
+        selectedRowData.forEach(function(dataItem) {
+            dataItem.category = category;
+        });
+        this.gridApi.updateRowData({ update: selectedRowData });
+    };
+
+    onRemoveSelected = () => {
+        var selectedRowData = this.gridApi.getSelectedRows();
+        this.gridApi.updateRowData({ remove: selectedRowData });
+    }
+
+
+}
+
+export default AgGrid3;
+
+
 
 
 
