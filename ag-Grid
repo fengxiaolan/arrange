@@ -5,7 +5,7 @@ ag-grid是Grid控件，系统模块中的表单是通过这个控件实现的。
 https://www.ag-grid.com/
 如何显示记录---rowdata,columndefs
 如何更新数据之后刷新界面----更新RowNodes数据/批量更新/样式
-如何分页显示数据--page
+如何分页显示数据--page，无限滚动
 如何操作当个单元格---event
 如何在地编辑数据----edit
 
@@ -14,6 +14,13 @@ https://www.ag-grid.com/
 3.该方法仅api.setRowData()适用 于内存行模型
 所有的valueGetter都必须是纯函数（给定相同的数据状态，它应该始终返回相同的结果）
 valueFormatter是文本格式/值转换。 cellRenderer当你想要包含HTML标记和潜在的功能到单元格的时候
+rowGroup is only valid in ag-Grid-Enterprise!!!
+toolPanel is only available in ag-Grid Enterprise
+aggFunc is only valid in ag-Grid-Enterprise
+rowGroupIndex is only valid in ag-Grid-Enterprise
+
+
+
 
 ?
 列组定义时不能合并行
@@ -23,6 +30,17 @@ defaultColGroupDef没改掉
 刷新
 不能实现按组打开
 动画函数
+组件
+过滤
+cellRender
+
+
+解决了行分组的的问题，以及依赖企业版本的属性，但出现许可证有报错
+对过滤使用和刷新的样式修改有了了解
+无限滚动的页数在弄
+对布局有了初步的构思
+
+
 
 
 
@@ -94,7 +112,8 @@ function createNewRowDatacat(category) {
     var newData = {
         model: category,
         make: (new Date()).getTime(),
-        price: Math.floor(Math.random() * 800000) + 20000
+        price: Math.floor(Math.random() * 800000) + 20000,
+        year: Math.floor(Math.random() *100) % 2 === 0 ? '2015' : '2016'
     };
     return newData;
 }
@@ -149,7 +168,8 @@ function createData(count) {
         result.push({
             make: (i * 863) % 100,
             model: (i * 811) % 100,
-            price: (i * 743) *100
+            price: (i * 743) * 100,
+            year: i % 2 === 0? '2017' : '2018'
         });
     }
     return result;
@@ -251,7 +271,7 @@ class AgGrid extends Component {
                     field: "model",
                     rowGroupIndex: 1,
                     hide: true,
-
+                    cellRenderer: "agGroupCellRenderer",
                 },
                 {
                     headerName: "Price",
@@ -299,7 +319,6 @@ class AgGrid extends Component {
             defaultColDef: {
                 headerClass: headerClassFunc,
                 width: 90,
-
             },
             groupHeaderHeight: 35,
             headerHeight: 50 ,
@@ -344,7 +363,7 @@ class AgGrid extends Component {
             <div>
               <h2>AgGrid表格</h2>
               <div  style={{height:300}} className="ag-theme-fresh">
-                  <AgGridReact
+                  <AgGridReact 
                       id="myGrid1"
                       rowData={rowDataFactory(this.state.refrow)} //行定义数组
                       //columnDefs={this.state.columnDefs} //列定义数组
@@ -378,6 +397,7 @@ class AgGrid extends Component {
                       onBodyScroll={this.onbodyScroll}   //滚动事件
                       onCellClicked={this.onCellClicked} //单击事件
                       onRowDataChanged={this.onRowDataChange}
+                      //suppressAggFuncInHeader={true}  //列标题将不包含aggFunc
                       animateRows={true} //点击排序有动画效果
                   >
                       <AgGridColumn field="make"></AgGridColumn>
@@ -407,20 +427,20 @@ class AgGrid extends Component {
                     <button onClick={this.onBtPageFifty}>To Page 10</button>
                 </div>
                 <div style={{ marginTop: "6px" }}>
-                    <span class="label">Last Page Found:</span>
-                    <span class="value" id="lbLastPageFound">
+                    <span className="label">Last Page Found:</span>
+                    <span className="value" id="lbLastPageFound">
               -
             </span>
-                    <span class="label">Page Size:</span>
-                    <span class="value" id="lbPageSize">
+                    <span className="label">Page Size:</span>
+                    <span className="value" id="lbPageSize">
               -
             </span>
-                    <span class="label">Total Pages:</span>
-                    <span class="value" id="lbTotalPages">
+                    <span className="label">Total Pages:</span>
+                    <span className="value" id="lbTotalPages">
               -
             </span>
-                    <span class="label">Current Page:</span>
-                    <span class="value" id="lbCurrentPage">
+                    <span className="label">Current Page:</span>
+                    <span className="value" id="lbCurrentPage">
               -
             </span>
                 </div>
@@ -458,6 +478,7 @@ class AgGrid extends Component {
                         pinnedTopRowData={this.state.pinnedTopRowData}
                         pinnedBottomRowData={this.state.pinnedBottomRowData}
                         enableCellChangeFlash={true} //刷新的单元格会闪烁
+
                     >
                     </AgGridReact>
                 </div>
@@ -706,257 +727,4 @@ class AgGrid extends Component {
 }
 
 export default AgGrid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Created by Mac on 2018/1/9.
- */
-//不能实现按组打开
-
-import React, {Component} from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid/dist/styles/ag-theme-dark.css';
-import 'ag-grid/dist/styles/ag-theme-fresh.css';
-import './AgGrid3.css';
-
-function poundFormatter(params) {
-    return (
-        "\xA3" +
-        Math.floor(params.value)
-            .toString()
-            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
-    );
-}
-function getInitialRowData() {
-    var rowData = [];
-    for (var i = 0; i < 12; i++) {
-        var category = categories[i % categories.length];
-        rowData.push(createNewRowData(category));
-    }
-    return rowData;
-}
-var names = ["Elly", "Shane", "Niall", "Rob", "John", "Sean", "Dicky", "Willy", "Shaggy", "Spud", "Sugar", "Spice"];
-var models = [
-    "Mondeo",
-    "Celica",
-    "Boxter",
-    "Minty",
-    "Snacky",
-    "FastCar",
-    "Biscuit",
-    "Whoooper",
-    "Scoooper",
-    "Jet Blaster"
-];
-var categories = ["Sold", "For Sale", "In Workshop"];
-function createNewRowData(category) {
-    var newData = {
-        category: category,
-        model: models[Math.floor(Math.random() * models.length)],
-        price: Math.floor(Math.random() * 800000) + 20000,
-        zombies: names[Math.floor(Math.random() * names.length)],
-        style: "Smooth",
-        clothes: "Jeans",
-        created: new Date().getTime()
-    };
-    return newData;
-}
-
-
-class AgGrid3 extends Component {
-    constructor() {
-        super();
-        this.state = {
-            columnDefs: [
-                {
-                    headerName: "Category",
-                    field: "category",
-                    rowGroupIndex: 1,
-                    hide: true ,
-                    rowGroup: true
-                },
-                {
-                    headerName: "Price",
-                    field: "price",
-                    aggFunc: "sum",
-                    valueFormatter: poundFormatter,
-                    rowGroup: true
-                },
-                {
-                    headerName: "Zombies",
-                    field: "zombies"
-                },
-                {
-                    headerName: "Style",
-                    field: "style"
-                },
-                {
-                    headerName: "Clothes",
-                    field: "clothes"
-                },
-                {
-                    headerName: "Created",
-                    field: "created"
-                }
-            ],
-            groupDefaultExpanded: 1,
-            rowData: getInitialRowData(),
-            rowSelection: "multiple",
-            getRowClass: function (params) {
-                var rowNode = params.node;
-                if (rowNode.group) {
-                    switch (rowNode.key) {
-                        case "In Workshop":
-                            return "category-in-workshop";
-                        case "Sold":
-                            return "category-sold";
-                        case "For Sale":
-                            return "category-for-sale";
-                        default:
-                            return null;
-                    }
-                } else {
-                    return null;
-                }
-            },
-            autoGroupColumnDef: {
-                headerName: "Group",
-                field: "model",
-                rowGroupIndex: 1,
-                cellRenderer: "agGroupCellRenderer",
-                cellRendererParams: {
-                    checkbox: true,
-                    suppressCount: true
-                }
-            }
-
-        };
-
-    }
-
-    render() {
-        return (
-            <div>
-                <h2>AgGrid表格3</h2>
-                <div style={{height: 400}} className="ag-theme-dark">
-                    <AgGridReact
-                        id="myGrid4"
-                        columnDefs={this.state.columnDefs}
-                        groupDefaultExpanded={this.state.groupDefaultExpanded}
-                        rowData={this.state.rowData}
-                        rememberGroupStateWhenNewData={true}
-                        enableSorting={true}
-                        suppressRowClickSelection={true}
-                        rowSelection={this.state.rowSelection}
-                        animateRows={true}
-                        groupSelectsChildren={true}
-                        getRowClass={this.state.getRowClass}
-                        autoGroupColumnDef={this.state.autoGroupColumnDef}
-                        onGridReady={this.onGridReady}
-                    >
-                    </AgGridReact>
-                </div>
-
-                <div style={{heigth: '30px'}}>
-                    <button class="bt-action" onClick={this.onAddRow.bind(this, "For Sale")}>
-                        Add For Sale
-                    </button>
-                    <button class="bt-action" onClick={this.onAddRow.bind(this, "In Workshop")}>
-                        Add In Workshop
-                    </button>
-                    <button class="bt-action" onClick={this.onRemoveSelected.bind(this)}>
-                        Remove Selected
-                    </button>
-                    <button class="bt-action" onClick={this.onMoveToGroup.bind(this, "For Sale")}>
-                        Move to For Sale
-                    </button>
-                    <button class="bt-action" onClick={this.onMoveToGroup.bind(this, "In Workshop")}>
-                        Move to In Workshop
-                    </button>
-                    <button class="bt-action" onClick={this.onMoveToGroup.bind(this, "Sold")}>
-                        Move to Sold
-                    </button>
-                    <button class="bt-action" onClick={this.getRowData.bind(this)}>
-                        Get Row Data
-                    </button>
-
-                </div>
-            </div>
-        );
-    }
-
-    onGridReady = (params) => {
-        this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
-        params.api.sizeColumnsToFit();
-    };
-
-
-    getRowData = () => {
-        var rowData = [];
-        this.gridApi.forEachNode(function(node) {
-            rowData.push(node.data);
-        });
-        console.log("Row Data:");
-        console.log(rowData);
-    };
-
-    onAddRow = (category) => {
-        var rowDataItem = createNewRowData(category);
-        this.gridApi.updateRowData({ add: [rowDataItem] });
-    };
-
-    onMoveToGroup = (category) => {
-        var selectedRowData = this.gridApi.getSelectedRows();
-        selectedRowData.forEach(function(dataItem) {
-            dataItem.category = category;
-        });
-        this.gridApi.updateRowData({ update: selectedRowData });
-    };
-
-    onRemoveSelected = () => {
-        var selectedRowData = this.gridApi.getSelectedRows();
-        this.gridApi.updateRowData({ remove: selectedRowData });
-    }
-
-
-}
-
-export default AgGrid3;
-
-
-
-
-
-
-
 
