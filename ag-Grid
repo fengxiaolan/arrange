@@ -728,3 +728,375 @@ class AgGrid extends Component {
 
 export default AgGrid;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Created by Mac on 2018/1/12.
+ */
+
+import React, {Component} from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid/dist/styles/ag-grid.css';
+import 'ag-grid/dist/styles/ag-theme-dark.css';
+import './AgGrid5.css';
+
+import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
+import FontIcon from 'material-ui/FontIcon';
+
+
+function currencyFormatter(params) {
+    return "\xA3" + formatNumber(params.value)
+}
+function formatNumber(number) {
+    return Math.floor(number)
+        .toFixed(2)
+        .toString()
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+}
+
+
+
+class AgGrid5 extends Component {
+    constructor() {
+        super();
+        this.state = {
+           value: 2
+        };
+
+    }
+
+    render() {
+        return (
+            <div>
+                <h2>交易系统初步设计</h2>
+                <img src="./Main_icon/svg/positions.svg" title="显示仓位"/>
+                <div className="">
+                    <Toolbar>
+                        <ToolbarGroup>
+                            <AppBar
+                                title="仓位"
+                                iconElementLeft={<IconButton><img src="../public/Main_icon/img/svg/positions.svg" title="显示仓位"/></IconButton>}
+                                iconStyleLeft={{width:16, height:16}}
+                            />
+                        </ToolbarGroup>
+                        <ToolbarGroup>
+                            <input type="text"  />
+                        </ToolbarGroup>
+                        <ToolbarGroup>
+                            <FloatingActionButton mini={true} disabled={true}>
+                                <ContentAdd />
+                            </FloatingActionButton>
+                        </ToolbarGroup>
+                        <ToolbarGroup>
+                            <FontIcon
+                                className="fa-cog"
+                            />
+                            <FontIcon
+                                className="fa-window-minimize"
+                            />
+                            <FontIcon
+                                className="fa-window-maximiz"
+                            />
+                        </ToolbarGroup>
+                    </Toolbar>
+                </div>
+
+
+
+                <div  style={{height:400}} className="ag-theme-dark">
+                    <AgGridReact
+                        id="myGrid5"
+                        onGridReady={this.onGridReady}
+                    >
+                    </AgGridReact>
+                </div>
+
+                <div style={{heigth:'30px'}}>
+
+                </div>
+            </div>
+        );
+    }
+
+    onGridReady = (params) => {
+        this.gridApi = params.api;
+        this.gridColumnApi = params.columnApi;
+
+        params.api.sizeColumnsToFit();
+
+
+    };
+
+
+
+}
+
+export default AgGrid5;
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Created by Mac on 2018/1/12.
+ */
+
+import React, {Component} from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid/dist/styles/ag-grid.css';
+import 'ag-grid/dist/styles/ag-theme-dark.css';
+import './AgGrid5.css';
+
+// import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+// import AppBar from 'material-ui/AppBar';
+// import IconButton from 'material-ui/IconButton';
+// import FloatingActionButton from 'material-ui/FloatingActionButton';
+// import ContentAdd from 'material-ui/svg-icons/content/add';
+// import FontIcon from 'material-ui/FontIcon';
+
+
+function isFullWidth(data) {
+    return ["Peru", "France", "Italy"].indexOf(data.name) >= 0;
+}
+
+
+class AgGrid5 extends Component {
+    constructor() {
+        super();
+        this.state = {
+            rowData1 : [
+                {a1: 111, b1: 222, children: [
+                {a2: 333, b2: 444}]},
+                {a1: 111, b1: 222, children: [
+                    {a2: 333, b2: 444}]},
+                {a1: 112, b1: 222, children: [
+                    {a2: 333, b2: 444}]},
+                {a1: 112, b1: 222, children: [
+                    {a2: 333, b2: 444}]}
+                ],
+            columnDefs1 : [
+                {field: 'a1', cellRenderer:'agGroupCellRenderer'},
+                {field: 'b1'}
+            ],
+            detailColumnDefs1: [
+                {field: 'a2', cellRenderer:'agGroupCellRenderer'},
+                {field: 'b2'}
+            ],
+            detailCellRendererParams1: {
+                detailGridOptions: [
+                    {field: 'a2', cellRenderer:'agGroupCellRenderer'}, {field: 'b2'}
+                ],
+                getDetailRowData: function (params) {
+                    params.successCallback(params.data.children);
+                }
+            },
+
+            rowData: [
+                {
+                    name: "Ireland",
+                    continent: "Europe",
+                    language: "English",
+                    code: "ie",
+                    population: 4000000,
+                    summary: "Master Drinkers",
+                    cellRenderer: isGroup ? 'agGroupCellRenderer' : ''
+                },
+                {
+                    name: "Spain",
+                    continent: "Europe",
+                    language: "Spanish",
+                    code: "es",
+                    population: 4000000,
+                    summary: "Bull Fighters"
+                },
+                {
+                    name: "United Kingdom",
+                    continent: "Europe",
+                    language: "English",
+                    code: "gb",
+                    population: 4000000,
+                    summary: "Center of the World"
+                },
+                {
+                    name: "France",
+                    continent: "Europe",
+                    language: "French",
+                    code: "fr",
+                    population: 4000000,
+                    summary: "Best Lovers"
+                },
+                {
+                    name: "Germany",
+                    continent: "Europe",
+                    language: "German",
+                    code: "de",
+                    population: 4000000,
+                    summary: "Always on Time"
+                },
+                {
+                    name: "Sweden",
+                    continent: "Europe",
+                    language: "Swedish",
+                    code: "se",
+                    population: 4000000,
+                    summary: "Home of Vikings"
+                },
+                {
+                    name: "Norway",
+                    continent: "Europe",
+                    language: "Norwegian",
+                    code: "no",
+                    population: 4000000,
+                    summary: "Best Vikings"
+                },
+                {
+                    name: "Italy",
+                    continent: "Europe",
+                    language: "Italian",
+                    code: "it",
+                    population: 4000000,
+                    summary: "Pizza Pizza"
+                },
+                {
+                    name: "Greece",
+                    continent: "Europe",
+                    language: "Greek",
+                    code: "gr",
+                    population: 4000000,
+                    summary: "Many Gods"
+                }
+            ],
+            columnDefs: [
+            {
+                headerName: "Name",
+                field: "name",
+            },
+            {
+                headerName: "Continent",
+                field: "continent",
+                width: 150
+            },
+            {
+                headerName: "Language",
+                field: "language",
+                width: 150
+            }
+            ],
+            isFullWidthCell: function(rowNode) {
+                return isFullWidth(rowNode.data);
+            },
+            fullWidthCellRenderer: "fullWidthCellRenderer",
+            components: {
+                fullWidthCellRenderer: function(params) {
+                    // if (params.value !== undefined) {
+                    //     return params.value;
+                    // } else {
+                    //     return '<div class="rowgrop">行组</div>';
+                    // }
+
+                    var eDiv = document.createElement("div");
+                    eDiv.innerHTML = `<div><button>Click</button> lalalalala</div>`;
+                    var eButton = eDiv.querySelector("button");
+                    eButton.addEventListener("click", function() {
+                        alert("button clicked");
+                    });
+                    return eDiv;
+                }
+            },
+            doesDataFlower: function(params) {
+               if(params.name == undefined) {
+                   return -1;
+               }
+
+             },
+            getRowHeight: function(params) {
+                console.log(params);
+                var isFullWidth = params.node.data.fullWidth;
+                if (isFullWidth) {
+                    return 30;
+                } else {
+                    return 25;
+                }
+            }
+
+
+        };
+
+    }
+
+    render() {
+        return (
+            <div>
+                <h2>行组不用企业版</h2>
+                <div  style={{height:300}} className="ag-theme-dark">
+                    <AgGridReact
+                        id="myGrid5"
+                        rowData={this.state.rowData}
+                        columnDefs={this.state.columnDefs}
+                        groupDefaultExpanded="1"
+                        // masterDetail={true}
+                        // detailCellRendererParams={this.state.detailCellRendererParams}
+                        enableSorting={true}
+                        enableFilter={true}
+                        isFullWidthCell={this.state.isFullWidthCell}
+                        fullWidthCellRenderer={this.state.fullWidthCellRenderer}
+                        components={this.state.components}
+                        getRowHeight={this.state.getRowHeight}
+                        doesDataFlower={this.state.doesDataFlower}
+                        onGridReady={this.onGridReady}
+                    >
+                    </AgGridReact>
+                </div>
+
+
+            </div>
+        );
+    }
+
+    onGridReady = (params) => {
+        this.gridApi = params.api;
+        this.gridColumnApi = params.columnApi;
+
+        params.api.sizeColumnsToFit();
+    };
+
+    getChildCount = (params) => {
+        return this.gridApi.getChildCount();
+    }
+
+
+
+
+}
+
+export default AgGrid5;
+
+
+
