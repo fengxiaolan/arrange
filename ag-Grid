@@ -19,8 +19,7 @@ toolPanel is only available in ag-Grid Enterprise
 aggFunc is only valid in ag-Grid-Enterprise
 rowGroupIndex is only valid in ag-Grid-Enterprise
 
-
-
+不用企业版要自己写，利用doesDataFlow与cellRender一起使用
 
 ?
 列组定义时不能合并行
@@ -33,16 +32,6 @@ defaultColGroupDef没改掉
 组件
 过滤
 cellRender
-
-
-解决了行分组的的问题，以及依赖企业版本的属性，但出现许可证有报错
-对过滤使用和刷新的样式修改有了了解
-无限滚动的页数在弄
-对布局有了初步的构思
-
-
-
-
 
 
 /**
