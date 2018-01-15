@@ -1,0 +1,947 @@
+
+
+1.window.js
+extends window就是利用它重写的方法
+
+ doesDataFlower = () => true;
+ 
+ isFullWidthCell(rowNode)
+    {
+        return rowNode.flower;
+    }
+    
+ getFullWidthCellRender()
+    {
+        return OrderTransactionRenderer;
+    }
+ getDefaultColDef()
+    {
+        return {
+            cellStyle: {'text-align': 'left'}
+        };
+    }
+    
+    buildGridRows(orderReportAry)
+    {
+        const gridIndexMap = {},
+              gridRows     = [];
+        
+        orderReportAry.forEach((orderReport) => {
+            if (orderReport.getReportProtoAry().length > 0)
+            {
+                const row = new OrderReportRow(orderReport);
+                
+                row.index = gridRows.push(row);
+                
+                gridIndexMap[orderReport.getClOrdID()] = row.index - 1;
+            }
+        });
+        
+        gridRows.reverse();
+        
+        return {gridRows, gridIndexMap};
+    }
+    
+
+
+// refreshGridRows(changedDataAry)
+    // {
+    //     this.getGridControl().setRowData(this.state.gridRows);
+    // }
+
+
+ this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
+  GridOptionsWrapper.prototype.getDoesDataFlowerFunc = function () { return this.gridOptions.doesDataFlower; };
+  
+  
+  InMemoryNodeManager.prototype.createNode = function (dataItem, parent, level) {
+        var node = new rowNode_1.RowNode();
+        this.context.wireBean(node);
+        var doingTreeData = this.gridOptionsWrapper.isTreeData();
+        var doingLegacyTreeData = !doingTreeData && utils_1.Utils.exists(this.getNodeChildDetails);
+        var nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
+        if (nodeChildDetails && nodeChildDetails.group) {
+            node.group = true;
+            node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
+            node.expanded = nodeChildDetails.expanded === true;
+            node.field = nodeChildDetails.field;
+            node.key = nodeChildDetails.key;
+            node.canFlower = node.master; // deprecated, is now 'master'
+            // pull out all the leaf children and add to our node
+            this.setLeafChildren(node);
+        }
+        else {
+            node.group = false;
+            if (doingTreeData) {
+                node.master = false;
+                node.expanded = false;
+            }
+            else {
+                // this is the default, for when doing grid data
+                if (this.doesDataFlower) {
+                    node.master = this.doesDataFlower(dataItem);
+                }
+                else if (this.doingMasterDetail) {
+                    // if we are doing master detail, then the
+                    // default is that everything can flower.
+                    if (this.isRowMasterFunc) {
+                        node.master = this.isRowMasterFunc(dataItem);
+                    }
+                    else {
+                        node.master = true;
+                    }
+                }
+                else {
+                    node.master = false;
+                }
+                node.expanded = node.master ? this.isExpanded(level) : false;
+            }
+        }
+        
+        
+          private doesDataFlower: (data: any) => boolean;
+          
+          
+          export interface ICellRendererParams {
+    value: any,
+    valueFormatted: any,
+    getValue: ()=> any,
+    setValue: (value: any) => void,
+    formatValue: (value: any) => any,
+    data: any,
+    node: RowNode,
+    colDef: ColDef,
+    column: Column,
+    $scope: any,
+    rowIndex: number,
+    api: GridApi,
+    columnApi: ColumnApi,
+    context: any,
+    refreshCell: ()=>void,
+    eGridCell: HTMLElement,
+    eParentOfValue: HTMLElement,
+    addRenderedRowListener: (eventType: string, listener: Function)=>void
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React from 'react'
+import PropTypes from 'prop-types'
+import memoize from 'lodash/memoize'
+
+import * as AgGrid from "ag-grid";
+import GridTable from '../gridTable'
+
+import {instrumentCols, translateColumnHeader} from '../gridControls/tableCells'
+import formatters from '../formatters'
+import {getTranslateRecords, getLang} from '../../services/translator'
+
+import xcederProto, {EMPTY_EXECUTIONREPORT, getOrderTimeInForceTitle} from '../../proto/xcederProto'
+
+let positionEnum         = {},
+
+    statusEnum           = {},
+
+    sideEnum             = {},
+    orderTypeEnum        = {},
+    rowTypeEnum          = {},
+    timeInForceEnum      = {},
+
+    orderTransColsLocale = {};
+
+const {LMT, STL, STP, MKT}        = xcederProto.getEnumOrderType().values,
+      {BUY, SELL}                 = xcederProto.getEnumSide().values,
+      ordStatus                   = xcederProto.getOrderReportStatus().values,
+      ROW_GROUP                   = 0,
+      ROW_ORDER                   = 1,
+      ROW_REPORT                  = 2,
+
+      EMPTY_OBJ                   = {},
+
+      orderCols                   = {
+          field   : 'ORDER_DETAIL',
+          children: [
+              {
+                  width      : 68,
+                  field      : 'QTY',
+                  cellStyle  : {'text-align': 'right'},
+                  valueGetter: ({data: orderReportRow}) => orderReportRow.getOrderQty()
+              },
+        
+              {
+                  width      : 112,
+                  field      : 'PRICE',
+                  cellStyle  : {'text-align': 'right'},
+                  valueGetter: ({data: orderReportRow}) => orderReportRow.getOrderPrice()
+              },
+        
+              {
+                  width      : 113,
+                  field      : 'TYPE',
+                  valueGetter: ({data: orderReportRow}) => orderReportRow.getOrderType()
+              },
+        
+              {
+                  width          : 124,
+                  field          : 'TIMEINFORCE',
+                  columnGroupShow: 'open',
+                  valueGetter    : ({data: orderReportRow}) => orderReportRow.getTimeInForce()
+              },
+        
+              {
+                  width          : 103,
+                  field          : 'CURRENCY',
+                  columnGroupShow: 'open',
+                  valueGetter    : ({data: orderReportRow}) => orderReportRow.getCurrency()
+              },
+        
+              {
+                  width          : 150,
+                  field          : 'TRADINGACCT',
+                  columnGroupShow: 'open',
+                  valueGetter    : ({data: orderReportRow}) => orderReportRow.getTradingAcct()
+              },
+        
+              {
+                  width          : 98,
+                  field          : 'POSITION',
+                  columnGroupShow: 'open',
+                  valueGetter    : ({data: orderReportRow}) => orderReportRow.getPositionFlag()
+              },
+        
+              {
+                  width          : 132,
+                  field          : 'submitUTC',
+                  columnGroupShow: 'open',
+                  valueGetter    : ({data: orderReportRow}) => orderReportRow.getSubmitTime()
+              }
+          ],
+      },
+
+      transactionDetails          = {
+          field   : 'TRANSACT',
+          children: [
+              {
+                  width      : 100,
+                  field      : 'QUEUEING',
+                  cellStyle  : {'text-align': 'right'},
+                  valueGetter: ({data: row}) => row.getLeaveQty()
+              },
+        
+              {
+                  width      : 88,
+                  field      : 'FILL',
+                  cellStyle  : {'text-align': 'right'},
+                  valueGetter: ({data: row}) => row.getFillQty()
+              },
+        
+              {
+                  width      : 100,
+                  field      : 'FILL_PRICE',
+                  cellStyle  : {'text-align': 'right'},
+                  valueGetter: ({data: row}) => row.getFillPrice()
+            
+              },
+        
+              // {
+              //     width          : 142,
+              //     field          : 'LATENCY',
+              //     columnGroupShow: 'closed',
+              //     valueGetter    : ({data:row}) => row.getTransactTime()
+              //
+              // },
+        
+              {
+                  width          : 100,
+                  field          : 'TRANSACT_PARTY',
+                  columnGroupShow: 'open',
+                  valueGetter    : ({data: row}) => row.getTransactParty()
+              },
+        
+              {
+                  width          : 142,
+                  field          : 'TRANSACT_TIME',
+                  columnGroupShow: 'open',
+                  valueGetter    : ({data: row}) => row.getTransactTime()
+            
+              },
+        
+              {
+                  width          : 132,
+                  field          : 'REPORT_TIME',
+                  columnGroupShow: 'open',
+                  valueGetter    : ({data: row}) => row.getReportTime()
+              }
+          ]
+      },
+
+      orderIDCols                 = {
+          field   : 'ORDER_IDS',
+          children: [
+              {
+                  width      : 120,
+                  field      : 'chainClOrdID',
+                  valueGetter: ({data: row}) => row.getChainClOrdID()
+              },
+        
+              {
+                  width          : 100,
+                  field          : 'clOrdID',
+                  columnGroupShow: 'open',
+                  valueGetter    : ({data: row}) => row.getClOrdID()
+              },
+        
+              {
+                  width          : 138,
+                  field          : 'execOrderID',
+                  columnGroupShow: 'open',
+                  valueGetter    : ({data: row}) => row.getExecOrderID()
+              }
+          ]
+      },
+
+      orderTransCols              = [
+          {
+              width      : 74,
+              field      : 'SIDE',
+              valueGetter: ({data: transRow}) => transRow.getSide()
+          },
+    
+          transactionDetails,
+    
+          {
+              field   : 'ORDER_IDS',
+              children: [
+                  {
+                      width          : 100,
+                      field          : 'clOrdID',
+                      columnGroupShow: 'open',
+                      valueGetter    : ({data: row}) => row.getClOrdID()
+                  },
+            
+                  {
+                      width          : 138,
+                      field          : 'execOrderID',
+                      columnGroupShow: 'open',
+                      valueGetter    : ({data: row}) => row.getExecOrderID()
+                  }
+              ]
+          },
+    
+          {
+              width      : 87,
+              field      : 'STATUS',
+              valueGetter: ({data: transRow}) => transRow.getStatus()
+          },
+    
+          {
+              width      : 175,
+              field      : 'REMARK',
+              valueGetter: ({data: transRow}) => transRow.getRemark()
+          },
+    
+          orderCols
+      ],
+
+      orderReportChainRowGridCols = [
+          {
+              field             : 'NUM',
+              width             : 100,
+              pinned            : 'left',
+              cellRenderer      : 'group', //to have the expand/contract icon
+              cellRendererParams: {
+                  innerRenderer: (params) => '<span>' + params.data.index + '(' + params.data.getReportAry().length +
+                                             ')</span>'
+              },
+              checkboxSelection : ({data: row}) => row.isQueueingOrder(),
+              valueGetter       : ({data: row}) => row.index
+          },
+    
+          instrumentCols,
+    
+          {
+              width      : 74,
+              field      : 'SIDE',
+              valueGetter: ({data: row}) => row.getSide()
+          },
+    
+          transactionDetails,
+    
+          orderCols,
+    
+          {
+              width      : 87,
+              field      : 'STATUS',
+              valueGetter: ({data: row}) => row.getStatus()
+          },
+    
+          {
+              width      : 175,
+              field      : 'REMARK',
+              valueGetter: ({data: row}) => row.getRemark()
+          },
+    
+          {
+              width      : 100,
+              field      : 'tag',
+              valueGetter: ({data: row}) => row.getTag()
+          },
+    
+          orderIDCols
+      ],
+
+      setTranslates               = memoize(function (lang, translates) {
+          const positionEnum    = {
+                    'true' : translates.CLOSE_POS,
+                    'false': translates.OPEN_POS
+                },
+    
+                statusEnum      = translateOrdStatus(translates),
+    
+                sideEnum        = {[BUY]: translates.BUY, [SELL]: translates.SELL},
+    
+                orderTypeEnum   = {
+                    [LMT]: translates.ORDER_LIMIT,
+                    [STP]: translates.ORDER_STOP,
+                    [STL]: translates.ORDER_STOP_LIMIT,
+                    [MKT]: translates.ORDER_MARKET
+                },
+    
+                rowTypeEnum     = {
+                    [ROW_ORDER] : translates.ORDER,
+                    [ROW_REPORT]: translates.ORDER_REPORT
+                },
+    
+                timeInForceEnum = getOrderTimeInForceTitle(translates);
+    
+          return {
+              positionEnum,
+              statusEnum,
+              sideEnum,
+              orderTypeEnum,
+              rowTypeEnum,
+              timeInForceEnum
+          };
+      });
+
+class RowBase {
+    
+    constructor(orderReport)
+    {
+        this.orderReport = orderReport;
+    }
+    
+    getPrecision()
+    {
+        return 0;
+    }
+    
+    getRowType()
+    {
+    }
+    
+    getOrderProto()
+    {
+        return this.orderReport.getOrderProto();
+    }
+    
+    getReportProto()
+    {
+        return this.orderReport.getReportProto();
+    }
+    
+    getTag()
+    {
+        return this.getOrderProto().tag;
+    }
+    
+    getSide()
+    {
+        return sideEnum[this.orderReport.getSide()];
+    }
+    
+    getOrderPrice()
+    {
+        let result, orderProto = this.getOrderProto();
+        
+        if (orderProto.params)
+        {
+            const {limitPrice, stopPrice} = orderProto.params;
+            
+            if (limitPrice === 0)
+                result = formatters.formatNumber(stopPrice, false, this.getPrecision());
+            else if (stopPrice === 0)
+                result = formatters.formatNumber(limitPrice, false, this.getPrecision());
+            else
+                result = stopPrice + '/' + limitPrice;
+        }
+        
+        return result;
+    }
+    
+    getOrderQty()
+    {
+        let result, orderProto = this.getOrderProto();
+        
+        if (orderProto.params)
+            result = formatters.formatNumber(orderProto.params.orderQty);
+        
+        return result;
+    }
+    
+    getExecOrderID()
+    {
+        return this.getOrderID().execOrderID;
+    }
+    
+    getOrderID()
+    {
+        return this.getReportProto().orderID || EMPTY_OBJ;
+    }
+    
+    getChainClOrdID()
+    {
+        const orderID = this.getOrderID();
+        
+        let result = orderID._chainClOrdID;
+        
+        if (!result && orderID !== EMPTY_OBJ)
+        {
+            result = orderID._chainClOrdID = orderID.chainClOrdID.toString(16).toUpperCase();
+        }
+        
+        return result;
+    }
+    
+    getClOrdID()
+    {
+        const orderID = this.getOrderID();
+        
+        let result = orderID._clOrdID;
+        
+        if (!result && orderID !== EMPTY_OBJ)
+        {
+            result = orderID._clOrdID = orderID.clOrdID.toString(16).toUpperCase();
+        }
+        
+        return result;
+    }
+    
+    getStatus()
+    {
+        let result, ordStatus = this.orderReport.getOrdStatus();
+        
+        result = statusEnum[ordStatus];
+        
+        return result;
+    }
+    
+    getRemark()
+    {
+        let result, reportProto = this.getReportProto();
+        
+        result = reportProto.remark;
+        
+        return result;
+    }
+    
+    getFillQty()
+    {
+        let result, reportProto = this.getReportProto();
+        
+        result = formatters.formatNumber(reportProto.fillQty);
+        
+        return result;
+    }
+    
+    getFillPrice()
+    {
+        let result, reportProto = this.getReportProto();
+        
+        result = formatters.formatNumber(reportProto.fillPrice, false, this.getPrecision());
+        
+        return result;
+    }
+    
+    getLeaveQty()
+    {
+        return formatters.formatNumber(this.getReportProto().remainingQty);
+    }
+    
+    getLatency()
+    {
+        
+    }
+    
+    getTransactTime()
+    {
+        let result, reportProto = this.getReportProto();
+        
+        if (reportProto.transactTimeUTC)
+            result = formatters.formatTime(reportProto.transactTimeUTC);
+        
+        return result;
+    }
+    
+    getReportTime()
+    {
+        let result, reportProto = this.getReportProto();
+        
+        if (reportProto.reportTimeUTC)
+            result = formatters.formatTime(reportProto.reportTimeUTC);
+        
+        return result;
+    }
+    
+    getTransactParty()
+    {
+        let result, reportProto = this.getReportProto();
+        
+        result = reportProto.fillCounterParty;
+        
+        return result;
+    }
+    
+    getLimitPrice()
+    {
+        let result, orderProto = this.getOrderProto();
+        
+        if (orderProto.params)
+            result = formatters.formatNumber(orderProto.params.limitPrice, false, this.getPrecision());
+        
+        return result;
+    }
+    
+    getStopPrice()
+    {
+        let result, orderProto = this.getOrderProto();
+        
+        if (orderProto.params)
+            result = formatters.formatNumber(orderProto.params.stopPrice, false, this.getPrecision());
+        
+        return result;
+    }
+    
+    getOrderType()
+    {
+        let result, orderProto = this.getOrderProto();
+        
+        if (orderProto.params)
+            result = orderTypeEnum[orderProto.params.orderType];
+        
+        return result;
+    }
+    
+    getTimeInForce()
+    {
+        let result, orderProto = this.getOrderProto();
+        
+        if (orderProto.params)
+            result = timeInForceEnum[orderProto.params.timeInForce];
+        
+        return result;
+    }
+    
+    getCurrency()
+    {
+        let result, orderProto = this.getOrderProto();
+        
+        if (orderProto.params)
+            result = orderProto.params.currency;
+        
+        return result;
+    }
+    
+    getTradingAcct()
+    {
+        let result, orderProto = this.getOrderProto();
+        
+        if (orderProto.params)
+            result = orderProto.params.tradingAccount;
+        
+        return result;
+    }
+    
+    getPositionFlag()
+    {
+        let result, orderProto = this.getOrderProto();
+        
+        if (orderProto.params)
+            result = positionEnum[orderProto.params.close];
+        
+        return result;
+    }
+    
+    getSubmitTime()
+    {
+        let result, orderProto = this.getOrderProto();
+        
+        if (orderProto.submitUTC)
+            result = formatters.formatTime(orderProto.submitUTC);
+        
+        return result;
+    }
+}
+
+function buildTransRows(orderReportRow)
+{
+    return orderReportRow.getReportAry().map((r) => new TransRow(orderReportRow.orderReport,
+                                                                 r,
+                                                                 orderReportRow.counter)).reverse();
+}
+
+class OrderTransactionRenderer {
+    init(params)
+    {
+        // trick to convert string of html into dom object
+        const eTemp = document.createElement('div');
+        
+        eTemp.innerHTML = this.getTemplate(params);
+        
+        this.eGui = eTemp.firstElementChild;
+        
+        this.setupGrid(buildTransRows(params.data));
+        this.consumeMouseWheelOnDetailGrid();
+    }
+    
+    destroy()
+    {
+        this.gridOptions.api.destroy();
+    }
+    
+    getTemplate(params)
+    {
+        return `<div class='grid-detail-panel'>
+                 <div class='grid-detail'></div>
+                 <div class='grid-detail-toolbar'></div>
+               </div>`;
+    }
+    
+    setupGrid(orderTrans)
+    {
+        this.gridOptions = {
+            enableSorting  : true,
+            enableFilter   : true,
+            enableColResize: true,
+            rowData        : orderTrans,
+            
+            columnDefs: orderTransColsLocale
+        };
+        
+        const eDetailGrid = this.eGui.querySelector('.grid-detail');
+        
+        new AgGrid.Grid(eDetailGrid, this.gridOptions);
+    };
+    
+    getGui()
+    {
+        return this.eGui;
+    }
+
+// if we don't do this, then the mouse wheel will be picked up by the main
+// grid and scroll the main grid and not this component. this ensures that
+// the wheel move is only picked up by the text field
+    consumeMouseWheelOnDetailGrid()
+    {
+        const eDetailGrid        = this.eGui.querySelector('.grid-detail'),
+        
+              mouseWheelListener = function (event) {
+                  event.stopPropagation();
+              };
+        
+        // event is 'mousewheel' for IE9, Chrome, Safari, Opera
+        eDetailGrid.addEventListener('mousewheel', mouseWheelListener);
+        
+        // event is 'DOMMouseScroll' Firefox
+        eDetailGrid.addEventListener('DOMMouseScroll', mouseWheelListener);
+    }
+}
+
+class TransRow extends RowBase {
+    
+    constructor(orderReport, reportProto, counter)
+    {
+        super(orderReport);
+        
+        this.counter = counter;
+        this.reportProto = reportProto;
+    }
+    
+    getPrecision()
+    {
+        return this.counter.getPricePrecision();
+    }
+    
+    getRowType()
+    {
+        return ROW_REPORT;
+    }
+    
+    getOrderProto()
+    {
+        return this.orderReport.getOrderProto(parseInt(this.getClOrdID(), 16));
+    }
+    
+    getStatus()
+    {
+        let result, ordStatus = this.getReportProto().ordStatus;
+        
+        result = statusEnum[ordStatus];
+        
+        return result;
+    }
+    
+    getReportProto()
+    {
+        return this.reportProto;
+    }
+}
+
+class OrderReportRow extends RowBase {
+    
+    /**
+     * @param {OrderReport} orderReport
+     */
+    constructor(orderReport)
+    {
+        super(orderReport);
+        
+        this.counter = orderReport.getCounter();
+    }
+    
+    getPrecision()
+    {
+        return this.counter.getPricePrecision();
+    }
+    
+    getRowType()
+    {
+        return ROW_GROUP;
+    }
+    
+    getReportAry()
+    {
+        return this.orderReport.getReportProtoAry();
+    }
+    
+    getFillPrice()
+    {
+        return formatters.formatNumber(this.getReportProto().avgFillPrice, false, this.counter.getPricePrecision(), true);
+    }
+    
+    getFillQty()
+    {
+        return formatters.formatNumber(this.getReportProto().totalFillQty);
+    }
+    
+    isQueueingOrder()
+    {
+        return this.orderReport.isQueueingOrder();
+    }
+}
+
+function translateOrdStatus(translates)
+{
+    const statusEnum = {};
+    
+    ['PENDING_NEW', 'PENDING_CANCEL', 'PENDING_REPLACE', 'SUSPENDED', 'NEW', 'PARTIAL_FILL', 'RESTATED', 'FILL',
+     'CANCELED', 'REPLACED', 'REJECTED', 'EXPIRED']
+        .forEach(key => {
+            statusEnum[ordStatus[key]] = translates[key].toUpperCase();
+        });
+    
+    return statusEnum;
+}
+
+export default class OrderListTable extends GridTable {
+    
+    static propTypes = {
+        ...GridTable.propTypes
+    };
+    
+    getDefaultColDef()
+    {
+        return {
+            cellStyle: {'text-align': 'left'}
+        };
+    }
+    
+    buildGridRows(orderReportAry)
+    {
+        const gridIndexMap = {},
+              gridRows     = [];
+        
+        orderReportAry.forEach((orderReport) => {
+            if (orderReport.getReportProtoAry().length > 0)
+            {
+                const row = new OrderReportRow(orderReport);
+                
+                row.index = gridRows.push(row);
+                
+                gridIndexMap[orderReport.getClOrdID()] = row.index - 1;
+            }
+        });
+        
+        gridRows.reverse();
+        
+        return {gridRows, gridIndexMap};
+    }
+    
+    doesDataFlower = () => true;
+    
+    // refreshGridRows(changedDataAry)
+    // {
+    //     this.getGridControl().setRowData(this.state.gridRows);
+    // }
+    
+    isFullWidthCell(rowNode)
+    {
+        return rowNode.flower;
+    }
+    
+    getFullWidthCellRender()
+    {
+        return OrderTransactionRenderer;
+    }
+    
+    getRowHeight(params)
+    {
+        // return 100 when nested row, otherwise return 25
+        return params.node.flower ? 150 : 25;
+    }
+    
+    getColumnDefs()
+    {
+        return translateColumnHeader('orderList', getLang(), getTranslateRecords(), orderReportChainRowGridCols);
+    }
+    
+    render()
+    {
+        const lang         = getLang(),
+              translates   = getTranslateRecords(),
+              translateMap = setTranslates(lang, translates),
+              positionEnum = translateMap.positionEnum;
+        
+        statusEnum = translateMap.statusEnum;
+        
+        sideEnum = translateMap.sideEnum;
+        orderTypeEnum = translateMap.orderTypeEnum;
+        rowTypeEnum = translateMap.rowTypeEnum;
+        timeInForceEnum = translateMap.timeInForceEnum;
+        
+        orderTransColsLocale = translateColumnHeader('orderTransList', lang, translates, orderTransCols);
+        
+        return super.render();
+    }
+}
+
