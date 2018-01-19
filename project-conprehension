@@ -19,77 +19,559 @@ ullWidthCellRenderer={this.state.fullWidthCellRenderer}不能与cellRenderer:  '
 
 
 
-export interface GetNodeChildDetails {
-    (dataItem: any): NodeChildDetails;
-}
-export interface NodeChildDetails {
-    group: boolean;
-    children?: any[];
-    expanded?: boolean;
-    field?: string;
-    key?: any;
+
+
+
+
+
+
+
+
+import React, {PureComponent} from 'react';
+import PropTypes from 'prop-types'
+
+import Subheader from 'material-ui/Subheader'
+import FontIcon from 'material-ui/FontIcon'
+import {List, ListItem} from 'material-ui/List'
+import Divider from 'material-ui/Divider'
+import Drawer from 'material-ui/Drawer'
+
+import {getTranslateRecords} from '../services/translator'
+
+import configure from '../configure';
+
+import {SpreaderIcon} from './controls/svgIcon';
+import {LadderIcon} from './controls/svgIcon';
+import {OrderBookIcon} from './controls/svgIcon';
+import {WatchListIcon} from './controls/svgIcon';
+import {OrderIcon} from './controls/svgIcon';
+import {CountersIcon} from './controls/svgIcon';
+import {PositionsIcon} from './controls/svgIcon';
+import {ChartIcon} from './controls/svgIcon';
+import {RiskControlIcon} from './controls/svgIcon';
+import {AuditTrailIcon} from './controls/svgIcon';
+
+
+
+import {onSessionStatus, isLogin, setLoginAccount} from '../model/user';
+import {queueLogoffRequest} from '../services/serviceEventBus';
+import {queueShowWindowRequest} from '../services/UIEventBus';
+
+import {getWindowInstanceIDList} from '../model/workspaceStore';
+
+const _basePath = configure.resourceHost + '/#/',
+      URL       = {
+          PRIVACY: {title: null, url: _basePath + 'privacy'},
+          TERMS  : {title: null, url: _basePath + 'terms'},
+          ABOUT  : {title: null, url: _basePath + 'about/products'}
+      };
+
+function getWindowCount(type)
+{
+    return getWindowInstanceIDList(type).length;
 }
 
-GridOptionsWrapper.prototype.isTreeData = function () { return isTrue(this.gridOptions.treeData); };
+function translateURLTitle(translates)
+{
+    Object.keys(URL).forEach(key => {
+        URL[key].title = translates[key];
+    });
+}
 
-public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
-   
-InMemoryNodeManager.prototype.createNode = function (dataItem, parent, level) {
-        var node = new rowNode_1.RowNode();
-        this.context.wireBean(node);
-        var doingTreeData = this.gridOptionsWrapper.isTreeData();
-        var doingLegacyTreeData = !doingTreeData && utils_1.Utils.exists(this.getNodeChildDetails);
-        var nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
-        if (nodeChildDetails && nodeChildDetails.group) {
-            node.group = true;
-            node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
-            node.expanded = nodeChildDetails.expanded === true;
-            node.field = nodeChildDetails.field;
-            node.key = nodeChildDetails.key;
-            node.canFlower = node.master; // deprecated, is now 'master'
-            // pull out all the leaf children and add to our node
-            this.setLeafChildren(node);
-        }
-        else {
-            node.group = false;
-            if (doingTreeData) {
-                node.master = false;
-                node.expanded = false;
-            }
-            else {
-                // this is the default, for when doing grid data
-                if (this.doesDataFlower) {
-                    node.master = this.doesDataFlower(dataItem);
-                }
-                else if (this.doingMasterDetail) {
-                    // if we are doing master detail, then the
-                    // default is that everything can flower.
-                    if (this.isRowMasterFunc) {
-                        node.master = this.isRowMasterFunc(dataItem);
-                    }
-                    else {
-                        node.master = true;
-                    }
-                }
-                else {
-                    node.master = false;
-                }
-                node.expanded = node.master ? this.isExpanded(level) : false;
-            }
-        }
-        // support for backwards compatibility, canFlow is now called 'master'
-        node.canFlower = node.master;
-        if (parent && !this.suppressParentsInRowNodes) {
-            node.parent = parent;
-        }
-        node.level = level;
-        node.setDataAndId(dataItem, this.nextId.toString());
-        this.allNodesMap[node.id] = node;
-        this.nextId++;
-        return node;
+function getCheckBox(isSelected)
+{
+    return <FontIcon className='material-icons'>{isSelected ? 'check_box' : 'check_box_outline_blank'}</FontIcon>
+}
+
+
+export default class LeftPanel extends PureComponent {
+    static propTypes = {
+        isShow : PropTypes.bool.isRequired,
+        onClose: PropTypes.func.isRequired
+    };
+
+    state = {
+        hover: false,
+        idx: 0,
+        winAmount: 0
+    };
+
+    onMouseEnter(index) {
+        this.setState({
+            hover: true,
+            idx: index
+        });
+    };
+
+    onMouseLeave = () => {
+        this.setState({
+            hover: false,
+            idx: 0
+        })
+    };
+
+    onClickPanelList(panelType)
+    {
+        this.setState((prev) => {
+            winAmount: prev.winAmount++
+        });
+
+        const {onClose} = this.props;
+    
+        queueShowWindowRequest(panelType);
+        
+        onClose();
     };
     
+    onSwitchLogin = () => {
+        
+        if (isLogin())
+        {
+            setLoginAccount(null);
+            
+            queueLogoffRequest('log out');
+        }
+        
+        this.props.onClose();
+    };
     
+    componentDidMount()
+    {
+        this._subscription = onSessionStatus(() => this.setState({update: Date.now()}));
+    }
+    
+    componentWillUnmount()
+    {
+        if (this._subscription)
+            this._subscription.unsubscribe();
+    }
+
+    ishover = (index) => {
+        return this.state.hover && (this.state.idx === index)
+    }
+    
+    render()
+    {
+        const {
+                  isShow,
+                  onClose,
+                  isPanelAllClosed = false
+              }
+                  = this.props,
+        
+              isLoginFlag = isLogin(),
+        
+              translates  = getTranslateRecords();
+
+        const leftLineStyle = {
+                width: 2,
+                height: 36,
+                backgroundColor: 'rgba(33, 150, 243, 1)',
+                position: 'absolute',
+                left: 0,
+                zIndex:99
+            },
+
+              leftLine = <div style={leftLineStyle}></div>,
+
+              leftTipStyle = {
+                  borderRadius: '9px',
+                  backgroundColor: 'rgba(244, 67, 54, 1)',
+                  textAlign: 'center',
+                  width: 20,
+                  height: 13,
+                  lineHeight: '13px',
+                  margin: '11.5px 9px 11.5px 0',
+                  position: 'absolute',
+                  right:4
+                 },
+
+            leftTip = <div style={leftTipStyle}> <div style={{fontSize: 12, transform: "scale(0.67)"}}> {this.state.winAmount} </div> </div>,
+
+              hoveColor = 'rgba(66, 66, 66, 1)',
+
+              primaryTextStyle = {
+                  color: 'rgba(189, 189, 189, 1)',
+                  fontSize: '13px',
+                  textAlign: 'left',
+                  marginLeft: 0,
+                  lineHeight: '36px'
+                  //position: 'absolute'
+                  //color: 'rgba(189, 189, 189, 1)'
+                 // color: 'rgba(255,255,255,1)'
+              },
+
+                primaryTextStyle1 = {
+                    color: 'rgba(255,255,255,1)',
+                    fontSize: '13px',
+                    textAlign: 'left',
+                    marginLeft: 0,
+                    lineHeight: '36px'
+                },
+
+                innerDivStyle = {padding: '0 0 0 55px'},
+
+                leftIconStyle = {
+                    margin: '7px 9px 7px 14px',
+                    left: 0,
+                    width: '22px',
+                    height: '22px'
+                },
+
+                sysIconStyle = {
+                    width: '22px',
+                    height: '22px',
+                    margin: '7px 9px 7px 14px',
+                    left: 0,
+                    lineHeight: '22px',
+                    textAlign: 'center',
+                    fontSize: '16px',
+                    color: 'rgba(189, 189, 189, 1)'
+                },
+
+                sysIconStyle1 = {
+                    width: '22px',
+                    height: '22px',
+                    margin: '7px 9px 7px 14px',
+                    left: 0,
+                    lineHeight: '22px',
+                    textAlign: 'center',
+                    fontSize: '16px',
+                    color: 'rgba(255, 255, 255, 1)'
+                },
+
+               dividerTopStyle = {
+                    width: '196px',
+                    height: '1px',
+                    backgroundColor: 'rgba(41, 41, 41, 1)',
+                    position:'relative',
+                   // margin: '9px 3px 0 3px'
+               },
+
+                dividerBotStyle = {
+                    width: '196px',
+                    height: '1px',
+                    backgroundColor: 'rgba(41, 41, 41, 1)',
+                    position:'relative',
+                   // margin: '0 3px 9px 3px'
+                },
+
+                 bottomAStyle = {
+                     marginRight: '12px',
+                     cursor: 'pointer',
+                     color: 'rgba(158, 158, 158, 1)',
+                     textDecoration: 'none',
+                     'a:hover':{color: 'rgba(255,255,255,1)'}
+                  },
+
+                bottomAStyle1 = {
+                    marginRight: '12px',
+                    cursor: 'pointer',
+                    color: 'rgba(255,255,255,1)',
+                    textDecoration: 'none'
+                }
+         ;
+
+
+        translateURLTitle(translates);
+        
+        return (
+            <Drawer
+                containerClassName="page toolbar-fixed"
+                docked={false}
+                open={isShow || isPanelAllClosed}
+                onRequestChange={onClose}
+                containerStyle={{width: 202, backgroundColor: 'rgba(54, 54, 54, 1)'}}
+            >
+                
+                {/*<Subheader>{translates[configure.title]}&nbsp;{configure.version}</Subheader>*/}
+
+                <List style={{overflow: 'hidden'}}>
+
+                    <ListItem
+                        onTouchTap={() => this.onClickPanelList('SP')}
+                        disabled={!isLoginFlag}
+                        leftIcon={<SpreaderIcon style={leftIconStyle}/>}
+                        hoverColor='rgba(66, 66, 66, 1)'
+                        //primaryText={translates.SPREADER}
+                        primaryText={<div style={this.ishover(1) ? primaryTextStyle1 : primaryTextStyle}>套利 </div>}
+                        style={{marginTop: '34px'}}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(1)}
+                        onMouseLeave={this.onMouseLeave}
+                    >
+                        {(this.state.hover && (this.state.idx === 1)) ? leftLine : ""}
+                        {(this.state.hover && (this.state.idx === 1))  ? leftTip : ""}
+                    </ListItem>
+
+                    <ListItem
+                        onTouchTap={() => this.onClickPanelList('LD')}
+                        disabled={!isLoginFlag}
+                        leftIcon={<LadderIcon style={leftIconStyle}/>}
+                        primaryText={<div style={this.ishover(2) ? primaryTextStyle1 : primaryTextStyle}>价阶 </div>}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(2)}
+                        onMouseLeave={this.onMouseLeave}
+                    >
+                        {(this.state.hover && (this.state.idx === 2)) ? leftLine : ""}
+                        {(this.state.hover && (this.state.idx === 2)) ? leftTip : ""}
+                    </ListItem>
+
+                    <ListItem
+                        onTouchTap={() => this.onClickPanelList('OE')}
+                        disabled={!isLoginFlag}
+                        leftIcon={<OrderBookIcon style={leftIconStyle}/>}
+                        primaryText={<div style={this.ishover(3) ? primaryTextStyle1 : primaryTextStyle}>订单 </div>}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(3)}
+                        onMouseLeave={this.onMouseLeave}
+                    >
+                        {(this.state.hover && (this.state.idx === 3))  ? leftLine : ""}
+                        {(this.state.hover && (this.state.idx === 3))  ? leftTip : ""}
+                    </ListItem>
+
+                    <ListItem
+                        onTouchTap={() => this.onClickPanelList('WL')}
+                        disabled={!isLoginFlag}
+                        leftIcon={<WatchListIcon style={leftIconStyle}/>}
+                        primaryText={<div style={this.ishover(4) ? primaryTextStyle1 : primaryTextStyle}>行情 </div>}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(4)}
+                        onMouseLeave={this.onMouseLeave}
+                    >
+                        {(this.state.hover && (this.state.idx === 4))  ? leftLine : ""}
+                        {(this.state.hover && (this.state.idx === 4))  ? leftTip : ""}
+                    </ListItem>
+
+                    <ListItem
+                        onTouchTap={() => this.onClickPanelList('OL')}
+                        disabled={!isLoginFlag}
+                        leftIcon={<OrderIcon style={leftIconStyle}/>}
+                        primaryText={<div style={this.ishover(5) ? primaryTextStyle1 : primaryTextStyle}>下单  </div>}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(5)}
+                        onMouseLeave={this.onMouseLeave}
+                    >
+                        {(this.state.hover && (this.state.idx === 5))  ? leftLine : ""}
+                        {(this.state.hover && (this.state.idx === 5))  ? leftTip : ""}
+                    </ListItem>
+
+                    <ListItem
+                        onTouchTap={() => this.onClickPanelList('PC')}
+                        disabled={!isLoginFlag}
+                        leftIcon={<CountersIcon style={leftIconStyle}/>}
+                        primaryText={<div style={this.ishover(6) ? primaryTextStyle1 : primaryTextStyle}>产品  </div>}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(6)}
+                        onMouseLeave={this.onMouseLeave}
+                    >
+                        {(this.state.hover && (this.state.idx === 6))  ? leftLine : ""}
+                        {(this.state.hover && (this.state.idx === 6))  ? leftTip : ""}
+                    </ListItem>
+
+                    <ListItem
+                        onTouchTap={() => this.onClickPanelList('PL')}
+                        disabled={!isLoginFlag}
+                        leftIcon={<PositionsIcon style={leftIconStyle}/>}
+                        primaryText={<div style={this.ishover(7) ? primaryTextStyle1 : primaryTextStyle}>仓位  </div>}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(7)}
+                        onMouseLeave={this.onMouseLeave}
+                    >
+                        {(this.state.hover && (this.state.idx === 7))  ? leftLine : ""}
+                        {(this.state.hover && (this.state.idx === 7))  ? leftTip : ""}
+                    </ListItem>
+
+                    <ListItem
+                        onTouchTap={() => this.onClickPanelList('AP')}
+                        disabled={!isLoginFlag}
+                        leftIcon={<ChartIcon style={leftIconStyle}/>}
+                        primaryText={<div style={this.ishover(8) ? primaryTextStyle1 : primaryTextStyle}>图表  </div>}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(8)}
+                        onMouseLeave={this.onMouseLeave}
+                    >
+                        {(this.state.hover && (this.state.idx === 8))  ? leftLine : ""}
+                        {(this.state.hover && (this.state.idx === 8))  ? leftTip : ""}
+                    </ListItem>
+
+                    <ListItem
+                        onTouchTap={() => this.onClickPanelList('AP')}
+                        disabled={!isLoginFlag}
+                        leftIcon={<RiskControlIcon style={leftIconStyle} />}
+                        primaryText={<div style={this.ishover(9) ? primaryTextStyle1 : primaryTextStyle}>风控 </div>}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(9)}
+                        onMouseLeave={this.onMouseLeave}
+                        >
+                            {(this.state.hover && (this.state.idx === 9))  ? leftLine : ""}
+                            {(this.state.hover && (this.state.idx === 9))  ? leftTip : ""}
+                    </ListItem>
+
+                    <ListItem
+                        onTouchTap={() => this.onClickPanelList('AP')}
+                        disabled={!isLoginFlag}
+                        leftIcon={<AuditTrailIcon style={leftIconStyle}/>}
+                        primaryText={<div style={this.ishover(10) ? primaryTextStyle1 : primaryTextStyle}>日志</div>}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(10)}
+                        onMouseLeave={this.onMouseLeave}
+                    >
+                        {(this.state.hover && (this.state.idx === 10))  ? leftLine : ""}
+                        {(this.state.hover && (this.state.idx === 10))  ? leftTip : ""}
+                    </ListItem>
+
+                    <div style={{width: 196, height: 1, margin: '9px 3px 9px 3px'}}>
+                      <Divider style={dividerTopStyle} />
+                      <Divider style={dividerBotStyle} />
+                    </div>
+
+                    <ListItem
+                        primaryText={<div style={this.ishover(11) ? primaryTextStyle1 : primaryTextStyle}> 系统设置 </div>}
+                        leftIcon={<FontIcon className={'fa fa-cog'} style={this.ishover(11) ? sysIconStyle1 : sysIconStyle}/>}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(11)}
+                        onMouseLeave={this.onMouseLeave}
+                    />
+
+                    <ListItem
+                        primaryText={<div style={this.ishover(12) ? primaryTextStyle1 : primaryTextStyle}> {isLoginFlag ? '退出登录' : '登录'} </div>}
+                        onTouchTap={this.onSwitchLogin}
+                        leftIcon={<FontIcon className={isLoginFlag ? 'fa fa-sign-in' : 'fa fa-sign-out'} style={this.ishover(12) ? sysIconStyle1 : sysIconStyle}/>}
+                        innerDivStyle={innerDivStyle}
+                        onMouseEnter={() => this.onMouseEnter(12)}
+                        onMouseLeave={this.onMouseLeave}
+                    />
+
+
+
+                    {/*<ListItem primaryText={isLoginFlag ? translates.LOGOUT : translates.LOGIN}*/}
+                              {/*onTouchTap={this.onSwitchLogin}*/}
+                              {/*leftIcon={<FontIcon className={isLoginFlag ? 'fa fa-sign-in' : 'fa fa-sign-out'}/>}*/}
+                    {/*/>*/}
+                    
+                    {/*<Divider inset={true}/>*/}
+                    
+                    {/*<Subheader inset={true}>{!isLoginFlag ? translates.LOGIN_PROMPT : translates.FUNCTIONS}</Subheader>*/}
+                    
+                    {/*<ListItem*/}
+                        {/*onTouchTap={() => this.onClickPanelList('SP')}*/}
+                        {/*disabled={!isLoginFlag}*/}
+                        {/*leftIcon={<FontIcon className='material-icons'>view_weeks</FontIcon>}*/}
+                        {/*rightIcon={isLoginFlag ? getCheckBox(getWindowCount('SP')) : undefined}*/}
+                        {/*primaryText={translates.SPREADER}*/}
+                    {/*/>*/}
+                    
+                    {/*<ListItem*/}
+                        {/*onTouchTap={() => this.onClickPanelList('LD')}*/}
+                        {/*disabled={!isLoginFlag}*/}
+                        {/*leftIcon={<LadderIcon/>}*/}
+                        {/*primaryText={translates.ORDER_LADDER}*/}
+                    {/*/>*/}
+                    
+                    {/*<ListItem*/}
+                        {/*onTouchTap={() => this.onClickPanelList('OE')}*/}
+                        {/*disabled={!isLoginFlag}*/}
+                        {/*leftIcon={<FontIcon className={'fa fa-pencil-square-o'}/>}*/}
+                        {/*rightIcon={isLoginFlag ? getCheckBox(getWindowCount('OE')) : undefined}*/}
+                        {/*primaryText={translates.ORDER_ENTRY}*/}
+                    {/*/>*/}
+                    
+                    {/*<ListItem*/}
+                        {/*onTouchTap={() => this.onClickPanelList('OL')}*/}
+                        {/*disabled={!isLoginFlag}*/}
+                        {/*leftIcon={<FontIcon className={'fa fa-book'}/>}*/}
+                        {/*rightIcon={isLoginFlag ? getCheckBox(getWindowCount('OL')) : undefined}*/}
+                        {/*primaryText={translates.ORDER_BOOK}*/}
+                    {/*/>*/}
+                    
+                    {/*<ListItem*/}
+                    {/*onTouchTap={() => this.onClickPanelList('PL')}*/}
+                    {/*disabled={!isLoginFlag}*/}
+                    {/*leftIcon={<FontIcon className={'fa fa-pie-chart'}/>}*/}
+                    {/*rightIcon={isLoginFlag ? getCheckBox(isLoginFlag && getWindowCount('PL')) : undefined}*/}
+                    {/*primaryText={translates.POSITION}*/}
+                    {/*/>*/}
+                    
+                    {/*<ListItem*/}
+                        {/*onTouchTap={() => this.onClickPanelList('WL')}*/}
+                        {/*disabled={!isLoginFlag}*/}
+                        {/*leftIcon={<FontIcon className={'fa fa-list'}/>}*/}
+                        {/*rightIcon={isLoginFlag ? getCheckBox(isLoginFlag && getWindowCount('WL')) : undefined}*/}
+                        {/*primaryText={translates.WATCHLIST}*/}
+                    {/*/>*/}
+                    
+                    {/*<ListItem*/}
+                        {/*onTouchTap={() => this.onClickPanelList('CL')}*/}
+                        {/*disabled={!isLoginFlag}*/}
+                        {/*leftIcon={<FontIcon className='material-icons'>chrome_reader_mode</FontIcon>}*/}
+                        {/*rightIcon={isLoginFlag ? getCheckBox(isLoginFlag && getWindowCount('CL')) : undefined}*/}
+                        {/*primaryText={translates.COUNTER_PANEL}*/}
+                    {/*/>*/}
+
+                    {/*<ListItem*/}
+                        {/*onTouchTap={() => this.onClickPanelList('PC')}*/}
+                        {/*disabled={!isLoginFlag}*/}
+                        {/*leftIcon={<FontIcon className='material-icons'>insert_chart</FontIcon>}*/}
+                        {/*primaryText={translates.CHART}*/}
+                    {/*/>*/}
+                    
+                    {/*<ListItem*/}
+                    {/*onTouchTap={() => this.onClickPanelList('AP')}*/}
+                    {/*disabled={!isLoginFlag}*/}
+                    {/*leftIcon={<FontIcon className='material-icons'>contact_mail</FontIcon>}*/}
+                    {/*rightIcon={isLoginFlag ? getCheckBox(isLoginFlag && getWindowCount('AP')) : undefined}*/}
+                    {/*primaryText={translates.PROFILE}*/}
+                    {/*/>*/}
+                
+                </List>
+
+                
+                {/*<div className="toolbar toolbar-bottom">*/}
+                    {/*<Subheader style={{position: 'relative', top: '-100%'}}>*/}
+                        {/*<small className="">&copy; 2013 Xceder Technology, Inc.</small>*/}
+                    {/*</Subheader>*/}
+                    {/*<div className="toolbar-inner">*/}
+                        {/*<a className="link" href={URL.PRIVACY.url} target="_blank">{URL.PRIVACY.title}</a>&middot;<a*/}
+                        {/*className="link" href={URL.TERMS.url}*/}
+                        {/*target="_blank">{URL.TERMS.title}</a>&middot;<a*/}
+                        {/*className="link" href={URL.ABOUT.url} target="_blank">{URL.ABOUT.title}</a>*/}
+                    {/*</div>*/}
+                {/*</div>*/}
+
+
+                <div style={{position: 'absolute', bottom: 0}}>
+                    <div style={{width: 196, height: 1, margin: '9px 3px'}}>
+                        <Divider style={dividerTopStyle} />
+                        <Divider style={dividerBotStyle} />
+                    </div>
+                    <div style={{textAlign: 'center', color: 'rgba(158, 158, 158, 1)', margin: '0 3px 12px 3px', height: '18px',fontSize: '9px', lineHeight:'18px'}}>
+                        <a href="#"
+                           style={this.ishover(13) ? bottomAStyle1 :bottomAStyle}
+                           onMouseEnter={() => this.onMouseEnter(13)}
+                           onMouseLeave={this.onMouseLeave}
+                        >隐私</a>
+                        <a style={{marginRight: '12px'}}>&middot;</a>
+                        <a href="#"
+                           style={this.ishover(14) ? bottomAStyle1 :bottomAStyle}
+                           onMouseEnter={() => this.onMouseEnter(14)}
+                           onMouseLeave={this.onMouseLeave}
+                        >条款</a>
+                        <a style={{marginRight: '12px'}}>&middot;</a>
+                        <a href="#"
+                           style={this.ishover(15) ? bottomAStyle1 :bottomAStyle}
+                           onMouseEnter={() => this.onMouseEnter(15)}
+                           onMouseLeave={this.onMouseLeave}
+                        >关于</a>
+                    </div>
+                </div>
+
+            </Drawer>
+        )
+    }
+}
+
+
 
 
 
