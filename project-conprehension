@@ -1,18 +1,21 @@
+？
+tip的字体大小和padding
+系统设置的hover效果？
+
+divider？
+hover颜色font a？
+
+
+
 
 
 1.window.js
 extends window就是利用它重写的方法
 
 2.
-
 isFullWidthCell={this.state.isFullWidthCell}
 ullWidthCellRenderer={this.state.fullWidthCellRenderer}不能与cellRenderer:  'agGroupCellRenderer',一起公用（在全宽下面的话）？
 行组还是有问题，嵌套，且语法不对  getNodeChildDetails
-
-
-
-
-
 
 
 
