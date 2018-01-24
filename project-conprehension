@@ -25,11 +25,12 @@ requireAll(req);
 可以产生symbol
 只有我们自己引入的 svg 文件需要经过 svg-sprite-loader，那么就将这些 svg 统一放到一个目录下，我这里放到了 src/assets/svg/ ，
 再修改 loader 配置。
+我们要接触的是一个叫 svg-sprite-loader 的插件，用来根据导入的 svg 文件自动生成 symbol 标签并插入 html，
 
 在SVG中<use>可以在任何地方复用svg文件中定定义的的形，包括<g>和 <symbol>已经<defs>
 在使用 use 时，它必须要有一个id，这样 use 通过xlink:href的值找到该形状的引用。注意，一定要在前面加一个#，这样才能引用ID成功。
 
-
+ svg中viewBox是控制起点，style是控制缩放，use中可以控制本身引用的大小
 
 
 
