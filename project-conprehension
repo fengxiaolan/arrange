@@ -46,549 +46,370 @@ requireAll(req);
  svg中viewBox是控制起点，style是控制缩放，use中可以控制本身引用的大小
 
 
-
-
-import React, {PureComponent} from 'react';
+import React, {PureComponent} from 'react'
 import PropTypes from 'prop-types'
 
-import Subheader from 'material-ui/Subheader'
+import {Step, Stepper, StepLabel, StepContent} from 'material-ui/Stepper';
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import FormsyText from 'formsy-material-ui/lib/FormsyText';
+import {blue500} from 'material-ui/styles/colors';
 import FontIcon from 'material-ui/FontIcon'
-import {List, ListItem} from 'material-ui/List'
-import Divider from 'material-ui/Divider'
-import Drawer from 'material-ui/Drawer'
 
-import {getTranslateRecords} from '../services/translator'
+import {getTranslateRecords, translate} from '../services/translator'
 
-import configure from '../configure';
+import md5 from './md5'
+import ErrorNotice from './controls/errorNotice'
+import LoadingButton from './controls/loadingButton';
+import PasswordInput from './controls/passwordInput';
 
-import {SpreaderIcon} from './controls/svgIcon';
-import {LadderIcon} from './controls/svgIcon';
-import {OrderBookIcon} from './controls/svgIcon';
-import {WatchListIcon} from './controls/svgIcon';
-import {OrderIcon} from './controls/svgIcon';
-import {CountersIcon} from './controls/svgIcon';
-import {PositionsIcon} from './controls/svgIcon';
-import {ChartIcon} from './controls/svgIcon';
-import {RiskControlIcon} from './controls/svgIcon';
-import {AuditTrailIcon} from './controls/svgIcon';
+import TextInput from './controls/textInput';
+import {WHITE_FAINT, WHITE, GREY_700, GREY_54, GREY_82} from '../colors';
 
+import {USER_OTP, USER_PWD, requestOTPAction, resetPasswordAction} from '../model/loginActions'
 
-
-import {onSessionStatus, isLogin, setLoginAccount} from '../model/user';
-import {queueLogoffRequest} from '../services/serviceEventBus';
-import {queueShowWindowRequest} from '../services/UIEventBus';
-
-import {getWindowInstanceIDList} from '../model/workspaceStore';
-
-const _basePath = configure.resourceHost + '/#/',
-      URL       = {
-          PRIVACY: {title: null, url: _basePath + 'privacy'},
-          TERMS  : {title: null, url: _basePath + 'terms'},
-          ABOUT  : {title: null, url: _basePath + 'about/products'}
-      };
-
-function getWindowCount(type)
-{
-    return getWindowInstanceIDList(type).length;
-}
-
-function translateURLTitle(translates)
-{
-    Object.keys(URL).forEach(key => {
-        URL[key].title = translates[key];
-    });
-}
-
-function getCheckBox(isSelected)
-{
-    return <FontIcon className='material-icons'>{isSelected ? 'check_box' : 'check_box_outline_blank'}</FontIcon>
-}
-
-
-export default class LeftPanel extends PureComponent {
+export default class ResetPasswordPanel extends PureComponent {
     static propTypes = {
-        isShow : PropTypes.bool.isRequired,
-        onClose: PropTypes.func.isRequired
+        theme: PropTypes.string.isRequired
     };
-
+    
     state = {
-        hover: false,
-        idx: 0,
-        winAmount: 0
+        isDemo    : false,
+        finished  : false,
+        submitTime: 0,
+        alertMsg  : '',
+        stepIndex : 0
     };
-
-    onMouseEnter(index) {
-        this.setState({
-            hover: true,
-            idx: index
-        });
-    };
-
-    onMouseLeave = () => {
-        this.setState({
-            hover: false,
-            idx: 0
-        })
-    };
-
-    onClickPanelList(panelType)
+    
+    handleNext = () =>
     {
-        this.setState((prev) => {
-            winAmount: prev.winAmount++
-        });
 
-        const {onClose} = this.props;
-    
-        queueShowWindowRequest(panelType);
+            const {stepIndex} = this.state;
+           
+            if(stepIndex < 2) {
+                this.setState({
+                                  stepIndex: stepIndex + 1,
+                                  finished : stepIndex >= 2
+                              });
+            }
         
-        onClose();
+
+            // if (finished)
+            // {
+            //    // this.refs.form.submit();
+            //     this.props.close;
+            // }
+
+            console.log(this.state.stepIndex)
+        console.log(this.state.finished)
+        
     };
     
-    onSwitchLogin = () => {
+    handlePrev = () =>
+    {
+        const {stepIndex} = this.state;
         
-        if (isLogin())
+        this.setState({
+               stepIndex: stepIndex - 1,
+               finished : false
+        });
+       
+    };
+    
+    enableSubmitButton(canSubmit, isSubmitting, stateCallback)
+    {
+        let {alertMsg, submitTime} = this.state;
+        
+        if (isSubmitting)
         {
-            setLoginAccount(null);
-            
-            queueLogoffRequest('log out');
+            alertMsg = '';
+            submitTime = Date.now();
         }
         
-        this.props.onClose();
+        this.setState({
+                          canSubmit,
+                          isSubmitting,
+                          alertMsg,
+                          submitTime
+                      }, stateCallback);
+    }
+    
+    requestToken = (form) =>
+    {
+        const {email} = form;
+        
+        this.enableSubmitButton(false, true);
+        
+        this.setState({email}, () =>
+        {
+            this.props.requestOTPAction(email);
+        });
     };
     
-    componentDidMount()
+    resetPassword = (form) =>
     {
-        this._subscription = onSessionStatus(() => this.setState({update: Date.now()}));
+        form.password = md5(form.password, true);
+        
+        this.enableSubmitButton(false, true, () =>
+        {
+            this.props.resetPasswordAction(this.state.email, null, form.password, form.token);
+        });
+    };
+    
+    moveToNextPage()
+    {
+        const stepIndex = this.state.stepIndex;
+        
+        this.setState({
+                          stepIndex: stepIndex + 1,
+                          finished : stepIndex >= 2
+                      });
+        
     }
     
-    componentWillUnmount()
+    componentWillReceiveProps(nextProps)
     {
-        if (this._subscription)
-            this._subscription.unsubscribe();
-    }
+        const {resetResult, OTPResult} = nextProps;
 
-    ishover = (index) => {
-        return this.state.hover && (this.state.idx === index)
+        let result;
+
+        if (OTPResult.timestamp >= this.state.submitTime)
+        {
+            result = OTPResult;
+        }
+        else if (resetResult.timestamp >= this.state.submitTime)
+        {
+            result = resetResult;
+        }
+
+        if (result)
+        {
+            this.enableSubmitButton(true, false);
+
+            if (!result.isFail())
+            {
+                this.moveToNextPage();
+            }
+            else
+            {
+                this.setState({alertMsg: result.getErrorMsg()})
+            }
+        }
     }
+    
     
     render()
     {
-        const {
-                  isShow,
-                  onClose,
-                  isPanelAllClosed = false
-              }
-                  = this.props,
-        
-              isLoginFlag = isLogin(),
-        
-              translates  = getTranslateRecords();
-
-        const leftLineStyle = {
-                width: 2,
-                height: 36,
-                backgroundColor: 'rgba(33, 150, 243, 1)',
-                position: 'absolute',
-                left: 0,
-                zIndex:99
-            },
-
-              leftLine = <div style={leftLineStyle}></div>,
-
-              leftTipStyle = {
-                  borderRadius: '9px',
-                  backgroundColor: 'rgba(244, 67, 54, 1)',
-                  textAlign: 'center',
-                  width: 20,
-                  height: 13,
-                  lineHeight: '13px',
-                  margin: '11.5px 9px 11.5px 0',
-                  position: 'absolute',
-                  right:4
-                 },
-
-            leftTip = <div style={leftTipStyle}> <div style={{fontSize: 12, transform: "scale(0.67)"}}> {this.state.winAmount} </div> </div>,
-
-              hoveColor = 'rgba(66, 66, 66, 1)',
-
-              primaryTextStyle = {
-                  color: 'rgba(189, 189, 189, 1)',
-                  fontSize: '13px',
-                  textAlign: 'left',
-                  marginLeft: 0,
-                  lineHeight: '36px'
-                  //position: 'absolute'
-                  //color: 'rgba(189, 189, 189, 1)'
-                 // color: 'rgba(255,255,255,1)'
-              },
-
-                primaryTextStyle1 = {
-                    color: 'rgba(255,255,255,1)',
-                    fontSize: '13px',
-                    textAlign: 'left',
-                    marginLeft: 0,
-                    lineHeight: '36px'
+        const {finished, stepIndex} = this.state,
+            translates = getTranslateRecords(),
+            
+            backBtn = {
+                onTouchTap: this.handlePrev,
+                className : "center",
+                type      : "submit",
+                style     : {
+                    float         : 'left',
+                    display       : stepIndex === 0  ?  'none' : 'initial' ,
+                    marginRight   : 11,
+                    minWidth      : 152
                 },
-
-                innerDivStyle = {padding: '0 0 0 55px'},
-
-                leftIconStyle = {
-                    margin: '7px 9px 7px 14px',
-                    left: 0,
-                    width: '22px',
-                    height: '22px'
-                },
-
-                sysIconStyle = {
-                    width: '22px',
-                    height: '22px',
-                    margin: '7px 9px 7px 14px',
-                    left: 0,
-                    lineHeight: '22px',
-                    textAlign: 'center',
-                    fontSize: '16px',
-                    color: 'rgba(189, 189, 189, 1)'
-                },
-
-                sysIconStyle1 = {
-                    width: '22px',
-                    height: '22px',
-                    margin: '7px 9px 7px 14px',
-                    left: 0,
-                    lineHeight: '22px',
-                    textAlign: 'center',
-                    fontSize: '16px',
-                    color: 'rgba(255, 255, 255, 1)'
-                },
-
-               dividerTopStyle = {
-                    width: '196px',
-                    height: '1px',
-                    backgroundColor: 'rgba(41, 41, 41, 1)',
-                    position:'relative',
-                   // margin: '9px 3px 0 3px'
-               },
-
-                dividerBotStyle = {
-                    width: '196px',
-                    height: '1px',
-                    backgroundColor: 'rgba(41, 41, 41, 1)',
-                    position:'relative',
-                   // margin: '0 3px 9px 3px'
-                },
-
-                 bottomAStyle = {
-                     marginRight: '12px',
-                     cursor: 'pointer',
-                     color: 'rgba(158, 158, 158, 1)',
-                     textDecoration: 'none',
-                     'a:hover':{color: 'rgba(255,255,255,1)'}
-                  },
-
-                bottomAStyle1 = {
-                    marginRight: '12px',
-                    cursor: 'pointer',
-                    color: 'rgba(255,255,255,1)',
-                    textDecoration: 'none'
+                label     : translates.BACK,
+                labelColor: GREY_700,
+                buttonStyle: {
+                    backgroundColor : GREY_54
                 }
-         ;
-
-
-        translateURLTitle(translates);
+            },
+            
+            stepperBtn = {
+                onTouchTap             : this.handleNext,
+                className              : "center",
+                type                   : "submit",
+                //fullWidth              : stepIndex === 0 ? true : false,
+                style                  : {
+                    float          : 'right',
+                    backgroundColor: GREY_82,
+                    minWidth       : stepIndex === 0 ? 316 : 152,
+                },
+                label                  : finished ? translates.FINISH : translates.NEXT,
+                labelColor             : WHITE,
+                disabledBackgroundColor: GREY_54,
+                disabledLabelColor     : WHITE,
+                disabled               : !this.state.canSubmit
+            },
+            
+            steps = {
+                0: <Formsy.Form autoComplete="off"
+                                ref="form"
+                                disabled={this.state.isSubmitting}
+                                onValidSubmit={this.requestToken}
+                                onValid={() => this.enableSubmitButton(true)}
+                                onInvalid={() => this.enableSubmitButton(false)}>
+                    
+                    <TextInput
+                        name="email"
+                        type="email"
+                        validations="isEmail"
+                        validationError={translates.EMAIL_ERROR}
+                        hintText={translates.EMAIL}
+                        style={{marginTop: 20}}
+                    />
+                
+                
+                </Formsy.Form>,
+                
+                1: <Formsy.Form autoComplete="off"
+                                ref="form"
+                                disabled={this.state.isSubmitting}
+                                onValidSubmit={this.resetPassword}
+                                onValid={() => this.enableSubmitButton(true)}
+                                onInvalid={() => this.enableSubmitButton(false)}>
+                    
+                    <TextInput
+                        name="token"
+                        type="number"
+                        validations="isNumeric,isLength:7"
+                        validationError={translates.RESET_TOKEN_ERROR}
+                        hintText={translates.RESET_TOKEN_HOLDER}
+                        style={{marginTop: 20}}
+                    />
+    
+                    {/*<PasswordInput strengthCheck={true}*/}
+                                   {/*style={{marginTop: 20}}*/}
+                                   {/*hintText={translates.RESET_NEW_PASSWORD}*/}
+                    {/*/>*/}
+                    
+                    {/*<TextInput*/}
+                        {/*name="passwordConfirm"*/}
+                        {/*type="password"*/}
+                        {/*validations="equalsField:password"*/}
+                        {/*validationError={translates.PASSWORD_CONFIRM_ERROR}*/}
+                        {/*hintText={translates.RESET_CONFIRM_PASSWORD}*/}
+                        {/*style={{marginTop: 12}}*/}
+                    {/*/>*/}
+                </Formsy.Form>,
+    
+                2: <Formsy.Form autoComplete="off"
+                                ref="form"
+                                disabled={this.state.isSubmitting}
+                                onValidSubmit={this.resetPassword}
+                                onValid={() => this.enableSubmitButton(true)}
+                                onInvalid={() => this.enableSubmitButton(false)}>
+                    
+                    <TextInput
+                        name="passwordConfirm"
+                        type="password"
+                        validations="equalsField:password"
+                        validationError={translates.PASSWORD_CONFIRM_ERROR}
+                        hintText={translates.RESET_CONFIRM_PASSWORD}
+                        style={{marginTop: 12}}
+                    />
+    
+                    <PasswordInput
+                            style={{marginTop: 20}}
+                            hintText={translates.RESET_NEW_PASSWORD}
+                    />
+    
+                    <TextInput
+                        name="passwordConfirm"
+                        type="password"
+                        validations="equalsField:password"
+                        validationError={translates.PASSWORD_CONFIRM_ERROR}
+                        hintText={translates.RESET_CONFIRM_PASSWORD}
+                        style={{marginTop: 12}}
+                    />
+                </Formsy.Form>
+                
+            },
+            
+            stepperStyle = {
+                marginTop: 30
+            },
+            
+            stepStyle = {
+                height: 50
+            },
+            
+            stepLabelStyle = {
+                fontSize: 12,
+                paddingLeft: 2,
+                height  : 50
+            },
+    
+            connector = {
+                wrapper: {
+                    marginLeft: 20
+                },
+                line: {
+                    minHeight: 16
+                }
+            }
+        
+        ;
         
         return (
-            <Drawer
-                containerClassName="page toolbar-fixed"
-                docked={false}
-                open={isShow || isPanelAllClosed}
-                onRequestChange={onClose}
-                containerStyle={{width: 202, backgroundColor: 'rgba(54, 54, 54, 1)'}}
-            >
+            <div>
+                <FlatButton label={translates.BACK_LOGIN}
+                            labelStyle={{
+                                textTransform: 'none',
+                                color        : blue500,
+                                fontSize     : 12,
+                                lineHeight   : '24px',
+                                paddingLeft  : 0,
+                                paddingRight : 5
+                            }}
+                            onTouchTap={this.props.onClose}
+                            icon={<FontIcon className='fa fa-chevron-left'
+                                            style={{fontSize: 16, lineHeight: '24px', marginLeft: 7, marginRight: 12}}
+                            ></FontIcon>}
+                            style={{height: 24}}
+                            hoverColor={WHITE_FAINT}
+                />
                 
-                {/*<Subheader>{translates[configure.title]}&nbsp;{configure.version}</Subheader>*/}
-
-                <List style={{overflow: 'hidden'}}>
-
-                    <ListItem
-                        onTouchTap={() => this.onClickPanelList('SP')}
-                        disabled={!isLoginFlag}
-                        leftIcon={<SpreaderIcon style={leftIconStyle}/>}
-                        hoverColor='rgba(66, 66, 66, 1)'
-                        //primaryText={translates.SPREADER}
-                        primaryText={<div style={this.ishover(1) ? primaryTextStyle1 : primaryTextStyle}>套利 </div>}
-                        style={{marginTop: '34px'}}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(1)}
-                        onMouseLeave={this.onMouseLeave}
-                    >
-                        {(this.state.hover && (this.state.idx === 1)) ? leftLine : ""}
-                        {(this.state.hover && (this.state.idx === 1))  ? leftTip : ""}
-                    </ListItem>
-
-                    <ListItem
-                        onTouchTap={() => this.onClickPanelList('LD')}
-                        disabled={!isLoginFlag}
-                        leftIcon={<LadderIcon style={leftIconStyle}/>}
-                        primaryText={<div style={this.ishover(2) ? primaryTextStyle1 : primaryTextStyle}>价阶 </div>}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(2)}
-                        onMouseLeave={this.onMouseLeave}
-                    >
-                        {(this.state.hover && (this.state.idx === 2)) ? leftLine : ""}
-                        {(this.state.hover && (this.state.idx === 2)) ? leftTip : ""}
-                    </ListItem>
-
-                    <ListItem
-                        onTouchTap={() => this.onClickPanelList('OE')}
-                        disabled={!isLoginFlag}
-                        leftIcon={<OrderBookIcon style={leftIconStyle}/>}
-                        primaryText={<div style={this.ishover(3) ? primaryTextStyle1 : primaryTextStyle}>订单 </div>}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(3)}
-                        onMouseLeave={this.onMouseLeave}
-                    >
-                        {(this.state.hover && (this.state.idx === 3))  ? leftLine : ""}
-                        {(this.state.hover && (this.state.idx === 3))  ? leftTip : ""}
-                    </ListItem>
-
-                    <ListItem
-                        onTouchTap={() => this.onClickPanelList('WL')}
-                        disabled={!isLoginFlag}
-                        leftIcon={<WatchListIcon style={leftIconStyle}/>}
-                        primaryText={<div style={this.ishover(4) ? primaryTextStyle1 : primaryTextStyle}>行情 </div>}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(4)}
-                        onMouseLeave={this.onMouseLeave}
-                    >
-                        {(this.state.hover && (this.state.idx === 4))  ? leftLine : ""}
-                        {(this.state.hover && (this.state.idx === 4))  ? leftTip : ""}
-                    </ListItem>
-
-                    <ListItem
-                        onTouchTap={() => this.onClickPanelList('OL')}
-                        disabled={!isLoginFlag}
-                        leftIcon={<OrderIcon style={leftIconStyle}/>}
-                        primaryText={<div style={this.ishover(5) ? primaryTextStyle1 : primaryTextStyle}>下单  </div>}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(5)}
-                        onMouseLeave={this.onMouseLeave}
-                    >
-                        {(this.state.hover && (this.state.idx === 5))  ? leftLine : ""}
-                        {(this.state.hover && (this.state.idx === 5))  ? leftTip : ""}
-                    </ListItem>
-
-                    <ListItem
-                        onTouchTap={() => this.onClickPanelList('PC')}
-                        disabled={!isLoginFlag}
-                        leftIcon={<CountersIcon style={leftIconStyle}/>}
-                        primaryText={<div style={this.ishover(6) ? primaryTextStyle1 : primaryTextStyle}>产品  </div>}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(6)}
-                        onMouseLeave={this.onMouseLeave}
-                    >
-                        {(this.state.hover && (this.state.idx === 6))  ? leftLine : ""}
-                        {(this.state.hover && (this.state.idx === 6))  ? leftTip : ""}
-                    </ListItem>
-
-                    <ListItem
-                        onTouchTap={() => this.onClickPanelList('PL')}
-                        disabled={!isLoginFlag}
-                        leftIcon={<PositionsIcon style={leftIconStyle}/>}
-                        primaryText={<div style={this.ishover(7) ? primaryTextStyle1 : primaryTextStyle}>仓位  </div>}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(7)}
-                        onMouseLeave={this.onMouseLeave}
-                    >
-                        {(this.state.hover && (this.state.idx === 7))  ? leftLine : ""}
-                        {(this.state.hover && (this.state.idx === 7))  ? leftTip : ""}
-                    </ListItem>
-
-                    <ListItem
-                        onTouchTap={() => this.onClickPanelList('AP')}
-                        disabled={!isLoginFlag}
-                        leftIcon={<ChartIcon style={leftIconStyle}/>}
-                        primaryText={<div style={this.ishover(8) ? primaryTextStyle1 : primaryTextStyle}>图表  </div>}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(8)}
-                        onMouseLeave={this.onMouseLeave}
-                    >
-                        {(this.state.hover && (this.state.idx === 8))  ? leftLine : ""}
-                        {(this.state.hover && (this.state.idx === 8))  ? leftTip : ""}
-                    </ListItem>
-
-                    <ListItem
-                        onTouchTap={() => this.onClickPanelList('AP')}
-                        disabled={!isLoginFlag}
-                        leftIcon={<RiskControlIcon style={leftIconStyle} />}
-                        primaryText={<div style={this.ishover(9) ? primaryTextStyle1 : primaryTextStyle}>风控 </div>}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(9)}
-                        onMouseLeave={this.onMouseLeave}
-                        >
-                            {(this.state.hover && (this.state.idx === 9))  ? leftLine : ""}
-                            {(this.state.hover && (this.state.idx === 9))  ? leftTip : ""}
-                    </ListItem>
-
-                    <ListItem
-                        onTouchTap={() => this.onClickPanelList('AP')}
-                        disabled={!isLoginFlag}
-                        leftIcon={<AuditTrailIcon style={leftIconStyle}/>}
-                        primaryText={<div style={this.ishover(10) ? primaryTextStyle1 : primaryTextStyle}>日志</div>}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(10)}
-                        onMouseLeave={this.onMouseLeave}
-                    >
-                        {(this.state.hover && (this.state.idx === 10))  ? leftLine : ""}
-                        {(this.state.hover && (this.state.idx === 10))  ? leftTip : ""}
-                    </ListItem>
-
-                    <div style={{width: 196, height: 1, margin: '9px 3px 9px 3px'}}>
-                      <Divider style={dividerTopStyle} />
-                      <Divider style={dividerBotStyle} />
-                    </div>
-
-                    <ListItem
-                        primaryText={<div style={this.ishover(11) ? primaryTextStyle1 : primaryTextStyle}> 系统设置 </div>}
-                        leftIcon={<FontIcon className={'fa fa-cog'} style={this.ishover(11) ? sysIconStyle1 : sysIconStyle}/>}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(11)}
-                        onMouseLeave={this.onMouseLeave}
-                    />
-
-                    <ListItem
-                        primaryText={<div style={this.ishover(12) ? primaryTextStyle1 : primaryTextStyle}> {isLoginFlag ? '退出登录' : '登录'} </div>}
-                        onTouchTap={this.onSwitchLogin}
-                        leftIcon={<FontIcon className={isLoginFlag ? 'fa fa-sign-in' : 'fa fa-sign-out'} style={this.ishover(12) ? sysIconStyle1 : sysIconStyle}/>}
-                        innerDivStyle={innerDivStyle}
-                        onMouseEnter={() => this.onMouseEnter(12)}
-                        onMouseLeave={this.onMouseLeave}
-                    />
-
-
-
-                    {/*<ListItem primaryText={isLoginFlag ? translates.LOGOUT : translates.LOGIN}*/}
-                              {/*onTouchTap={this.onSwitchLogin}*/}
-                              {/*leftIcon={<FontIcon className={isLoginFlag ? 'fa fa-sign-in' : 'fa fa-sign-out'}/>}*/}
-                    {/*/>*/}
+                <Stepper activeStep={stepIndex} orientation="vertical" style={stepperStyle} >
+                    <Step style={stepStyle}>
+                        <StepLabel style={stepLabelStyle}
+                                   iconContainerStyle={{color: WHITE}}
+                        >{translates.RESET_STEP1}</StepLabel>
+                    </Step>
                     
-                    {/*<Divider inset={true}/>*/}
+                    <Step style={stepStyle}>
+                        <StepLabel style={stepLabelStyle}
+                                   iconContainerStyle={{color: WHITE}}
+                        >{translates.RESET_STEP2}</StepLabel>
+                    </Step>
                     
-                    {/*<Subheader inset={true}>{!isLoginFlag ? translates.LOGIN_PROMPT : translates.FUNCTIONS}</Subheader>*/}
-                    
-                    {/*<ListItem*/}
-                        {/*onTouchTap={() => this.onClickPanelList('SP')}*/}
-                        {/*disabled={!isLoginFlag}*/}
-                        {/*leftIcon={<FontIcon className='material-icons'>view_weeks</FontIcon>}*/}
-                        {/*rightIcon={isLoginFlag ? getCheckBox(getWindowCount('SP')) : undefined}*/}
-                        {/*primaryText={translates.SPREADER}*/}
-                    {/*/>*/}
-                    
-                    {/*<ListItem*/}
-                        {/*onTouchTap={() => this.onClickPanelList('LD')}*/}
-                        {/*disabled={!isLoginFlag}*/}
-                        {/*leftIcon={<LadderIcon/>}*/}
-                        {/*primaryText={translates.ORDER_LADDER}*/}
-                    {/*/>*/}
-                    
-                    {/*<ListItem*/}
-                        {/*onTouchTap={() => this.onClickPanelList('OE')}*/}
-                        {/*disabled={!isLoginFlag}*/}
-                        {/*leftIcon={<FontIcon className={'fa fa-pencil-square-o'}/>}*/}
-                        {/*rightIcon={isLoginFlag ? getCheckBox(getWindowCount('OE')) : undefined}*/}
-                        {/*primaryText={translates.ORDER_ENTRY}*/}
-                    {/*/>*/}
-                    
-                    {/*<ListItem*/}
-                        {/*onTouchTap={() => this.onClickPanelList('OL')}*/}
-                        {/*disabled={!isLoginFlag}*/}
-                        {/*leftIcon={<FontIcon className={'fa fa-book'}/>}*/}
-                        {/*rightIcon={isLoginFlag ? getCheckBox(getWindowCount('OL')) : undefined}*/}
-                        {/*primaryText={translates.ORDER_BOOK}*/}
-                    {/*/>*/}
-                    
-                    {/*<ListItem*/}
-                    {/*onTouchTap={() => this.onClickPanelList('PL')}*/}
-                    {/*disabled={!isLoginFlag}*/}
-                    {/*leftIcon={<FontIcon className={'fa fa-pie-chart'}/>}*/}
-                    {/*rightIcon={isLoginFlag ? getCheckBox(isLoginFlag && getWindowCount('PL')) : undefined}*/}
-                    {/*primaryText={translates.POSITION}*/}
-                    {/*/>*/}
-                    
-                    {/*<ListItem*/}
-                        {/*onTouchTap={() => this.onClickPanelList('WL')}*/}
-                        {/*disabled={!isLoginFlag}*/}
-                        {/*leftIcon={<FontIcon className={'fa fa-list'}/>}*/}
-                        {/*rightIcon={isLoginFlag ? getCheckBox(isLoginFlag && getWindowCount('WL')) : undefined}*/}
-                        {/*primaryText={translates.WATCHLIST}*/}
-                    {/*/>*/}
-                    
-                    {/*<ListItem*/}
-                        {/*onTouchTap={() => this.onClickPanelList('CL')}*/}
-                        {/*disabled={!isLoginFlag}*/}
-                        {/*leftIcon={<FontIcon className='material-icons'>chrome_reader_mode</FontIcon>}*/}
-                        {/*rightIcon={isLoginFlag ? getCheckBox(isLoginFlag && getWindowCount('CL')) : undefined}*/}
-                        {/*primaryText={translates.COUNTER_PANEL}*/}
-                    {/*/>*/}
-
-                    {/*<ListItem*/}
-                        {/*onTouchTap={() => this.onClickPanelList('PC')}*/}
-                        {/*disabled={!isLoginFlag}*/}
-                        {/*leftIcon={<FontIcon className='material-icons'>insert_chart</FontIcon>}*/}
-                        {/*primaryText={translates.CHART}*/}
-                    {/*/>*/}
-                    
-                    {/*<ListItem*/}
-                    {/*onTouchTap={() => this.onClickPanelList('AP')}*/}
-                    {/*disabled={!isLoginFlag}*/}
-                    {/*leftIcon={<FontIcon className='material-icons'>contact_mail</FontIcon>}*/}
-                    {/*rightIcon={isLoginFlag ? getCheckBox(isLoginFlag && getWindowCount('AP')) : undefined}*/}
-                    {/*primaryText={translates.PROFILE}*/}
-                    {/*/>*/}
+                    <Step style={stepStyle}>
+                        <StepLabel style={stepLabelStyle}>{translates.RESET_STEP3}</StepLabel>
+                    </Step>
+                </Stepper>
                 
-                </List>
-
-                
-                {/*<div className="toolbar toolbar-bottom">*/}
-                    {/*<Subheader style={{position: 'relative', top: '-100%'}}>*/}
-                        {/*<small className="">&copy; 2013 Xceder Technology, Inc.</small>*/}
-                    {/*</Subheader>*/}
-                    {/*<div className="toolbar-inner">*/}
-                        {/*<a className="link" href={URL.PRIVACY.url} target="_blank">{URL.PRIVACY.title}</a>&middot;<a*/}
-                        {/*className="link" href={URL.TERMS.url}*/}
-                        {/*target="_blank">{URL.TERMS.title}</a>&middot;<a*/}
-                        {/*className="link" href={URL.ABOUT.url} target="_blank">{URL.ABOUT.title}</a>*/}
-                    {/*</div>*/}
-                {/*</div>*/}
-
-
-                <div style={{position: 'absolute', bottom: 0}}>
-                    <div style={{width: 196, height: 1, margin: '9px 3px'}}>
-                        <Divider style={dividerTopStyle} />
-                        <Divider style={dividerBotStyle} />
-                    </div>
-                    <div style={{textAlign: 'center', color: 'rgba(158, 158, 158, 1)', margin: '0 3px 12px 3px', height: '18px',fontSize: '9px', lineHeight:'18px'}}>
-                        <a href="#"
-                           style={this.ishover(13) ? bottomAStyle1 :bottomAStyle}
-                           onMouseEnter={() => this.onMouseEnter(13)}
-                           onMouseLeave={this.onMouseLeave}
-                        >隐私</a>
-                        <a style={{marginRight: '12px'}}>&middot;</a>
-                        <a href="#"
-                           style={this.ishover(14) ? bottomAStyle1 :bottomAStyle}
-                           onMouseEnter={() => this.onMouseEnter(14)}
-                           onMouseLeave={this.onMouseLeave}
-                        >条款</a>
-                        <a style={{marginRight: '12px'}}>&middot;</a>
-                        <a href="#"
-                           style={this.ishover(15) ? bottomAStyle1 :bottomAStyle}
-                           onMouseEnter={() => this.onMouseEnter(15)}
-                           onMouseLeave={this.onMouseLeave}
-                        >关于</a>
+                <div>
+                    {steps[stepIndex]}
+                    
+                    <ErrorNotice>{this.state.alertMsg ? translate('RESET_ERROR', this.state.alertMsg) :
+                                  ''}</ErrorNotice>
+                    
+                    <div style={{marginTop: 20, overflow: 'hidden'}}>
+                        
+                        {/*<RaisedButton className="center"*/}
+                        {/*fullWidth={true}*/}
+                        {/*//style={{float: 'left', display: stepIndex === 0 || finished ? 'none' : 'initial'}}*/}
+                        {/*disabled={this.state.isSubmitting}*/}
+                        {/*label={translates.BACK}*/}
+                        {/*onTouchTap={this.handlePrev}/>*/}
+                        
+                        <LoadingButton isFlatButton={false}
+                                       button={backBtn}/>
+                        
+                        <LoadingButton isFlatButton={false}
+                                       indicator={{show: this.state.isSubmitting, left: -8}}
+                                       button={stepperBtn}/>
+                    
                     </div>
                 </div>
-
-            </Drawer>
-        )
+            
+            </div>
+        );
     }
 }
 
@@ -606,3 +427,127 @@ export default class LeftPanel extends PureComponent {
 
 
 
+
+
+
+
+/**
+ * Created by Mac on 2018/1/30.
+ */
+import React, {PureComponent} from 'react';
+import PropTypes from "prop-types";
+
+import Formsy from 'formsy-react';
+import FormsyText from 'formsy-material-ui/lib/FormsyText';
+
+import IconButton from 'material-ui/IconButton';
+import FontIcon from 'material-ui/FontIcon';
+import debounce from 'lodash/debounce';
+
+import {WHITE, RED, WHITE_DARK, GREY_97, GREEN_500, BLUE, GREY_189} from '../../colors';
+
+export default class TextInput extends PureComponent {
+    state = {
+        value: this.props.value || '',
+        focus: false,
+    };
+    
+    onFocus = () =>
+    {
+        this.setState({
+                          focus: true
+                      });
+        
+    };
+    
+    debounceOnBlur = debounce(() =>
+                              {
+                                  if (this.state.value.length === 0)
+                                  {
+                                      this.setState({value: ''});
+                                  }
+                                  
+                                  this.setState({focus: false});
+                              }
+        , 200);
+    
+    handleChange = (e) =>
+    {
+        this.setState({value: e.target.value});
+    };
+    
+    handleClear = () =>
+    {
+        if (this.state.value)
+        {
+            this.setState({
+                              value: ''
+                          });
+        }
+    };
+    
+    render()
+    {
+        const {style, hintText, name, disable, validations, validationError} = this.props,
+            
+            clearBtnStyle = {
+               clearStyle : {
+                    position: 'absolute',
+                    float   : 'right',
+                    width   : 12,
+                    height  : 12,
+                    padding : 0,
+                    bottom  : 16,
+                    right   : 1
+                },
+    
+                clearIconStyle : {
+                    fontSize       : 9,
+                    fontWeight     : 'bold',
+                    color          : WHITE,
+                    textAlign      : 'center',
+                    backgroundColor: RED,
+                    borderRadius   : '50%',
+                    width          : 12,
+                    height         : 12,
+                    lineHeight     : '12px'
+                }
+            },
+            
+            clearBtn = (this.state.value && this.state.focus) ? <IconButton style={clearBtnStyle.clearStyle }
+                                                                            iconStyle={clearBtnStyle.clearIconStyle}
+                                                                            onClick={this.handleClear}
+            >
+                <FontIcon className="material-icons"
+                > clear </FontIcon>
+            </IconButton> : "",
+            
+            erricon = <FontIcon className="fa fa-exclamation-triangle"
+                                style={{fontSize: 12, color: 'rgba(244, 67, 54, 1)', float: 'right'}}/>
+        
+        ;
+        
+        return <div style={{position: 'relative'}}>
+            <FormsyText
+                fullWidth={true}
+                value={this.state.value}
+                name={name}
+                required
+                hintText={hintText}
+                hintStyle={{fontSize: 13, color: GREY_97}}
+                disabled={disable}
+                validationColor={GREEN_500}
+                underlineFocusStyle={{backgroundColor: BLUE}}
+                underlineStyle={{backgroundColor: GREY_97}}
+                inputStyle={{fontSize: 13, color: GREY_189}}
+                validations={validations}
+                validationError={validationError}
+                style={style}
+                onFocus={this.onFocus}
+                onBlur={this.debounceOnBlur}
+                onChange={this.handleChange}
+            />
+            {clearBtn}
+        </div>;
+    }
+}
