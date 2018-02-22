@@ -63,508 +63,171 @@ requireAll(req);
  svg中viewBox是控制起点，style是控制缩放，use中可以控制本身引用的大小
 
 
-import React, {PureComponent} from 'react'
-import PropTypes from 'prop-types'
 
-import {Step, Stepper, StepLabel, StepContent} from 'material-ui/Stepper';
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React from 'react'
+import PropTypes from 'prop-types'
+import {connect} from 'react-redux'
+
+import Formsy from 'formsy-react';
+import FlatButton from 'material-ui/FlatButton'
+import FormsyCheckbox from 'formsy-material-ui/lib/FormsyCheckbox';
 import FormsyText from 'formsy-material-ui/lib/FormsyText';
 import {blue500} from 'material-ui/styles/colors';
-import FontIcon from 'material-ui/FontIcon'
-
-import {getTranslateRecords, translate} from '../services/translator'
 
 import md5 from './md5'
+import FormComponent from './controls/formComponent'
 import ErrorNotice from './controls/errorNotice'
-import LoadingButton from './controls/loadingButton';
-import PasswordInput from './controls/passwordInput';
+import LoadingButton from './controls/loadingButton'
+import PasswordInput from './controls/passwordInput'
+import {
+    USER_LOGIN,
+    USER_LASTLOGIN,
+    requestLoginAction,
+    requestLastLoginAction,
 
-import TextInput from './controls/textInput';
-import {WHITE_FAINT, WHITE, GREY_700, GREY_54, GREY_82} from '../colors';
+} from '../store/loginActions'
 
-import {USER_OTP, USER_PWD, requestOTPAction, resetPasswordAction} from '../model/loginActions'
+const defaultLastLogin = {};
 
-export default class ResetPasswordPanel extends PureComponent {
+class LoginPanel extends FormComponent {
     static propTypes = {
-        theme: PropTypes.string.isRequired
+        ...FormComponent.propTypes,
+        onPasswordReset   : PropTypes.func.isRequired,
+        lastLogin         : PropTypes.object.isRequired,
+        requestLoginAction: PropTypes.func.isRequired
     };
-    
-    state = {
-        isDemo    : false,
-        finished  : false,
-        submitTime: 0,
-        alertMsg  : '',
-        stepIndex : 0
-    };
-    
-    handleNext = () =>
-    {
 
-            const {stepIndex} = this.state;
-           
-            if(stepIndex < 2) {
-                this.setState({
-                                  stepIndex: stepIndex + 1,
-                                  finished : stepIndex >= 2
-                              });
-            }
-        
-
-            // if (finished)
-            // {
-            //    // this.refs.form.submit();
-            //     this.props.close;
-            // }
-
-            console.log(this.state.stepIndex)
-        console.log(this.state.finished)
-        
-    };
-    
-    handlePrev = () =>
+    componentWillMount()
     {
-        const {stepIndex} = this.state;
-        
-        this.setState({
-               stepIndex: stepIndex - 1,
-               finished : false
-        });
-       
-    };
-    
-    enableSubmitButton(canSubmit, isSubmitting, stateCallback)
-    {
-        let {alertMsg, submitTime} = this.state;
-        
-        if (isSubmitting)
-        {
-            alertMsg = '';
-            submitTime = Date.now();
-        }
-        
-        this.setState({
-                          canSubmit,
-                          isSubmitting,
-                          alertMsg,
-                          submitTime
-                      }, stateCallback);
+        this.props.requestLastLoginAction();
     }
     
-    requestToken = (form) =>
+    submitForm = (form) =>
     {
-        const {email} = form;
-        
-        this.enableSubmitButton(false, true);
-        
-        this.setState({email}, () =>
-        {
-            this.props.requestOTPAction(email);
-        });
+        this.setStatus(false, true, false, '',)
+            .then(() =>
+                  {
+                      if (form.password !== this.props.lastLogin.password)
+                          form.password = md5(form.password, true);
+                
+                      this.props.requestLoginAction(form.isDemo,
+                                                    form.userID,
+                                                    form.password,
+                                                    form.keepLoginInfo);
+                  });
     };
     
-    resetPassword = (form) =>
+    requestPwdReset = () =>
     {
-        form.password = md5(form.password, true);
-        
-        this.enableSubmitButton(false, true, () =>
-        {
-            this.props.resetPasswordAction(this.state.email, null, form.password, form.token);
-        });
+        this.props.onPasswordReset();
     };
     
-    moveToNextPage()
+    onCheck = (event) =>
     {
-        const stepIndex = this.state.stepIndex;
-        
-        this.setState({
-                          stepIndex: stepIndex + 1,
-                          finished : stepIndex >= 2
-                      });
-        
-    }
+        this.setState({[event.target.name]: !this.state[event.target.name]})
+    };
     
     componentWillReceiveProps(nextProps)
     {
-        const {resetResult, OTPResult} = nextProps;
-
-        let result;
-
-        if (OTPResult.timestamp >= this.state.submitTime)
+        super.componentWillReceiveProps(nextProps);
+        
+        if (this.state.userID === undefined && nextProps.lastLogin.userID)
         {
-            result = OTPResult;
-        }
-        else if (resetResult.timestamp >= this.state.submitTime)
-        {
-            result = resetResult;
-        }
-
-        if (result)
-        {
-            this.enableSubmitButton(true, false);
-
-            if (!result.isFail())
-            {
-                this.moveToNextPage();
-            }
-            else
-            {
-                this.setState({alertMsg: result.getErrorMsg()})
-            }
+            this.setState({...nextProps.lastLogin})
         }
     }
     
-    
     render()
     {
-        const {finished, stepIndex} = this.state,
-            translates = getTranslateRecords(),
-            
-            backBtn = {
-                onTouchTap: this.handlePrev,
-                className : "center",
-                type      : "submit",
-                style     : {
-                    float         : 'left',
-                    display       : stepIndex === 0  ?  'none' : 'initial' ,
-                    marginRight   : 11,
-                    minWidth      : 152
-                },
-                label     : translates.BACK,
-                labelColor: GREY_700,
-                buttonStyle: {
-                    backgroundColor : GREY_54
-                }
+        let linkColor   = blue500,
+            {translator}= this.props,
+            translates  = translator.translates,
+            resetBtn    = {
+                onTouchTap: this.requestPwdReset,
+                className : "forgetPwd",
+                label     : translates.FORGET_PASSWORD,
+                disabled  : this.state.isResetting,
+                labelStyle: {textTransform: 'none', fontSize: '80%', paddingRight: 0, color: linkColor}
             },
-            
-            stepperBtn = {
-                onTouchTap             : this.handleNext,
-                className              : "center",
-                type                   : "submit",
-                //fullWidth              : stepIndex === 0 ? true : false,
-                style                  : {
-                    float          : 'right',
-                    backgroundColor: GREY_82,
-                    minWidth       : stepIndex === 0 ? 316 : 152,
-                },
-                label                  : finished ? translates.FINISH : translates.NEXT,
-                labelColor             : WHITE,
-                disabledBackgroundColor: GREY_54,
-                disabledLabelColor     : WHITE,
-                disabled               : !this.state.canSubmit
-            },
-            
-            steps = {
-                0: <Formsy.Form autoComplete="off"
-                                ref="form"
-                                disabled={this.state.isSubmitting}
-                                onValidSubmit={this.requestToken}
-                                onValid={() => this.enableSubmitButton(true)}
-                                onInvalid={() => this.enableSubmitButton(false)}>
-                    
-                    <TextInput
-                        name="email"
-                        type="email"
-                        validations="isEmail"
-                        validationError={translates.EMAIL_ERROR}
-                        hintText={translates.EMAIL}
-                        style={{marginTop: 20}}
-                    />
-                
-                
-                </Formsy.Form>,
-                
-                1: <Formsy.Form autoComplete="off"
-                                ref="form"
-                                disabled={this.state.isSubmitting}
-                                onValidSubmit={this.resetPassword}
-                                onValid={() => this.enableSubmitButton(true)}
-                                onInvalid={() => this.enableSubmitButton(false)}>
-                    
-                    <TextInput
-                        name="token"
-                        type="number"
-                        validations="isNumeric,isLength:7"
-                        validationError={translates.RESET_TOKEN_ERROR}
-                        hintText={translates.RESET_TOKEN_HOLDER}
-                        style={{marginTop: 20}}
-                    />
-    
-                    {/*<PasswordInput strengthCheck={true}*/}
-                                   {/*style={{marginTop: 20}}*/}
-                                   {/*hintText={translates.RESET_NEW_PASSWORD}*/}
-                    {/*/>*/}
-                    
-                    {/*<TextInput*/}
-                        {/*name="passwordConfirm"*/}
-                        {/*type="password"*/}
-                        {/*validations="equalsField:password"*/}
-                        {/*validationError={translates.PASSWORD_CONFIRM_ERROR}*/}
-                        {/*hintText={translates.RESET_CONFIRM_PASSWORD}*/}
-                        {/*style={{marginTop: 12}}*/}
-                    {/*/>*/}
-                </Formsy.Form>,
-    
-                2: <Formsy.Form autoComplete="off"
-                                ref="form"
-                                disabled={this.state.isSubmitting}
-                                onValidSubmit={this.resetPassword}
-                                onValid={() => this.enableSubmitButton(true)}
-                                onInvalid={() => this.enableSubmitButton(false)}>
-                    
-                    <TextInput
-                        name="passwordConfirm"
-                        type="password"
-                        validations="equalsField:password"
-                        validationError={translates.PASSWORD_CONFIRM_ERROR}
-                        hintText={translates.RESET_CONFIRM_PASSWORD}
-                        style={{marginTop: 12}}
-                    />
-    
-                    <PasswordInput
-                            style={{marginTop: 20}}
-                            hintText={translates.RESET_NEW_PASSWORD}
-                    />
-    
-                    <TextInput
-                        name="passwordConfirm"
-                        type="password"
-                        validations="equalsField:password"
-                        validationError={translates.PASSWORD_CONFIRM_ERROR}
-                        hintText={translates.RESET_CONFIRM_PASSWORD}
-                        style={{marginTop: 12}}
-                    />
-                </Formsy.Form>
-                
-            },
-            
-            stepperStyle = {
-                marginTop: 30
-            },
-            
-            stepStyle = {
-                height: 50
-            },
-            
-            stepLabelStyle = {
-                fontSize: 12,
-                paddingLeft: 2,
-                height  : 50
-            },
-    
-            connector = {
-                wrapper: {
-                    marginLeft: 20
-                },
-                line: {
-                    minHeight: 16
-                }
-            }
+            submitBtn   = {
+                className: "center marginTop fullWidth",
+                type     : "submit",
+                label    : translates.SUBMIT,
+                disabled : !this.state.canSubmit
+            };
         
-        ;
-        
-        return (
-            <div>
-                <FlatButton label={translates.BACK_LOGIN}
-                            labelStyle={{
-                                textTransform: 'none',
-                                color        : blue500,
-                                fontSize     : 12,
-                                lineHeight   : '24px',
-                                paddingLeft  : 0,
-                                paddingRight : 5
-                            }}
-                            onTouchTap={this.props.onClose}
-                            icon={<FontIcon className='fa fa-chevron-left'
-                                            style={{fontSize: 16, lineHeight: '24px', marginLeft: 7, marginRight: 12}}
-                            ></FontIcon>}
-                            style={{height: 24}}
-                            hoverColor={WHITE_FAINT}
-                />
-                
-                <Stepper activeStep={stepIndex} orientation="vertical" style={stepperStyle} >
-                    <Step style={stepStyle}>
-                        <StepLabel style={stepLabelStyle}
-                                   iconContainerStyle={{color: WHITE}}
-                        >{translates.RESET_STEP1}</StepLabel>
-                    </Step>
-                    
-                    <Step style={stepStyle}>
-                        <StepLabel style={stepLabelStyle}
-                                   iconContainerStyle={{color: WHITE}}
-                        >{translates.RESET_STEP2}</StepLabel>
-                    </Step>
-                    
-                    <Step style={stepStyle}>
-                        <StepLabel style={stepLabelStyle}>{translates.RESET_STEP3}</StepLabel>
-                    </Step>
-                </Stepper>
-                
-                <div>
-                    {steps[stepIndex]}
-                    
-                    <ErrorNotice>{this.state.alertMsg ? translate('RESET_ERROR', this.state.alertMsg) :
-                                  ''}</ErrorNotice>
-                    
-                    <div style={{marginTop: 20, overflow: 'hidden'}}>
-                        
-                        {/*<RaisedButton className="center"*/}
-                        {/*fullWidth={true}*/}
-                        {/*//style={{float: 'left', display: stepIndex === 0 || finished ? 'none' : 'initial'}}*/}
-                        {/*disabled={this.state.isSubmitting}*/}
-                        {/*label={translates.BACK}*/}
-                        {/*onTouchTap={this.handlePrev}/>*/}
-                        
-                        <LoadingButton isFlatButton={false}
-                                       button={backBtn}/>
-                        
-                        <LoadingButton isFlatButton={false}
-                                       indicator={{show: this.state.isSubmitting, left: -8}}
-                                       button={stepperBtn}/>
-                    
-                    </div>
-                </div>
+        return <Formsy.Form
+            ref="form"
+            method="post"
+            autoComplete="off"
+            disabled={this.state.isSubmitting}
+            onValid={() => this.setStatus(true)}
+            onInvalid={() => this.setStatus(false)}
+            onValidSubmit={this.submitForm}
+        >
+            {/*fake fields are a workaround for chrome autofill getting the wrong fields*/}
+            <input style={{display: 'none'}} type="text" name="fakeusernameremembered" defaultValue="fake"/>
+            <input style={{display: 'none'}} type="password" name="fakepasswordremembered" defaultValue="fake"/>
             
-            </div>
-        );
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Created by Mac on 2018/1/30.
- */
-import React, {PureComponent} from 'react';
-import PropTypes from "prop-types";
-
-import Formsy from 'formsy-react';
-import FormsyText from 'formsy-material-ui/lib/FormsyText';
-
-import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon';
-import debounce from 'lodash/debounce';
-
-import {WHITE, RED, WHITE_DARK, GREY_97, GREEN_500, BLUE, GREY_189} from '../../colors';
-
-export default class TextInput extends PureComponent {
-    state = {
-        value: this.props.value || '',
-        focus: false,
-    };
-    
-    onFocus = () =>
-    {
-        this.setState({
-                          focus: true
-                      });
-        
-    };
-    
-    debounceOnBlur = debounce(() =>
-                              {
-                                  if (this.state.value.length === 0)
-                                  {
-                                      this.setState({value: ''});
-                                  }
-                                  
-                                  this.setState({focus: false});
-                              }
-        , 200);
-    
-    handleChange = (e) =>
-    {
-        this.setState({value: e.target.value});
-    };
-    
-    handleClear = () =>
-    {
-        if (this.state.value)
-        {
-            this.setState({
-                              value: ''
-                          });
-        }
-    };
-    
-    render()
-    {
-        const {style, hintText, name, disable, validations, validationError} = this.props,
-            
-            clearBtnStyle = {
-               clearStyle : {
-                    position: 'absolute',
-                    float   : 'right',
-                    width   : 12,
-                    height  : 12,
-                    padding : 0,
-                    bottom  : 16,
-                    right   : 1
-                },
-    
-                clearIconStyle : {
-                    fontSize       : 9,
-                    fontWeight     : 'bold',
-                    color          : WHITE,
-                    textAlign      : 'center',
-                    backgroundColor: RED,
-                    borderRadius   : '50%',
-                    width          : 12,
-                    height         : 12,
-                    lineHeight     : '12px'
-                }
-            },
-            
-            clearBtn = (this.state.value && this.state.focus) ? <IconButton style={clearBtnStyle.clearStyle }
-                                                                            iconStyle={clearBtnStyle.clearIconStyle}
-                                                                            onClick={this.handleClear}
-            >
-                <FontIcon className="material-icons"
-                > clear </FontIcon>
-            </IconButton> : "",
-            
-            erricon = <FontIcon className="fa fa-exclamation-triangle"
-                                style={{fontSize: 12, color: 'rgba(244, 67, 54, 1)', float: 'right'}}/>
-        
-        ;
-        
-        return <div style={{position: 'relative'}}>
             <FormsyText
                 fullWidth={true}
-                value={this.state.value}
-                name={name}
+                value={this.state.userID}
+                name="userID"
                 required
-                hintText={hintText}
-                hintStyle={{fontSize: 13, color: GREY_97}}
-                disabled={disable}
-                validationColor={GREEN_500}
-                underlineFocusStyle={{backgroundColor: BLUE}}
-                underlineStyle={{backgroundColor: GREY_97}}
-                inputStyle={{fontSize: 13, color: GREY_189}}
-                validations={validations}
-                validationError={validationError}
-                style={style}
-                onFocus={this.onFocus}
-                onBlur={this.debounceOnBlur}
-                onChange={this.handleChange}
+                hintText={translates.ACCOUNT_HINT}
+                floatingLabelText={translates.ACCOUNT}
+                disabled={this.state.isSubmitting}
             />
-            {clearBtn}
-        </div>;
+            
+            <PasswordInput password={this.state.password} translator={translator} disabled={this.state.isSubmitting}/>
+            
+            <FlatButton {...resetBtn}/>
+            
+            <FormsyCheckbox
+                disabled={this.state.isSubmitting}
+                onChange={this.onCheck}
+                name="keepLoginInfo"
+                value={this.state.keepLoginInfo}
+                label={translates.KEEPPWD_HINT}
+                className="marginTop"
+            />
+            
+            {/*<FormsyCheckbox*/}
+            {/*disabled={this.state.isSubmitting}*/}
+            {/*onChange={this.onCheck}*/}
+            {/*name="isDemo"*/}
+            {/*value={this.state.isDemo}*/}
+            {/*label={translates.DEMO_HINT}*/}
+            {/*/>*/}
+            
+            <ErrorNotice>{this.state.alertMsg ? translator.format('LOGIN_ERROR', this.state.alertMsg) : ''}</ErrorNotice>
+            
+            <LoadingButton isFlatButton={false}
+                           indicator={{show: this.state.isSubmitting}}
+                           button={submitBtn}/>
+        </Formsy.Form>;
     }
 }
+
+export default connect(
+    state => ({
+        result   : state[USER_LOGIN],
+        lastLogin: state[USER_LASTLOGIN].getResult() || defaultLastLogin
+    }),
+    {
+        requestLoginAction,
+        requestLastLoginAction
+    })(LoginPanel);
