@@ -28,23 +28,24 @@ git使用：
 3.fetch和rebase
 
 4.webstorm中git出现remote no reposity
-  git config --global user.name "你的名字"
-  git config --global user.email "你的邮箱"
-  git config -l
-  ssh-keygen -t rsa -C "你的邮箱"
-  
-  Host githost
-Hostname 120.76.xx.xx
-User git
-IdentityFile “c:\users\DELL\.ssh\id_rsa”
-若是在mac中，最后一句应该为：
-IdentityFile "/Users/Zhang/.ssh/id_rsa"
+  1）.配置：
+    git config --global user.name "你的名字"
+    git config --global user.email "你的邮箱"
+    git config -l
+    ssh-keygen -t rsa -C "你的邮箱"
+  2）.手动在.ssh里生成config文件
+    Host githost
+    Hostname 120.76.xx.xx
+    User git
+    IdentityFile “c:\users\DELL\.ssh\id_rsa”
+    若是在mac中，最后一句应该为：IdentityFile "/Users/Zhang/.ssh/id_rsa"
+  3）.该方法没成功
+    删除.ssh下面的known_hosts文件  ?
+    删除github上的密钥，并重新生成和添加密钥
+    设置.ssh
+  4）.先检查ssh是否配置-->在版本控制器中SSH可执行文件选择native
 
 
-1删除.ssh下面的known_hosts文件  ?
-2删除github上的密钥，并重新生成和添加密钥
-3 设置.ssh
-  先检查ssh是否配置-->在版本控制器中SSH可执行文件选择native
 
 
 
