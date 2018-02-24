@@ -1,0 +1,12 @@
+1.setInterval  vs requestAnimationFrame
+  requestAnimationFrame优点：
+  requestAnimationFrame。这只是一种告诉浏览器“在屏幕上画下一帧之前，执行这个游戏逻辑/动画处理”的方法。
+  requestAnimationFrame 生成更高质量的动画，完全消除使用setTimeout或setInterval减少或完全消除帧跳时可能发生的闪烁和剪切 
+  计时器 使用setTimeout进行动画处理。时间是1000/60
+  RAF最佳质量，使用requestAnimationFrame动画
+  双定时器，使用两个定时器，一个每1000/60清除一个，另一个渲染。这将产生闪烁的程度取决于硬件设置。但是，渲染解决方案涉及很多事件，比如鼠标，定时器和其他类型，这是很糟糕和典型的。
+  带定时动画的RAF，使用requestAnimationFrame，但使用帧流逝的时间进行动画处理。这种技术在动画中非常常见。我相信这是有缺陷的，但我会将其留给观众
+  计时器与定时动画。作为“具有定时动画的RAF”，并且在这种情况下用于克服在“定时器”方法中看到的跳帧。我再次想到它，但游戏社区发誓这是最好的方法来使用，当你无法访问显示刷新
+  
+  
+2.
