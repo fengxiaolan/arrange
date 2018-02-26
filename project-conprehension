@@ -1,8 +1,7 @@
 issue:
-  1.重置密码先后问题
-  2.disable
-  3.进度条
-  4.出错处理
+  resetpassword的进度条出不来
+  
+  
 
 
 resolve: 
