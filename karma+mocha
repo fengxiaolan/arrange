@@ -45,6 +45,98 @@ karma init my.conf.js命令生成配置文件
         { type: 'text-summary' }
       ]
     }
+    
+    /***
+         * 基础路径，用在files，exclude属性上
+         */
+        basePath: "",
+
+        /**
+         * 测试框架
+         * 可用的框架：https://npmjs.org/browse/keyword/karma-adapter
+         */
+        frameworks: ["jasmine"],
+
+        /**
+         * 需要加载到浏览器的文件列表
+         */
+        files: [
+            "karmaTest/*.js"
+        ],
+
+        /**
+         * 排除的文件列表
+         */
+        exclude: [
+        ],
+
+        /**
+         * 在浏览器使用之前处理匹配的文件
+         * 可用的预处理: https://npmjs.org/browse/keyword/karma-preprocessor
+         */
+        preprocessors: {
+            "karmaTest/test.js" : "coverage"
+        },
+
+        /**
+         * 使用测试结果报告者
+         * 可能的值: "dots", "progress"
+         * 可用的报告者：https://npmjs.org/browse/keyword/karma-reporter
+         */
+        reporters: ["progress", "coverage"],
+
+        /**
+         * 使用reporters为"coverage"时报告输出的类型和那目录
+         */
+        coverageReporter: {
+            type: "html",
+            dir: "karmaTest/coverage"
+        },
+
+        /**
+         * 服务端口号
+         */
+        port: 9876,
+
+        /**
+         * 启用或禁用输出报告或者日志中的颜色
+         */
+        colors: true,
+
+        /**
+         * 日志等级
+         * 可能的值：
+         * config.LOG_DISABLE //不输出信息
+         * config.LOG_ERROR    //只输出错误信息
+         * config.LOG_WARN //只输出警告信息
+         * config.LOG_INFO //输出全部信息
+         * config.LOG_DEBUG //输出调试信息
+         */
+        logLevel: config.LOG_INFO,
+
+        /**
+         * 启用或禁用自动检测文件变化进行测试
+         */
+        autoWatch: true,
+
+
+        /**
+         * 测试启动的浏览器
+         * 可用的浏览器：https://npmjs.org/browse/keyword/karma-launcher
+         */
+        browsers: ["Chrome"],
+
+
+        /**
+         * 开启或禁用持续集成模式
+         * 设置为true, Karma将打开浏览器，执行测试并最后退出
+         */
+        singleRun: true,
+
+        /**
+         * 并发级别（启动的浏览器数）
+         */
+        concurrency: Infinity
 优点：1. cli（command-line interface，命令行界面） 运行，webstorm下配合完美 
       2. 良好支持 mocha、jasmine 等测试框架 
       3. 支持多浏览器的测试 
@@ -100,4 +192,215 @@ length 设置.have.length标记作为比较length属性值的前缀
 lengthof() 断言目标的length属性为期望的值
 match(RegExp) 断言目标匹配到一个正则表达式
 string(string) 断言目标字符串包含另一个字符串
+
+6.bug
+（1）WARN [plugin]: Error during loading "karma-phantomjs-launcher" plugin:
+  Path must be a string. Received null
+  --------插件安装在--save-dev中，不要重复
+  
+  
+  “测试覆盖是一种学习手段”。学习什么呢？学习为什么有些代码没有被覆盖到，以及为什么有些代码变了测试却没有失败。理解“为什么”背后的原因，
+  程序员就可以做相应的改善和提高，相比凭空想象单元测试的有效性和代码的好坏，这会更加有效。
+  
+  
+  karma怎么运行的，怎么让jenkins自动化
+  
+  
+  
+  
+  
+  
+  
+  const webpackConfig = require('./webpack.config.js');
+
+module.exports = function (config)
+{
+    config.set({
+                   basePath  : '../',
+                   frameworks: ['mocha'],
+        
+                   reporters: ['dots', 'junit'],
+        
+                   junitReporter: {
+                       outputFile: 'test-results.xml'
+                   },
+    
+                   port               : 9876,
+                   colors             : true,
+                   logLevel           : config.LOG_DEBUG,
+                   autoWatch          : true,
+                   browsers           : ['Chrome'],
+                   singleRun          : true,
+                   autoWatchBatchDelay: 3000,
+        
+                   files: [
+                       './test/**/*Spec.js'
+                   ],
+        
+                   loader: 'babel-loader',
+        
+                   preprocessors: {
+                       './test/**/*Spec.js': ['webpack']
+                   },
+        
+                   webpack: webpackConfig(),
+        
+                   webpackMiddleware: {
+                       noInfo: true
+                   },
+        
+                   captureTimeout: 60000,
+        
+                   plugins: [
+                       'karma-mocha',
+                       'karma-chrome-launcher',
+                       'karma-junit-reporter',
+                       'karma-webpack'
+                   ]
+               });
+};
+
+
+
+
+
+
+
+
+
+报错情况：
+   /usr/local/bin/node /usr/local/lib/node_modules/npm/bin/npm-cli.js run test:watch --scripts-prepend-node-path=auto
+
+> @ test:watch /Users/fengxiaolan/Eugene/xcederWeb
+> karma start tools/karma.config.js
+
+27 02 2018 18:39:15.135:DEBUG [config]: autoWatch set to false, because of singleRun
+27 02 2018 18:39:15.139:DEBUG [plugin]: Loading plugin karma-mocha.
+27 02 2018 18:39:15.140:DEBUG [plugin]: Loading plugin karma-chrome-launcher.
+27 02 2018 18:39:15.144:DEBUG [plugin]: Loading plugin karma-junit-reporter.
+27 02 2018 18:39:15.154:DEBUG [plugin]: Loading plugin karma-webpack.
+27 02 2018 18:39:15.288:DEBUG [web-server]: Instantiating middleware
+27 02 2018 18:39:15.295:DEBUG [reporter]: Trying to load reporter: junit
+27 02 2018 18:39:15.296:DEBUG [reporter]: Trying to load color-version of reporter: junit (junit_color)
+27 02 2018 18:39:15.296:DEBUG [reporter]: Couldn't load color-version.
+27 02 2018 18:40:05.380:INFO [karma]: Karma v1.7.1 server started at http://0.0.0.0:9876/
+27 02 2018 18:40:05.382:INFO [launcher]: Launching browser Chrome with unlimited concurrency
+27 02 2018 18:40:05.566:INFO [launcher]: Starting browser Chrome
+27 02 2018 18:40:05.567:DEBUG [temp-dir]: Creating temp dir at /var/folders/q5/98zpsm5158q5hdrgp4bgx7lm0000gn/T/karma-20091750
+27 02 2018 18:40:05.567:DEBUG [launcher]: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --user-data-dir=/var/folders/q5/98zpsm5158q5hdrgp4bgx7lm0000gn/T/karma-20091750 --no-default-browser-check --no-first-run --disable-default-apps --disable-popup-blocking --disable-translate --disable-background-timer-throttling --disable-renderer-backgrounding --disable-device-discovery-notifications http://localhost:9876/?id=20091750
+27 02 2018 18:40:06.403:DEBUG [web-server]: serving: /Users/fengxiaolan/Eugene/xcederWeb/node_modules/karma/static/client.html
+27 02 2018 18:40:06.465:DEBUG [web-server]: serving: /Users/fengxiaolan/Eugene/xcederWeb/node_modules/karma/static/karma.js
+27 02 2018 18:40:06.501:DEBUG [karma]: A browser has connected on socket U9AthH1crdJHYJ9RAAAA
+27 02 2018 18:40:06.505:DEBUG [web-server]: upgrade /socket.io/?EIO=3&transport=websocket&sid=U9AthH1crdJHYJ9RAAAA
+27 02 2018 18:40:06.530:INFO [Chrome 63.0.3239 (Mac OS X 10.12.5)]: Connected on socket U9AthH1crdJHYJ9RAAAA with id 20091750
+27 02 2018 18:40:06.531:DEBUG [launcher]: Chrome (id 20091750) captured in 1.148 secs
+27 02 2018 18:40:06.531:DEBUG [web-server]: serving: /Users/fengxiaolan/Eugene/xcederWeb/node_modules/karma/static/favicon.ico
+27 02 2018 18:40:06.543:DEBUG [middleware:karma]: custom files null null null
+27 02 2018 18:40:06.543:DEBUG [middleware:karma]: Serving static request /context.html
+27 02 2018 18:40:06.544:DEBUG [web-server]: serving: /Users/fengxiaolan/Eugene/xcederWeb/node_modules/karma/static/context.html
+27 02 2018 18:40:06.555:DEBUG [middleware:source-files]: Requesting /base/node_modules/mocha/mocha.js?8bf1d1adf34e719cca6e8f6915b9cd6eabf83d6b /
+27 02 2018 18:40:06.555:DEBUG [middleware:source-files]: Fetching /Users/fengxiaolan/Eugene/xcederWeb/node_modules/mocha/mocha.js
+27 02 2018 18:40:06.556:DEBUG [web-server]: serving (cached): /Users/fengxiaolan/Eugene/xcederWeb/node_modules/mocha/mocha.js
+27 02 2018 18:40:06.563:DEBUG [middleware:source-files]: Requesting /base/node_modules/karma-mocha/lib/adapter.js?e8826109cf50b958ee4bd667517729ffdd4de363 /
+27 02 2018 18:40:06.563:DEBUG [middleware:source-files]: Fetching /Users/fengxiaolan/Eugene/xcederWeb/node_modules/karma-mocha/lib/adapter.js
+27 02 2018 18:40:06.564:DEBUG [middleware:source-files]: Requesting /base/test/middlewares/encryptSpec.js?538fb739c7a90ffb800471ccb2f7285955d12cae /
+27 02 2018 18:40:06.565:DEBUG [middleware:source-files]: Fetching /Users/fengxiaolan/Eugene/xcederWeb/test/middlewares/encryptSpec.js
+27 02 2018 18:40:06.565:DEBUG [middleware:source-files]: Requesting /base/test/middlewares/xcederAPISpec.js?013dd0799f06e9154096a822047f804d0dfb78f3 /
+27 02 2018 18:40:06.565:DEBUG [middleware:source-files]: Fetching /Users/fengxiaolan/Eugene/xcederWeb/test/middlewares/xcederAPISpec.js
+27 02 2018 18:40:06.566:DEBUG [web-server]: serving (cached): /Users/fengxiaolan/Eugene/xcederWeb/node_modules/karma-mocha/lib/adapter.js
+27 02 2018 18:40:06.566:DEBUG [web-server]: serving (cached): /Users/fengxiaolan/Eugene/xcederWeb/test/middlewares/encryptSpec.js
+27 02 2018 18:40:06.577:DEBUG [web-server]: serving (cached): /Users/fengxiaolan/Eugene/xcederWeb/test/middlewares/xcederAPISpec.js
+27 02 2018 18:40:06.584:DEBUG [middleware:source-files]: Requesting /base/test/proto/responseDecoderSpec.js?ab731a27e9ad0d8e565a8e89c218544b4b8e2754 /
+27 02 2018 18:40:06.585:DEBUG [middleware:source-files]: Fetching /Users/fengxiaolan/Eugene/xcederWeb/test/proto/responseDecoderSpec.js
+27 02 2018 18:40:06.585:DEBUG [middleware:source-files]: Requesting /base/test/proto/requestSpec.js?ded1b81c5f93b6c152a61b7f64e09b066b5b27a2 /
+27 02 2018 18:40:06.585:DEBUG [middleware:source-files]: Fetching /Users/fengxiaolan/Eugene/xcederWeb/test/proto/requestSpec.js
+27 02 2018 18:40:06.586:DEBUG [web-server]: serving (cached): /Users/fengxiaolan/Eugene/xcederWeb/test/proto/responseDecoderSpec.js
+27 02 2018 18:40:06.600:DEBUG [web-server]: serving (cached): /Users/fengxiaolan/Eugene/xcederWeb/test/proto/requestSpec.js
+27 02 2018 18:40:06.620:DEBUG [web-server]: serving: /Users/fengxiaolan/Eugene/xcederWeb/node_modules/karma/static/context.js
+27 02 2018 18:40:06.626:DEBUG [middleware:source-files]: Requesting /base/test/store/instrumentSpec.js?3ef2212f6bfd7d536a0c1b63afd661fbb00ce3dc /
+27 02 2018 18:40:06.626:DEBUG [middleware:source-files]: Fetching /Users/fengxiaolan/Eugene/xcederWeb/test/store/instrumentSpec.js
+27 02 2018 18:40:06.627:DEBUG [middleware:source-files]: Requesting /base/test/store/marketDepthBookSpec.js?c9e0d1135d4920070414f24949a99c268880a07d /
+27 02 2018 18:40:06.630:DEBUG [middleware:source-files]: Fetching /Users/fengxiaolan/Eugene/xcederWeb/test/store/marketDepthBookSpec.js
+27 02 2018 18:40:06.631:DEBUG [middleware:source-files]: Requesting /base/test/testing/addSpec.js?93dbf1798bf0f2c58a4c34c5b19983a682f11f8d /
+27 02 2018 18:40:06.631:DEBUG [middleware:source-files]: Fetching /Users/fengxiaolan/Eugene/xcederWeb/test/testing/addSpec.js
+27 02 2018 18:40:06.631:DEBUG [web-server]: serving (cached): /Users/fengxiaolan/Eugene/xcederWeb/test/store/instrumentSpec.js
+27 02 2018 18:40:06.730:DEBUG [web-server]: serving (cached): /Users/fengxiaolan/Eugene/xcederWeb/test/store/marketDepthBookSpec.js
+27 02 2018 18:40:06.813:DEBUG [web-server]: serving (cached): /Users/fengxiaolan/Eugene/xcederWeb/test/testing/addSpec.js
+Chrome 63.0.3239 (Mac OS X 10.12.5) encryption rsa encrypt FAILED
+	AssertionError: expected false to equal 'aaaabbbbccccddddddde'
+	    at Context.it (test/middlewares/encryptSpec.js:15428:175)
+Chrome 63.0.3239 (Mac OS X 10.12.5) Request proto message encode the Spreader request FAILED
+	Error: invalid wire type 6 at offset 3
+	    at Reader.585.Reader.skipType (test/proto/requestSpec.js:17933:19)
+	    at Type.WatchLists$decode [as decode] (eval at Codegen (test/proto/requestSpec.js:1955:33), <anonymous>:16:5)
+	    at Type.decode_setup [as decode] (test/proto/requestSpec.js:18480:25)
+	    at Type.Request$decode [as decode] (eval at Codegen (test/proto/requestSpec.js:1955:33), <anonymous>:50:25)
+	    at Type.decode_setup [as decode] (test/proto/requestSpec.js:18480:25)
+	    at ProtoCreator.decode (test/proto/requestSpec.js:16560:30)
+	    at Context.it (test/proto/requestSpec.js:16178:91)
+Chrome 63.0.3239 (Mac OS X 10.12.5) responseDecoder extract full message properly FAILED
+	AssertionError: expected [ Array(1) ] to deeply equal [ Array(1) ]
+	    at promiseAry.push.decoder.write.then.msgAry (test/proto/responseDecoderSpec.js:17059:120)
+	    at <anonymous>
+Chrome 63.0.3239 (Mac OS X 10.12.5) responseDecoder extract partial message bytes properly FAILED
+	AssertionError: expected [ Array(1) ] to deeply equal [ Array(1) ]
+	    at decoder.write.then.msgAry (test/proto/responseDecoderSpec.js:17089:101)
+	    at <anonymous>
+Chrome 63.0.3239 (Mac OS X 10.12.5) responseDecoder extract big message bytes properly FAILED
+	TypeError: Cannot read property 'create' of null
+	    at createResultProto (test/proto/responseDecoderSpec.js:16991:24)
+	    at Context.it (test/proto/responseDecoderSpec.js:17105:49)
+Chrome 63.0.3239 (Mac OS X 10.12.5) responseDecoder extract multiple message bytes properly FAILED
+	TypeError: Cannot read property 'create' of null
+	    at createResultProto (test/proto/responseDecoderSpec.js:16991:24)
+	    at Context.it (test/proto/responseDecoderSpec.js:17136:49)
+Chrome 63.0.3239 (Mac OS X 10.12.5) instrument should compare with other instrument identity with proper result FAILED
+	TypeError: Cannot read property 'broker' of undefined
+	    at Instrument.getBroker (test/store/instrumentSpec.js:71420:38)
+	    at trimSearchableFields (test/store/instrumentSpec.js:62812:38)
+	    at InstrumentComparator.getIdentityFields (test/store/instrumentSpec.js:62892:60)
+	    at InstrumentComparator.compare (test/store/instrumentSpec.js:62961:33)
+	    at Instrument.compare (test/store/instrumentSpec.js:71493:47)
+	    at Context.it (test/store/instrumentSpec.js:148178:32)
+Chrome 63.0.3239 (Mac OS X 10.12.5) marketDepthBook should append the price level in end properly FAILED
+	AssertionError: price level count: expected 0 to deeply equal 1
+	    at Context.it (test/store/marketDepthBookSpec.js:150978:123)
+Chrome 63.0.3239 (Mac OS X 10.12.5) marketDepthBook should append the price level in front properly FAILED
+	AssertionError: price level count: expected 0 to deeply equal 1
+	    at Context.it (test/store/marketDepthBookSpec.js:150995:123)
+.
+Chrome 63.0.3239 (Mac OS X 10.12.5): Executed 10 of 10 (9 FAILED) (0.095 secs / 0.06 secs)
+27 02 2018 18:40:07.698:DEBUG [karma]: Run complete, exiting.
+27 02 2018 18:40:07.698:DEBUG [launcher]: Disconnecting all browsers
+27 02 2018 18:40:07.732:DEBUG [reporter.junit]: JUnit results written to "/Users/fengxiaolan/Eugene/xcederWeb/Chrome_63.0.3239_(Mac_OS_X_10.12.5)/test-results.xml".
+27 02 2018 18:40:07.799:DEBUG [launcher]: Process Chrome exited with code 0
+27 02 2018 18:40:07.800:DEBUG [temp-dir]: Cleaning temp dir /var/folders/q5/98zpsm5158q5hdrgp4bgx7lm0000gn/T/karma-20091750
+27 02 2018 18:40:07.828:DEBUG [launcher]: Finished all browsers
+
+npm ERR! Darwin 16.6.0
+npm ERR! argv "/usr/local/bin/node" "/usr/local/lib/node_modules/npm/bin/npm-cli.js" "run" "test:watch" "--scripts-prepend-node-path=auto"
+npm ERR! node v6.10.0
+npm ERR! npm  v3.10.10
+npm ERR! code ELIFECYCLE
+npm ERR! @ test:watch: `karma start tools/karma.config.js`
+npm ERR! Exit status 1
+npm ERR! 
+npm ERR! Failed at the @ test:watch script 'karma start tools/karma.config.js'.
+npm ERR! Make sure you have the latest version of node.js and npm installed.
+npm ERR! If you do, this is most likely a problem with the  package,
+npm ERR! not with npm itself.
+npm ERR! Tell the author that this fails on your system:
+npm ERR!     karma start tools/karma.config.js
+npm ERR! You can get information on how to open an issue for this project with:
+npm ERR!     npm bugs 
+npm ERR! Or if that isn't available, you can get their info via:
+npm ERR!     npm owner ls 
+npm ERR! There is likely additional logging output above.
+
+npm ERR! Please include the following file with any support request:
+npm ERR!     /Users/fengxiaolan/Eugene/xcederWeb/npm-debug.log
+
+Process finished with exit code 1
+
+
 
