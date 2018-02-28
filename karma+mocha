@@ -1,3 +1,12 @@
+参考文献：
+http://annn.me/frontend-ci-cd/
+http://karma-runner.github.io/0.12/plus/jenkins.html
+http://powertech.iteye.com/blog/2051387
+http://www.shenyanchao.cn/blog/2013/04/01/run-karma-in-jenkins-ci/
+http://www.shenyanchao.cn/blog/2013/03/27/use-karma-to-run-mocha-test/
+http://www.51testing.com/html/70/n-3720170.html
+https://github.com/nupthale/jasmine_karma_travis
+
 1.单测框架（即 mocha）Mocha的作用是运行测试脚本
  测试脚本里面应该包括一个或多个describe块，每个describe块应该包括一个或多个it块。
 describe块称为“测试套件”（test suite），表示一组相关的测试。它是一个函数，第一个参数是测试套件的名称（“加法函数的测试”），第二个参数是一个实际执行的函数。
@@ -137,6 +146,7 @@ karma init my.conf.js命令生成配置文件
          * 并发级别（启动的浏览器数）
          */
         concurrency: Infinity
+        
 优点：1. cli（command-line interface，命令行界面） 运行，webstorm下配合完美 
       2. 良好支持 mocha、jasmine 等测试框架 
       3. 支持多浏览器的测试 
@@ -203,9 +213,13 @@ string(string) 断言目标字符串包含另一个字符串
   
  (2)karma浏览器显示与否 singleRun: false  才能显示，不然浏览器会自动关闭
  
-（3）autoWatch：true 与 singleRun: true 冲突  ？
+（3）autoWatch：true 与 singleRun: true 冲突  
+   因为我们使用的是jasmine测试框架， 所以还要声明karma-jasmine。在远端Travis服务上， 我们不需要autoWatch， 否则任务无法结束，
+   设置autoWatch为false， 浏览器测试完毕后需要关闭， 所以设置singleRun为true。
  
  (4)coverage遍历的文件夹不清楚怎么写？
+ 
+（5)若executed 执行全部成功将不会报错npm的错，且process code 0,否则process code 1
  
 
  
