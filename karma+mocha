@@ -20,96 +20,66 @@ expect断言风格 var expect = require('chai').expect;
 可以集成到webstorm里单测可用在run-->edit config-->mocha-(写上文件目录*.test.js 或者*.spec.js)
 
 2.Karma 不是一个测试框架，也不是一个断言库，仅仅启动一个 http server，并通过你熟知的测试框架生成运行测试的HTML。
-karma init my.conf.js命令生成配置文件
-    frameworks：我们这里需要 mocha 和 chai。框架必须预先通过 npm install karma-xxx --save-dev 命令安装好，支持的框架详见：https://www.npmjs.com/browse/keyword/karma-adapter
-    files：可以配置通配符把源代码和测试代码加载进来。
-    browsers：需要启动的浏览器
-    autoWatch：观察文件是否变动，如有变动则重新运行单测
-    preprocessors 预处理器配置,这里配置哪些文件需要统计测试覆盖率, 例如, 如果你的所有代码文件都在 js文件夹中, 你就需要如下配置. 注意不要包含你所依赖的库，测试文件等等
-    reports 报告配置,在配置文件中包含下面的信息来激活覆盖率报告器.
-    // 浏览器
-    browsers: ['PhantomJS'],
-    // 测试框架
-    frameworks: ['mocha', 'sinon-chai', 'phantomjs-shim'],
-    // 测试报告
-    reporters: ['spec', 'coverage'],
-    // 测试入口文件
-    files: ['./index.js'],
-    // 预处理器 karma-webpack
-    preprocessors: {
-      './index.js': ['webpack', 'sourcemap']
-    },
-    // Webpack配置
-    webpack: webpackConfig,
-    // Webpack中间件
-    webpackMiddleware: {
-      noInfo: true
-    },
-    // 测试覆盖率报告
-    // https://github.com/karma-runner/karma-coverage/blob/master/docs/configuration.md
-    coverageReporter: {
-      dir: './coverage',
-      reporters: [
-        { type: 'lcov', subdir: '.' },
-        { type: 'text-summary' }
-      ]
-    }
+karma init my.conf.js命令生成配置文件，安装完成后会生成my.conf.js，改js为karma的配置项
     
-    /***
-         * 基础路径，用在files，exclude属性上
-         */
+    参考：http://blog.csdn.net/maomaolaoshi/article/details/78542837
+    
+    //将用于解析files和exclude中定义的所有相对路径的根路径位置。如果basePath的配置是一个相对路径，那么它将被解析到__dirname的配置文件中。
         basePath: "",
 
-        /**
-         * 测试框架
-         * 可用的框架：https://npmjs.org/browse/keyword/karma-adapter
-         */
+        //默认为[]。你要使用的测试框架列表。通常情况下，你会设置该值为['jasmine'], ['mocha'] 或 ['qunit']…
+        //请注意: karma中的所有框架都需要安装额外的插件/框架库（通过NPM）。
         frameworks: ["jasmine"],
 
-        /**
-         * 需要加载到浏览器的文件列表
-         */
+        //默认为[]。在浏览器中加载的文件/模式列表。查看更多关于https://karma-runner.github.io/latest/config/files.html的信息
+        
         files: [
-            "karmaTest/*.js"
+            "karmaTest/*.js"，
+            {
+                pattern: 'src/**/*.js',
+                // false 表示初始化的时候不会使用 script 标签直接将相关 js 引入到浏览器，需要自己写代码加载
+                included: false
+            },
         ],
 
-        /**
-         * 排除的文件列表
-         */
+        //默认为[]。从加载文件中排除的文件/模式的列表
         exclude: [
         ],
 
-        /**
-         * 在浏览器使用之前处理匹配的文件
-         * 可用的预处理: https://npmjs.org/browse/keyword/karma-preprocessor
-         */
+        //在浏览器使用之前处理匹配的文件
+        //默认为{'**/*.coffee': 'coffee'}。要是用的预处理器的映射。预处理器可以通过插件加载。
+       //注意：几乎所有的karma的预处理器（除了CoffeeScript和一些其他默认的预处理器）都需要（通过NPM）额外的库去安装。
         preprocessors: {
             "karmaTest/test.js" : "coverage"
         },
 
-        /**
-         * 使用测试结果报告者
-         * 可能的值: "dots", "progress"
-         * 可用的报告者：https://npmjs.org/browse/keyword/karma-reporter
-         */
+        //默认为 ['progress']。 可能的值：dots, progress。
+        //使用的报告者（reporter）列表。额外的报告者，例如growl, junit, teamcity 或者 coverage 可以通过插件被加载。
+        //注意：几乎所有的karma报告者都需要（通过NPM）额外的库去安装。
         reporters: ["progress", "coverage"],
-
-        /**
-         * 使用reporters为"coverage"时报告输出的类型和那目录
-         */
-        coverageReporter: {
-            type: "html",
-            dir: "karmaTest/coverage"
+        
+        // Webpack配置,在这是导入
+        webpack: webpackConfig,
+        
+        // Webpack中间件
+        webpackMiddleware: {
+          noInfo: true
         },
+        
+        // 测试覆盖率报告，使用reporters为"coverage"时报告输出的类型和那目录
+        // https://github.com/karma-runner/karma-coverage/blob/master/docs/configuration.md
+        coverageReporter: {
+          dir: './coverage',
+          reporters: [   //报告配置,在配置文件中包含下面的信息来激活覆盖率报告器.
+            { type: 'lcov', subdir: '.' },
+            { type: 'text-summary' }
+          ]
+        }
 
-        /**
-         * 服务端口号
-         */
+        //默认值为9876。设置将被web服务器监听的端口
         port: 9876,
 
-        /**
-         * 启用或禁用输出报告或者日志中的颜色
-         */
+        //默认为true。启用或禁用输出（报告和日志）的颜色
         colors: true,
 
         /**
@@ -123,31 +93,62 @@ karma init my.conf.js命令生成配置文件
          */
         logLevel: config.LOG_INFO,
 
-        /**
-         * 启用或禁用自动检测文件变化进行测试
-         */
+        //默认为true。启用或禁用监视文件，当这些文件被改变时，执行测试。
         autoWatch: true,
+        
+        //配置设置将告诉karma在发生更改之后，在再次发生更改之前，应该等待多久（毫秒）。
+        autoWatchBatchDelay: 250,
 
 
-        /**
-         * 测试启动的浏览器
-         * 可用的浏览器：https://npmjs.org/browse/keyword/karma-launcher
-         */
+        //该值是要启动和捕获的浏览器列表。当Karma启动时，它也会启动放置在这个设置中的每个浏览器。一旦Karma关闭，它也会关闭这些浏览器。
+        //您可以通过打开浏览器并访问Karma Web服务器正在侦听的URL来手动捕获任何浏览器（默认情况下为http://localhost:9876/）。
+        //可能的值：
+       /* Chrome （发射器需要karma-chrome-launcher插件）
+        *ChromeCanary （发射器需要karma-chrome-launcher插件）
+        *PhantomJS （发射器需要karma-phantomjs-launcher插件）
+        *Firefox （发射器需要karma-firefox-launcher插件）
+        *Opera （发射器需要karma-opera-launcher插件）
+        *IE （发射器需要karma-ie-launcher插件）
+        *Safari （发射器需要karma-safari-launcher插件）
+        */
         browsers: ["Chrome"],
+        
+        //默认为2000。规定karma等待浏览重连的时间（毫秒）。
+        browserDisconnectTimeout: 2000,
+        
+        //默认为'0.0.0.0'或LISTEN_ADDR。服务器的地址将会被监听。更改为localhost仅仅会监听环路，或者更改为::，监听所有的IPv6接口。
+        listenAddress: '0.0.0.0',
+        
+        //默认为localhost。捕获浏览器时使用的主机名。
+        hostname: localhost,
+        
+        //默认为"60000"。捕获浏览器的超时时长（ms）。该值代表着浏览器启动并连接到karma的最大启动时长。
+        //如果浏览器不能在规定时长内被捕获到，karma将会结束该任务，并尝试重新启动它，如此三次之后，karma将会放弃捕获。
+        captureTimeout: 60000,
+        
+        //路径代理对的映射。默认{}
+        //代理可以直接由目标url或路径指定，也可以通过对象配置更多选项{target: 必填, changeOrigin： 默认false,代理是否应使用来自目标的主机覆盖主机头}
+        proxies: {
+        '/img/': '/base/test/images/',
+        '/proxyfied': {
+          'target': 'http://myserver.localhost',
+          'changeOrigin': true
+        }
+        },
 
-
-        /**
-         * 开启或禁用持续集成模式
-         * 设置为true, Karma将打开浏览器，执行测试并最后退出
-         */
+        //默认为false。持续集成模式。如果该值为true，karma将会启动和捕获配置的浏览器，运行测试然后退出，退出使用的代码0或1取决于测试是成功还是失败。
         singleRun: true,
 
-        /**
-         * 并发级别（启动的浏览器数）
-         */
-        concurrency: Infinity
+        //默认为"Infinity"。karma并行启动多少个浏览器
+        concurrency: Infinity,
         
-优点：1. cli（command-line interface，命令行界面） 运行，webstorm下配合完美 
+        //加载插件的列表。一个插件可以是一个字符串（这种情况下，它将会被karma引用）或者一个内联插件对象。默认情况下，karma会加载以karma-*开头命名的所有兄弟NPM 模块。
+        //注意：几乎所有的karma插件都需要(通过NPM)一个额外的库来安装。
+        plugins: [
+         karma-mocha,...
+        ]
+        
+优点： 1. cli（command-line interface，命令行界面） 运行，webstorm下配合完美 
       2. 良好支持 mocha、jasmine 等测试框架 
       3. 支持多浏览器的测试 
       4. 生态好，插件多 
