@@ -7,6 +7,18 @@ http://www.shenyanchao.cn/blog/2013/03/27/use-karma-to-run-mocha-test/
 http://www.51testing.com/html/70/n-3720170.html
 https://github.com/nupthale/jasmine_karma_travis
 
+
+https://segmentfault.com/a/1190000004558796
+http://www.cnblogs.com/junhua/p/7809732.html
+http://www.mincoder.com/article/2502.shtml
+http://www.shenyanchao.cn/blog/2013/03/27/use-karma-to-run-mocha-test/
+https://github.com/tmallfe/tmallfe.github.io/issues/37
+
+https://mochajs.org/#arrow-functions
+
+markdown : https://www.jianshu.com/p/82e730892d42
+js框架  http://www.cnblogs.com/mbailing/articles/Js.html
+
 1.单测框架（即 mocha）Mocha的作用是运行测试脚本
  测试脚本里面应该包括一个或多个describe块，每个describe块应该包括一个或多个it块。
 describe块称为“测试套件”（test suite），表示一组相关的测试。它是一个函数，第一个参数是测试套件的名称（“加法函数的测试”），第二个参数是一个实际执行的函数。
@@ -68,6 +80,13 @@ karma init my.conf.js命令生成配置文件，安装完成后会生成my.conf.
         
         // 测试覆盖率报告，使用reporters为"coverage"时报告输出的类型和那目录
         // https://github.com/karma-runner/karma-coverage/blob/master/docs/configuration.md
+        //可能的值：
+        //html （默认）
+        //lcov （lcov和html）
+        // lcovonly
+        //text
+       // text-summary
+        //cobertura （Jenkins支持的xml格式）
         coverageReporter: {
           dir: './coverage',
           reporters: [   //报告配置,在配置文件中包含下面的信息来激活覆盖率报告器.
@@ -206,8 +225,25 @@ string(string) 断言目标字符串包含另一个字符串
 
   “测试覆盖是一种学习手段”。学习什么呢？学习为什么有些代码没有被覆盖到，以及为什么有些代码变了测试却没有失败。理解“为什么”背后的原因，
   程序员就可以做相应的改善和提高，相比凭空想象单元测试的有效性和代码的好坏，这会更加有效。
+  
+6.
+coverage输出结果
+  statements：可执行语句执行情况
+  branches：分支执行情况，比如if就会产生两个分支，我们只运行了其中的一个
+  Functions：函数执行情况
+  Lines：行执行情况
 
-6.bug
+karma依赖的插件
+  karma：框架本体
+  karma-mocha：Mocha测试框架
+  karma-coverage：覆盖率测试
+  karma-spec-reporter：测试结果输出
+  karma-phantomjs-launcher：PhantomJS环境
+  phantomjs-prebuilt: PhantomJS最新版本
+  karma-chrome-launcher：Chrome环境
+  karma-firefox-launcher：Firefox环境
+
+7.bug
 （1）WARN [plugin]: Error during loading "karma-phantomjs-launcher" plugin:
   Path must be a string. Received null
   --------插件安装在--save-dev中，不要重复 （无界面的浏览器） 
@@ -221,6 +257,10 @@ string(string) 断言目标字符串包含另一个字符串
  (4)coverage遍历的文件夹不清楚怎么写？
  
 （5)若executed 执行全部成功将不会报错npm的错，且process code 0,否则process code 1
+
+(6)在files添加coverage的路径有错误   ?
+FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
+-------尝试function在外面导入--不行
  
 
  
@@ -228,9 +268,7 @@ string(string) 断言目标字符串包含另一个字符串
   
   
   
- 
-  
-  const webpackConfig = require('./webpack.config.js');
+ const webpackConfig = require('./webpack.config.js');
 
 module.exports = function (config)
 {
@@ -238,27 +276,43 @@ module.exports = function (config)
                    basePath  : '../',
                    frameworks: ['mocha'],
         
-                   reporters: ['dots', 'junit'],
+                   reporters: ['dots', 'junit', 'coverage'],
         
                    junitReporter: {
+                       //outputDir: 'junit-report/',
                        outputFile: 'test-results.xml'
                    },
-    
+        
+                   coverageReporter: {
+                       //type: 'cobertura',
+                       dir : 'coverage/',
+                       reporters: [
+                       {
+                           type: 'text-summary'
+                       }, {
+                           type: 'cobertura'
+                       }]
+                   },
+        
+                   exclude            : ['karma.conf.js'],
                    port               : 9876,
                    colors             : true,
                    logLevel           : config.LOG_DEBUG,
                    autoWatch          : true,
                    browsers           : ['Chrome'],
-                   singleRun          : true,
+                   singleRun          : false,
                    autoWatchBatchDelay: 3000,
         
                    files: [
-                       './test/**/*Spec.js'
+                       './test/**/*Spec.js',
+                       './app/**/**/*.js'
                    ],
         
                    loader: 'babel-loader',
         
                    preprocessors: {
+                       './app/**/**/*.js': ['coverage'],
+                       './app/**/*.js': ['coverage'],
                        './test/**/*Spec.js': ['webpack']
                    },
         
@@ -268,20 +322,79 @@ module.exports = function (config)
                        noInfo: true
                    },
         
-                   captureTimeout: 60000,
+                   captureTimeout: 20000,
         
                    plugins: [
                        'karma-mocha',
                        'karma-chrome-launcher',
                        'karma-junit-reporter',
+                       'karma-coverage',
                        'karma-webpack'
                    ]
                });
 };
+  
+
+file--coverage:
+
+01 03 2018 18:17:24.025:DEBUG [preprocessor.coverage]: Processing "/Users/fengxiaolan/Eugene/xcederWeb/app/views/zxcvbnLoader.js".
+Failed to parse file: /Users/fengxiaolan/Eugene/xcederWeb/app/views/zxcvbnLoader.js
+01 03 2018 18:17:24.025:ERROR [preprocessor.coverage]: Line 1: Unexpected token
+  at /Users/fengxiaolan/Eugene/xcederWeb/app/views/zxcvbnLoader.js
+01 03 2018 18:17:24.025:DEBUG [preprocessor.coverage]: Processing "/Users/fengxiaolan/Eugene/xcederWeb/app/xcederResult.js".
+Failed to parse file: /Users/fengxiaolan/Eugene/xcederWeb/app/xcederResult.js
+01 03 2018 18:17:24.025:ERROR [preprocessor.coverage]: Line 1: Unexpected token
+
+
+'./app/**/**/*.js': ['webpack','coverage']出错：
+
+<--- Last few GCs --->
+
+FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
+  117414 ms: Mark-sweep 1077.1 (1434.1) -> 1076.9 (1434.1) MB, 672.5 / 0.0 ms [allocation failure] [GC in old space requested].
+ 1: node::Abort() [/usr/local/bin/node]
+  118066 ms: Mark-sweep 1076.9 (1434.1) -> 1076.9 (1434.1) MB, 651.8 / 0.0 ms [allocation failure] [GC in old space requested].
+ 2: node::FatalException(v8::Isolate*, v8::Local<v8::Value>, v8::Local<v8::Message>) [/usr/local/bin/node]
+  118729 ms: Mark-sweep 1076.9 (1434.1) -> 1090.7 (1403.1) MB, 662.4 / 0.0 ms [last resort gc].
+ 3: v8::internal::V8::FatalProcessOutOfMemory(char const*, bool) [/usr/local/bin/node]
+  119395 ms: Mark-sweep 1090.7 (1403.1) -> 1104.8 (1403.1) MB, 665.8 / 0.0 ms [last resort gc].
+ 4: v8::internal::Factory::NewTransitionArray(int) [/usr/local/bin/node]
+
+
+<--- JS stacktrace --->
+
+ 5: v8::internal::TransitionArray::Insert(v8::internal::Handle<v8::internal::Map>, v8::internal::Handle<v8::internal::Name>, v8::internal::Handle<v8::internal::Map>, v8::internal::SimpleTransitionFlag) [/usr/local/bin/node]
+==== JS stack trace =========================================
+
+Security context: 0x25707cecfb51 <JS Object>
+ 6: v8::internal::Map::CopyReplaceDescriptors(v8::internal::Handle<v8::internal::Map>, v8::internal::Handle<v8::internal::DescriptorArray>, v8::internal::Handle<v8::internal::LayoutDescriptor>, v8::internal::TransitionFlag, v8::internal::MaybeHandle<v8::internal::Name>, char const*, v8::internal::SimpleTransitionFlag) [/usr/local/bin/node]
+    1: node [/Users/fengxiaolan/Eugene/xcederWeb/node_modules/webpack/node_modules/webpack-sources/lib/OriginalSource.js:~51] [pc=0x30e949166812] (this=0x1fe5021a27b9 <a Source with map 0x3dcf9d2bbc61>,options=0x23875c7b0181 <an Object with map 0x2e80fcd1d171>)
+ 7: v8::internal::Map::CopyAddDescriptor(v8::internal::Handle<v8::internal::Map>, v8::internal::Descriptor*, v8::internal::TransitionFlag) [/usr/local/bin/node]
+    2: node [/Users/fengxiaolan/Eugene/xcederWeb/node_modules/webpack/node_modules/webpack-sources/lib/ReplaceSource.js:~73] [pc=0x30e9...
+
+ 8: v8::internal::Map::CopyWithField(v8::internal::Handle<v8::internal::Map>, v8::internal::Handle<v8::internal::Name>, v8::internal::Handle<v8::internal::FieldType>, v8::internal::PropertyAttributes, v8::internal::Representation, v8::internal::TransitionFlag) [/usr/local/bin/node]
+ 9: v8::internal::Map::TransitionToDataProperty(v8::internal::Handle<v8::internal::Map>, v8::internal::Handle<v8::internal::Name>, v8::internal::Handle<v8::internal::Object>, v8::internal::PropertyAttributes, v8::internal::Object::StoreFromKeyed) [/usr/local/bin/node]
+10: v8::internal::LookupIterator::PrepareTransitionToDataProperty(v8::internal::Handle<v8::internal::JSObject>, v8::internal::Handle<v8::internal::Object>, v8::internal::PropertyAttributes, v8::internal::Object::StoreFromKeyed) [/usr/local/bin/node]
+11: v8::internal::Object::AddDataProperty(v8::internal::LookupIterator*, v8::internal::Handle<v8::internal::Object>, v8::internal::PropertyAttributes, v8::internal::Object::ShouldThrow, v8::internal::Object::StoreFromKeyed) [/usr/local/bin/node]
+12: v8::internal::Runtime::SetObjectProperty(v8::internal::Isolate*, v8::internal::Handle<v8::internal::Object>, v8::internal::Handle<v8::internal::Object>, v8::internal::Handle<v8::internal::Object>, v8::internal::LanguageMode) [/usr/local/bin/node]
+13: v8::internal::Runtime_SetProperty(int, v8::internal::Object**, v8::internal::Isolate*) [/usr/local/bin/node]
+14: 0x30e9445092a7
+15: 0x30e949166812
+
+Process finished with exit code 134 (interrupted by signal 6: SIGABRT)
 
 
 
 
+
+
+
+
+
+
+
+coverage预处理和files对应
+Uncaught SyntaxError: Unexpected number
 
 
 
