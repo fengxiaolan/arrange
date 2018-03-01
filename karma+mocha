@@ -62,7 +62,8 @@ karma init my.conf.js命令生成配置文件，安装完成后会生成my.conf.
         //默认为{'**/*.coffee': 'coffee'}。要是用的预处理器的映射。预处理器可以通过插件加载。
        //注意：几乎所有的karma的预处理器（除了CoffeeScript和一些其他默认的预处理器）都需要（通过NPM）额外的库去安装。
         preprocessors: {
-            "karmaTest/test.js" : "coverage"
+            "karmaTest/test.js" : "coverage",
+            '**/*Spec.js' : ['webpack'] //告诉karma需要Webpack打包的文件所在位置，
         },
 
         //默认为 ['progress']。 可能的值：dots, progress。
@@ -263,10 +264,45 @@ FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memo
 -------尝试function在外面导入--不行
  
 
- 
+相关知识的总结：
+前端让集成ci跑起来 http://annn.me/frontend-ci-cd/
+karma和Jenkins进行持续集成单元测试 http://powertech.iteye.com/blog/2051387
+Karma与Jenkins-CI集成 http://www.shenyanchao.cn/blog/2013/04/01/run-karma-in-jenkins-ci/
+使用Karma来驱动mocha测试 http://www.shenyanchao.cn/blog/2013/03/27/use-karma-to-run-mocha-test/
+前端自动化单元测试以及coverage可能出现的错误 http://www.51testing.com/html/70/n-3720170.html
+前端自动化测试Jasmine+Karma+TravisCI实践 https://github.com/nupthale/jasmine_karma_travis
+聊一聊前端自动化测试 https://segmentfault.com/a/1190000004558796
 
+###配置Karma.conf.js文件###
+   必须保证：
+   singleRun = true;
+   只有这样，才能保证运行Test后，浏览器自动退出，不影响下次执行。
+   在Jenkins中，也许你想查看测试结果，这个时候可以借助junit reporter。
+   reporters = ['junit'];
+   junitReporter = {
+         outputFile: 'test-results.xml'
+   };
+   
+  reporters = ['coverage'];
+
+代码覆盖率：
+preprocessors = {
+    'src/*.js': 'coverage'
+};
+coverageReporter = {
+    type : 'cobertura',
+    dir : 'coverage/'
+};
+这里，reporters指出了要生成coverage报告。preprocessors指明了要统计覆盖率的源码。coverageReporter里，
+指明type为cobertura，dir则是报告路径。type用多种选择，其中cobertura为Jenkins专属的。
   
-  
+本地开发时，需要将singleRun=false,也就是说执行完测试之后不退出。只有在CI环境下才用true。
+新版的Karma几乎所有的工具都需要插件支持
+
+会发现代码覆盖率无法正常检测了。即使你注释掉某个函数的测试用例，代码覆盖率仍旧是100%。这就是前文提到的，
+如果使用karma-coverage检测Webpack打包后的代码，就会出现这种情况。所以这里我们需要使用其它办法来检测代码覆盖率。
+
+
   
  const webpackConfig = require('./webpack.config.js');
 
