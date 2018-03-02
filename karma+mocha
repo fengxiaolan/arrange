@@ -19,19 +19,7 @@ https://mochajs.org/#arrow-functions
 markdown : https://www.jianshu.com/p/82e730892d42
 js框架  http://www.cnblogs.com/mbailing/articles/Js.html
 
-1.单测框架（即 mocha）Mocha的作用是运行测试脚本
- 测试脚本里面应该包括一个或多个describe块，每个describe块应该包括一个或多个it块。
-describe块称为“测试套件”（test suite），表示一组相关的测试。它是一个函数，第一个参数是测试套件的名称（“加法函数的测试”），第二个参数是一个实际执行的函数。
-it块称为“测试用例”（test case），表示一个单独的测试，是测试的最小单位。它也是一个函数，第一个参数是测试用例的名称（“1 加 1 应该等于 2”），第二个参数是一个实际执行的函数。
-断言库有很多种，mocha 并不限制使用哪一种。上面代码引入的断言库是 chai，并且指定使用它的assert断言风格。因为这更接近其它语言的风格。
-所谓"断言"，就是判断源码的实际执行结果与预期结果是否一致，如果不一致就抛出一个错误
-expect断言风格 var expect = require('chai').expect;
-             expect(4 + 5).to.be.equal(9); 其中equal是expect的方法
-             如果expect断言不成立，就会抛出一个错误。事实上，只要不抛出错误，测试用例就算通过。
-
-可以集成到webstorm里单测可用在run-->edit config-->mocha-(写上文件目录*.test.js 或者*.spec.js)
-
-2.Karma 不是一个测试框架，也不是一个断言库，仅仅启动一个 http server，并通过你熟知的测试框架生成运行测试的HTML。
+1.Karma 不是一个测试框架，也不是一个断言库，仅仅启动一个 http server，并通过你熟知的测试框架生成运行测试的HTML。
 karma init my.conf.js命令生成配置文件，安装完成后会生成my.conf.js，改js为karma的配置项
     
     参考：http://blog.csdn.net/maomaolaoshi/article/details/78542837
@@ -44,13 +32,15 @@ karma init my.conf.js命令生成配置文件，安装完成后会生成my.conf.
         frameworks: ["jasmine"],
 
         //默认为[]。在浏览器中加载的文件/模式列表。查看更多关于https://karma-runner.github.io/latest/config/files.html的信息
-        
+        // **/*.js：所有子目录中所有带有“js”扩展名的文件
+        // **/!(jquery).js：与之前相同，但排除“jquery.js”
+        // **/(foo|bar).js：在所有子目录中，包含所有“foo.js”或“bar.js”文件
         files: [
             "karmaTest/*.js"，
             {
                 pattern: 'src/**/*.js',
                 // false 表示初始化的时候不会使用 script 标签直接将相关 js 引入到浏览器，需要自己写代码加载
-                included: false
+                included: false  //默认。 true。应该使用<script>标签将文件包含在浏览器中 ？false如果您想手动加载它们，请使用，例如。使用Require.js。
             },
         ],
 
@@ -174,30 +164,44 @@ karma init my.conf.js命令生成配置文件，安装完成后会生成my.conf.
       4. 生态好，插件多 
       5. 集成监控解放双手，文件变化时自动启测，类似gulp的watch功能
     
-3.命令行指定测试脚本时，可以使用通配符，同时指定多个文件。
+2.命令行指定测试脚本时，可以使用通配符，同时指定多个文件。
 shell通配符表示： $ mocha test/{,**/}*.{js,jsx}
-node通配符表示： $ mocha 'test/**/*.@(js|jsx)'
+node通配符表示： $ mocha 'test/**/*.@(js|jsx)'  
+// test目录下面任何子目录中、文件后缀名为js或jsx的测试脚本。注意，Node的通配符要放在单引号之中，否则星号（*）会先被Shell解释。
 
 Chai是一个单元测试的验证框架，它有3种不同形式的校验：expect、should和assert。expect和should的方式让写出来的测试代码更像自然语言，让业务人员也可以看懂，
 而assert方式是传统单元测试断言的方式，如果以前习惯写Java的单元测试会对这种方式比较熟悉。
 
-4。react单元测试常常与webpack工具结合
+3。react单元测试常常与webpack工具结合
 
-5.测试之chai.js断言库
+
+4.单测框架（即 mocha）Mocha的作用是运行测试脚本
+ 测试脚本里面应该包括一个或多个describe块，每个describe块应该包括一个或多个it块。
+describe块称为“测试套件”（test suite），表示一组相关的测试。它是一个函数，第一个参数是测试套件的名称（“加法函数的测试”），第二个参数是一个实际执行的函数。
+it块称为“测试用例”（test case），表示一个单独的测试，是测试的最小单位。它也是一个函数，第一个参数是测试用例的名称（“1 加 1 应该等于 2”），第二个参数是一个实际执行的函数。所有的测试用例（it块）都应该含有一句或多句的断言
+断言库有很多种，mocha 并不限制使用哪一种。
+所谓"断言"，就是判断源码的实际执行结果与预期结果是否一致，如果不一致就抛出一个错误
+expect断言风格 var expect = require('chai').expect;
+             expect(4 + 5).to.be.equal(9); 其中equal是expect的方法 ,使用它的expect断言风格。expect断言的优点是很接近自然语言
+             如果expect断言不成立，就会抛出一个错误。事实上，只要不抛出错误，测试用例就算通过。
+
+可以集成到webstorm里单测可用在run-->edit config-->mocha-(写上文件目录*.test.js 或者*.spec.js)
+
+测试之chai.js断言库里的expect
 chai.js 是一套TDD(测试驱动开发---注重输出结果)/BDD(行为驱动开发--注重测试逻辑)的断言库
 语言链修饰符：to
-be
-been
-is
-that
-which
-and
-has
-have
-with
-at
-of
-same
+            be
+            been
+            is
+            that
+            which
+            and
+            has
+            have
+            with
+            at
+            of
+            same
 
 具体api说明：
 any/all
@@ -272,6 +276,7 @@ Karma与Jenkins-CI集成 http://www.shenyanchao.cn/blog/2013/04/01/run-karma-in-
 前端自动化单元测试以及coverage可能出现的错误 http://www.51testing.com/html/70/n-3720170.html
 前端自动化测试Jasmine+Karma+TravisCI实践 https://github.com/nupthale/jasmine_karma_travis
 聊一聊前端自动化测试 https://segmentfault.com/a/1190000004558796
+karma文档 http://karma-runner.github.io/0.12/config/files.html
 
 ###配置Karma.conf.js文件###
    必须保证：
@@ -426,11 +431,24 @@ Process finished with exit code 134 (interrupted by signal 6: SIGABRT)
 
 
 
-
-
-
 coverage预处理和files对应
 Uncaught SyntaxError: Unexpected number
 
 
+
+
+Chrome 63.0.3239 (Mac OS X 10.12.5) plus test 1 + 1 = 1 FAILED
+	AssertionError: expected 3 to equal 2
+	    at Context.<anonymous> (test/testing/addSpec.js:11020:144)
+.
+Chrome 63.0.3239 (Mac OS X 10.12.5): Executed 2 of 2 (1 FAILED) (0.005 secs / 0.003 secs)
+
+=============================== Coverage summary ===============================
+Statements   : 100% ( 0/0 )
+Branches     : 100% ( 0/0 )
+Functions    : 100% ( 0/0 )
+Lines        : 100% ( 0/0 )
+================================================================================
+02 03 2018 09:41:20.970:DEBUG [coverage]: Writing coverage to /Users/fengxiaolan/Eugene/xcederWeb/coverage/Chrome 63.0.3239 (Mac OS X 10.12.5)
+02 03 2018 09:41:20.973:DEBUG [reporter.junit]: JUnit results written to "/Users/fengxiaolan/Eugene/xcederWeb/Chrome_63.0.3239_(Mac_OS_X_10.12.5)/test-results.xml".
 
