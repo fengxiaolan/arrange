@@ -540,3 +540,329 @@ class TextInput extends PureComponent {
 };
 
 export default withFormsy(TextInput);
+
+
+
+
+
+
+
+
+内部获取错误  passwordInput 
+
+
+import React, {PureComponent} from 'react';
+import PropTypes from 'prop-types';
+
+import {getTranslateRecords} from '../../services/translator';
+import LinearProgress from 'material-ui/LinearProgress';
+
+import {withFormsy} from 'formsy-react';
+import TextField from 'material-ui/TextField';
+
+import {
+    GREEN_A400,
+    GREEN_A700,
+    WHITE,
+    RED_A100,
+    RED_A200,
+    RED_A700,
+    GREY_189
+} from '../../colors';
+import debounce from 'lodash/debounce';
+import zxcvbn from 'zxcvbn'
+import {FONT_NORMAL} from "../../font";
+import validationRules from 'formsy-react/lib/validationRules';
+
+const FormsyText = withFormsy(TextField);
+
+const strengthLevels = {
+    0: 'PWD_EASIEST',
+    1: 'PWD_EASIER',
+    2: 'PWD_EASY',
+    3: 'PWD_SAFE',
+    4: 'PWD_SAFEST'
+};
+
+function getPasswordMessage(translates, msg)
+{
+    let result;
+    
+    switch (msg)
+    {
+        case 'Use a few words, avoid common phrases':
+            result = translates.PWD_AVOID_COMMON_PHASE;
+            break;
+        case 'No need for symbols, digits, or uppercase letters':
+            result = translates.PWD_NO_NEED;
+            break;
+        case 'Add another word or two. Uncommon words are better.':
+            result = translates.PWD_MORE_WORDS;
+            break;
+        case 'Straight rows of keys are easy to guess':
+            result = translates.PWD_STRAIGHT;
+            break;
+        case 'Short keyboard patterns are easy to guess':
+            result = translates.PWD_SHORT_PATTERN;
+            break;
+        case 'Use a longer keyboard pattern with more turns':
+            result = translates.PWD_LONG_PATTERN;
+            break;
+        case 'Repeats like "aaa" are easy to guess':
+            result = translates.PWD_REPEATS_WARN;
+            break;
+        case 'Repeats like "abcabcabc" are only slightly harder to guess than "abc"':
+            result = translates.PWD_REPEATS_PROMPT;
+            break;
+        case 'Avoid repeated words and characters':
+            result = translates.PWD_AVOID_REPEAT;
+            break;
+        case 'Sequences like abc or 6543 are easy to guess':
+            result = translates.PWD_SEQUENCES_WARN;
+            break;
+        case 'Avoid sequences':
+            result = translates.PWD_AVOID_SEQUENCES;
+            break;
+        case 'Recent years are easy to guess':
+            result = translates.PWD_RECENT_YEAR;
+            break;
+        case 'Avoid recent years':
+            result = translates.PWD_AVOID_RECENT_YEAR;
+            break;
+        case 'Avoid years that are associated with you':
+            result = translates.PWD_AVOID_YEAR;
+            break;
+        case 'Dates are often easy to guess':
+            result = translates.PWD_DATES;
+            break;
+        case 'Avoid dates and years that are associated with you':
+            result = translates.PWD_AVOID_DATES;
+            break;
+        case 'This is a top-10 common password':
+            result = translates.PWD_TOP_10;
+            break;
+        case 'This is a top-100 common password':
+            result = translates.PWD_TOP_100;
+            break;
+        case 'This is a very common password':
+            result = translates.PWD_COMMON;
+            break;
+        case 'This is similar to a commonly used password':
+            result = translates.PWD_SIMILAR;
+            break;
+        case 'A word by itself is easy to guess':
+            result = translates.PWD_WORD;
+            break;
+        case 'Names and surnames by themselves are easy to guess':
+            result = translates.PWD_NAMES;
+            break;
+        case 'Common names and surnames are easy to guess':
+            result = translates.PWD_COMMON_NAME;
+            break;
+        case 'Capitalization doesn\'t help very much':
+            result = translates.PWD_CAPITALIZATION;
+            break;
+        case 'All-uppercase is almost as easy to guess as all-lowercase':
+            result = translates.PWD_UPPERCASE;
+            break;
+        case 'Reversed words aren\'t much harder to guess':
+            result = translates.PWD_REVERSE;
+            break;
+        case 'Predictable substitutions like \'@\' instead of \'a\' don\'t help very much':
+            result = translates.PWD_SUBSTITUTION;
+            break;
+        
+        default:
+            result = msg;
+    }
+    
+    return result;
+}
+
+function getPasswordStrengthColor(score)
+{
+    const colors = {
+        1: RED_A700,
+        2: RED_A200,
+        3: RED_A100,
+        4: GREEN_A400,
+        5: GREEN_A700
+    };
+    
+    return colors[score];
+}
+
+export default class PasswordInput extends PureComponent {
+    static contextTypes = {
+        muiTheme: PropTypes.object.isRequired
+    };
+    
+    static propTypes = {
+        className      : PropTypes.string,
+        strengthCheck  : PropTypes.bool,
+        password       : PropTypes.string,
+        name           : PropTypes.string,
+        disabled       : PropTypes.bool,
+        hintText       : PropTypes.string,
+        style          : PropTypes.object,
+        inputStyle     : PropTypes.object,
+        hintStyle      : PropTypes.object,
+        value          : PropTypes.any,
+        getErrorMessage: PropTypes.func,
+        setValue       : PropTypes.string,
+        getValue       : PropTypes.string
+    };
+    
+    state = {suggestions: [], password: null, focus: false};
+    
+    onPWDChange = (event) =>
+    {
+        const translates = getTranslateRecords(),
+            value = event.target.value;
+        
+        if (zxcvbn && value)
+        {
+            const result = zxcvbn(value),
+                suggestions = result.feedback.suggestions.map(suggestion => getPasswordMessage(translates, suggestion));
+            
+            if (result.feedback.warning)
+                suggestions.unshift(getPasswordMessage(translates, result.feedback.warning));
+            
+            this.setState({
+                              strength: result.score + 1,
+                              password: value,
+                              suggestions
+                          });
+        }
+        else
+        {
+            this.setState({
+                              strength   : 0,
+                              password   : value,
+                              suggestions: []
+                          });
+        }
+        
+        //this.props.setValue(event.currentTarget.value);
+    };
+    
+    onFocus = (event) =>
+    {
+        
+        const {password} = this.props;
+        
+        if (event.target.value === password)
+        {
+            this.setState({typing: true});
+        }
+        
+        this.setState({focus: true});
+    };
+    
+    debounceOnBlur = debounce(() =>
+                              {
+        
+                                  if (!this.state.password)
+                                  {
+                                      this.setState({typing: false})
+                                  }
+        
+                                  this.setState({focus: false});
+        
+                              }, 300);
+    
+    isSafePassword = () =>
+    {
+        return this.state.strength >= 4;
+    };
+    
+    reset()
+    {
+        this.setState({
+                          strength   : 0,
+                          password   : null,
+                          suggestions: []
+                      })
+    }
+    
+    onKeyDown = (keyEvent) =>
+    {
+        const {keyCode} = keyEvent;
+        
+        if (keyCode === 13)
+        {
+            if (keyEvent.target.value !== '')
+                this.setState({focus: false});
+        }
+    };
+    
+    render()
+    {
+        
+        const {
+                strengthCheck, name, disabled, hintText, style,
+                className, value,
+                
+                inputStyle = {fontSize: 14, color: WHITE},
+                
+                hintStyle = {fontSize: 14, color: GREY_189, fontWeight: FONT_NORMAL},
+            
+                validations,
+                validationError
+                
+            } = this.props,
+            
+            color = this.context.muiTheme.textField.hintColor,
+            translates = getTranslateRecords(),
+            
+            pwdVal = this.state.password !== null ? this.state.password : value,
+            
+            suggestionStyle = strengthCheck && (this.state.typing || (pwdVal && !this.isSafePassword())) ? {} :
+                              {display: 'none'},
+            strengthColor = getPasswordStrengthColor(this.state.strength),
+            
+            //errorText = this.props.getErrorMessage()
+            errorText = this.pwdInput ? this.pwdInput.getErrorMessage() : ""
+            
+        ;
+        
+        return <div className={className} style={{position: 'relative'}}>
+            <FormsyText fullWidth={true}
+                       name={name}
+                       ref={ref => this.pwdInput = ref}
+                       type="password"
+                       required
+                       value={pwdVal}
+                       hintText={hintText}
+                       hintStyle={hintStyle}
+                       disabled={disabled}
+                       errorText={errorText}
+                       inputStyle={inputStyle}
+                       style={style}
+                       onChange={this.onPWDChange}
+                       onKeyDown={this.onKeyDown}
+                       validations={validations}
+                       //validationError={validationError}
+            />
+            
+            <div style={{color, ...suggestionStyle}}>
+                <p><span>{translates.PWD_STRENGTH}</span>:<span
+                    style={{color: strengthColor}}>{translates[strengthLevels[this.state.strength - 1]]}</span>
+                </p>
+                
+                <LinearProgress mode="determinate"
+                                max={5}
+                                color={strengthColor}
+                                value={this.state.strength}/>
+                
+                {this.state.suggestions.map((suggestion, index) =>
+                                            {
+                                                return <div key={index}>{suggestion}</div>;
+                                            })}
+            
+            </div>
+        </div>
+    }
+}
+
+//export default withFormsy(PasswordInput);
