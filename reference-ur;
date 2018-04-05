@@ -1,0 +1,28 @@
+web开发所用的资料平台：
+官方文档 github
+
+web前端主流框架：
+react vue angular
+
+web前端ui框架
+layui遵循原生js
+https://github.com/fengxiaolan/layui
+easyui
+antd
+bootstrap
+material ui
+
+web前端请求
+axios
+https://github.com/fengxiaolan/axios
+
+rxJS提供强大的功能性方法来处理事件:
+https://rxjs-cn.github.io/learn-rxjs-operators/
+
+formsy-react是react验证表单：
+https://github.com/fengxiaolan/formsy-react
+
+socket.io nodeJS server参考：
+https://github.com/fengxiaolan/socket.io
+
+
