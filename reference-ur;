@@ -16,6 +16,11 @@ web前端请求
 axios
 https://github.com/fengxiaolan/axios
 
+有用的接口
+showApi
+
+
+
 rxJS提供强大的功能性方法来处理事件:
 https://rxjs-cn.github.io/learn-rxjs-operators/
 
@@ -26,3 +31,36 @@ socket.io nodeJS server参考：
 https://github.com/fengxiaolan/socket.io
 
 
+
+
+
+菜鸟教程http://www.runoob.com/
+w3c教程  http://www.w3cplus.com/
+css参考手册 http://css.doyoe.com/
+jquery中文文档http://jquery.cuishifeng.cn/
+web mdn文档 https://developer.mozilla.org/zh-CN/
+mongoose文档 http://mongoosejs.com/
+jquery插件 http://www.jq22.com/
+web 前端开发http://www.css88.com/
+一点gulp教程http://www.ydcss.com/
+bootstrap中文网http://www.bootcss.com/
+前端网页是否兼容http://caniuse.com/
+fis文档http://fis.baidu.com/fis3/docs/beginning/intro.html
+iscroll教程 https://www.gitbook.com/@iiunknown
+swiper使用 http://www.swiper.com.cn/
+mongoose文档 http://www.nodeclass.com/api/mongoose.html
+dcloud文档 http://ask.dcloud.net.cn/docs/
+           http://www.html5plus.org/doc/zh_cn/accelerometer.html
+微信公众平台https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
+vue文档https://cn.vuejs.org/
+react参考文档 http://shouce.jb51.net/react/
+              http://www.ruanyifeng.com/blog/2015/03/react.html
+js一知半解https://www.kancloud.cn/dennis/tgjavascript/241800
+
+张鑫旭  阮一峰(es6,router...)
+
+在线压缩图片https://tinypng.com/
+
+浅谈web缓存 http://www.alloyteam.com/2016/03/discussion-on-web-caching/
+layui--http://www.layui.com/
+闭包 http://www.jianshu.com/p/76ad6105bb8b
