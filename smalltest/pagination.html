@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pagination</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.2/pagination.css"/>
+    <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.2/pagination.min.js"></script>
+    <style>
+        #pagination{
+            background: #e3e3e3;
+            height: 40px;
+            line-height: 40px;
+            width: 990px;
+            margin-top: 20px;
+            text-align: right;
+        }
+        #pagination .active{
+            color: #c41929;
+            border: 1px solid transparent;
+            background: #e3e3e3;
+            font-size: 14px;
+            padding: 3px 4px;
+            margin-right: 10px;
+        }
+        #pagination a,#pagination span{
+            border: 1px solid #cdcdcd;
+            background: #fff;
+            font-size: 14px;
+            padding: 3px 4px;
+            color: #000;
+            margin-right: 10px;
+        }
+        #pagination a.jump-btn{
+            margin-right: 20px;
+            margin-left: 20px;
+        }
+        #pagination input{
+            height: 18px;
+            line-height:18px;
+            width: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="pagination"></div>
+</body>
+<script>
+    $(function(){
+        $('#pagination').pagination({
+            pageCount:40,
+            jump:true,
+            coping:false,
+            count:2,
+            prevContent:'<上一页',
+            nextContent:'下一页>',
+            jumpBtn:'确定'
+            //callback:
+        });
+    })
+
+
+</script>
+</html>

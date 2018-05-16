@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>datepicker</title>
+    <!--<script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>-->
+
+    <!--<link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.22.1/locale/af.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" />
+
+    <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+
+
+    <script src="https://cdn.bootcss.com/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdn.bootcss.com/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet">
+
+    <link href="https://cdn.bootcss.com/bootstrap-daterangepicker/3.0.1/daterangepicker.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/bootstrap-daterangepicker/3.0.1/daterangepicker.js"></script>
+</head>
+<body>
+    <div>
+      datepicker:<input class="form_datetime" type="text" readonly>
+      datetimepicker:<input id="datetimepicker1" class="form_datetime1" type="text" readonly>
+
+        <div class="controls">
+            <div id="reportrange" class="pull-left dateRange" style="width:350px">
+                <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                <span id="searchDateRange"></span>
+                <b class="caret"></b>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    $(document).ready(function() {
+        //datepicker
+        $.fn.datepicker.dates['cn'] = {   //切换为中文显示
+            days: ["周日", "周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+            daysShort: ["日", "一", "二", "三", "四", "五", "六", "七"],
+            daysMin: ["日", "一", "二", "三", "四", "五", "六", "七"],
+            months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            monthsShort: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            today: "今天",
+            clear: "清除"
+        };
+
+        $(".form_datetime").datepicker({
+            autoclose: true, //自动关闭
+            beforeShowDay: $.noop,    //在显示日期之前调用的函数
+            calendarWeeks: false,     //是否显示今年是第几周
+            clearBtn: false,          //显示清除按钮
+            daysOfWeekDisabled: [],   //星期几不可选
+            endDate: Infinity,        //日历结束日期
+            forceParse: true,         //是否强制转换不符合格式的字符串
+            format: 'yyyy-mm-dd',     //日期格式
+            keyboardNavigation: true, //是否显示箭头导航
+            language: 'cn',           //语言
+            minViewMode: 0,
+            orientation: "auto",      //方向
+            rtl: false,
+            startDate: -Infinity,     //日历开始日期
+            startView: 0,             //开始显示
+            todayBtn: false,          //今天按钮
+            todayHighlight: false,    //今天高亮
+            weekStart: 0              //星期几是开始
+        });
+
+        //datetimepicker
+        $("#datetimepicker1").datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-cn')
+        });
+
+        //daterangepicker
+        $('#reportrange span').html(moment().subtract('hours', 1).format('YYYY-MM-DD HH:mm:ss') + ' - ' + moment().format('YYYY-MM-DD HH:mm:ss'));
+        $('#reportrange').daterangepicker(
+            {
+                // startDate: moment().startOf('day'),
+                //endDate: moment(),
+                //minDate: '01/01/2012', //最小时间
+                maxDate : moment(), //最大时间
+                dateLimit : {
+                    days : 30
+                }, //起止时间的最大间隔
+                showDropdowns : true,
+                showWeekNumbers : false, //是否显示第几周
+                timePicker : true, //是否显示小时和分钟
+                timePickerIncrement : 60, //时间的增量，单位为分钟
+                timePicker12Hour : false, //是否使用12小时制来显示时间
+                ranges : {
+                    //'最近1小时': [moment().subtract('hours',1), moment()],
+                    '今日': [moment().startOf('day'), moment()],
+                    '昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
+                    '最近7日': [moment().subtract('days', 6), moment()],
+                    '最近30日': [moment().subtract('days', 29), moment()]
+                },
+                opens : 'right', //日期选择框的弹出位置
+                buttonClasses : [ 'btn btn-default' ],
+                applyClass : 'btn-small btn-primary blue',
+                cancelClass : 'btn-small',
+                format : 'YYYY-MM-DD HH:mm:ss', //控件中from和to 显示的日期格式
+                separator : ' to ',
+                locale : {
+                    applyLabel : '确定',
+                    cancelLabel : '取消',
+                    fromLabel : '起始时间',
+                    toLabel : '结束时间',
+                    customRangeLabel : '自定义',
+                    daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ],
+                    monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',
+                        '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+                    firstDay : 1
+                }
+            }, function(start, end, label) {//格式化日期显示框
+                $('#reportrange span').html(start.format('YYYY-MM-DD HH:mm:ss') + ' - ' + end.format('YYYY-MM-DD HH:mm:ss'));
+            });
+
+
+    })
+</script>
+</html>
