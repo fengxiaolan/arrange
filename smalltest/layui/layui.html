@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>layui示例</title>
+    <link rel="stylesheet" href="dist/css/layui.css" media="all">
+</head>
+<body>
+<div class="layui-inline">
+    <label class="layui-form-label">日期时间范围</label>
+    <div class="layui-input-inline">
+        <input type="text" class="layui-input" id="test10" placeholder=" - ">
+    </div>
+</div>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>半星效果</legend>
+</fieldset>
+<div id="test3"></div>
+
+
+</body>
+<script src="dist/layui.js"></script>
+<script>
+    layui.use('laydate', function() {
+        var laydate = layui.laydate;
+        //日期时间范围
+        laydate.render({
+            elem: '#test10'
+            , type: 'datetime'
+            , range: true
+        });
+
+    })
+
+    layui.use(['rate'], function() {
+        var rate = layui.rate;
+        //半星效果
+        rate.render({
+            elem: '#test3'
+            , value: 2.5 //初始值
+            , half: true //开启半星
+            ,text: true //开启文本
+        })
+
+    })
+
+</script>
+</html>

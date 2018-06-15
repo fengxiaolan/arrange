@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>video</title>
+    <script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+    <style>
+        .v1{
+            width: 300px; height: 300px; float: left; margin-right: 30px;
+        }
+
+        .v2{
+            width: 300px; height: 300px; float: left;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <video src="http://192.168.13.140:7000/videos/00a6efeddfc6bd61b308daa2b6297732.mp4"
+           id="video1" class="v1"
+           autoplay loop >
+        你的浏览器不支持！
+    </video>
+</div>
+
+<div>
+    <video id="video2" class="v2">
+        <source src="http://192.168.13.140:7000/videos/00a6efeddfc6bd61b308daa2b6297732.mp4" type="video/mp4">
+        你的浏览器不支持！
+    </video>
+</div>
+</body>
+<!--
+刷新方式不同，页面加载完后不会自动播放
+没法在页面加载完成的时候播放音频或视频。
+这是Chrome 66的新特性，不过chrome之前很多浏览器都这么做了
+-->
+
+<script>
+
+    //video1
+      $("#video1").mouseenter(function () {
+          $("#video1").get(0).pause();
+      })
+
+      $("#video1").mouseleave(function () {
+          $("#video1").get(0).play();
+      })
+
+
+
+
+    //video2
+      $("#video2").mouseenter(function () {
+          $("#video2").get(0).pause();
+      })
+
+      $("#video2").mouseleave(function () {
+          $("#video2").get(0).play();
+      })
+
+      $("#video2").on('ended', function(){
+          $("#video2").get(0).play();
+      })
+
+    //失败都不会自动播放
+      // $(document).ready(function(){
+      //    $("#video1").trigger('mouseenter')
+      // })
+</script>
+</html>

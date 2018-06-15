@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>slick-carousel</title>
+    <link href="https://cdn.bootcss.com/slick-carousel/1.9.0/slick.css" rel="stylesheet">
+    <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/slick-carousel/1.9.0/slick.js"></script>
+    <style>
+        .slick-center{
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+<div class="slick">
+    <div><a href="http://www.jq22.com"><img src="https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=254b5229c5177f3e0f34fa0d40ce3bb9/4afbfbedab64034f8c730299a3c379310b551df7.jpg" alt=""></a></div>
+    <div><a href="http://www.jq22.com"><img src="https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=254b5229c5177f3e0f34fa0d40ce3bb9/4afbfbedab64034f8c730299a3c379310b551df7.jpg" alt=""></a></div>
+    <div><a href="http://www.jq22.com"><img src="https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=254b5229c5177f3e0f34fa0d40ce3bb9/4afbfbedab64034f8c730299a3c379310b551df7.jpg" alt=""></a></div>
+    <div><a href="http://www.jq22.com"><img src="https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=254b5229c5177f3e0f34fa0d40ce3bb9/4afbfbedab64034f8c730299a3c379310b551df7.jpg" alt=""></a></div>
+    <div><a href="http://www.jq22.com"><img src="https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=254b5229c5177f3e0f34fa0d40ce3bb9/4afbfbedab64034f8c730299a3c379310b551df7.jpg" alt=""></a></div>
+    <div><a href="http://www.jq22.com"><img src="https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=254b5229c5177f3e0f34fa0d40ce3bb9/4afbfbedab64034f8c730299a3c379310b551df7.jpg" alt=""></a></div>
+</div>
+</body>
+
+<script>
+    $(function(){
+        $('.slick').slick({
+            //dots: true,
+            centerMode: true,
+            centerPadding: '60px',
+            slidesToShow: 3,
+            responsive: [
+                {
+                    breakpoint: 768,
+                    settings: {
+                        arrows: false,
+                        centerMode: true,
+                        centerPadding: '40px',
+                        slidesToShow: 3
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        arrows: false,
+                        centerMode: true,
+                        centerPadding: '40px',
+                        slidesToShow: 1
+                    }
+                }
+            ]
+        });
+    });
+</script>
+</html>
