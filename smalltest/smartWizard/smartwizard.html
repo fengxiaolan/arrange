@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>smartwizard</title>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="dist/js/jquery.smartWizard.js"></script>
+    <link href="dist/css/smart_wizard.css" rel="stylesheet"/>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+
+    </style>
+</head>
+<body>
+<div id="smartwizard">
+    <ul>
+        <li><a href="#step-1">Step Title<br /><small>Step description</small></a></li>
+        <li><a href="#step-2">Step Title<br /><small>Step description</small></a></li>
+        <li><a href="#step-3">Step Title<br /><small>Step description</small></a></li>
+        <li><a href="#step-4">Step Title<br /><small>Step description</small></a></li>
+    </ul>
+
+    <div>
+        <div id="step-1" class="">
+            Step Content
+        </div>
+        <div id="step-2" class="">
+            Step Content
+        </div>
+        <div id="step-3" class="">
+            Step Content
+        </div>
+        <div id="step-4" class="">
+            Step Content
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $(document).ready(function(){
+        $('#smartwizard').smartWizard();
+    });
+</script>
+</html>

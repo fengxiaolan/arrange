@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a8419627-3abf-4a9e-b7ca-5901abf4b4b8" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/smalltest/jquery-ui/drag.html" afterPath="$PROJECT_DIR$/smalltest/jquery-ui/drag.html" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/smalltest/smartWizard/smartwizard.html" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -16,11 +17,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="drag.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/smalltest/jquery-ui/drag.html">
+      <file leaf-file-name="smartwizard.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/smalltest/smartWizard/smartwizard.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="422">
-              <caret line="75" column="0" lean-forward="true" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+            <state relative-caret-position="68">
+              <caret line="4" column="30" lean-forward="true" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -32,10 +33,15 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="HTML File" />
         <option value="JavaScript File" />
+        <option value="HTML File" />
       </list>
     </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>showstepCallback</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -57,6 +63,8 @@
         <option value="$PROJECT_DIR$/smalltest/test.js" />
         <option value="$PROJECT_DIR$/smalltest/video.html" />
         <option value="$PROJECT_DIR$/smalltest/jquery-ui/drag.html" />
+        <option value="$PROJECT_DIR$/smalltest/smartwizard.html" />
+        <option value="$PROJECT_DIR$/smalltest/smartWizard/smartwizard.html" />
       </list>
     </option>
   </component>
@@ -67,8 +75,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="203" />
-    <option name="y" value="53" />
+    <option name="x" value="357" />
+    <option name="y" value="45" />
     <option name="width" value="921" />
     <option name="height" value="740" />
   </component>
@@ -100,6 +108,44 @@
               <item name="arrange" type="462c0819:PsiDirectoryNode" />
               <item name="smalltest" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="arrange" type="b2602c69:ProjectViewProjectNode" />
+              <item name="arrange" type="462c0819:PsiDirectoryNode" />
+              <item name="smalltest" type="462c0819:PsiDirectoryNode" />
+              <item name="smartWizard" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="arrange" type="b2602c69:ProjectViewProjectNode" />
+              <item name="arrange" type="462c0819:PsiDirectoryNode" />
+              <item name="smalltest" type="462c0819:PsiDirectoryNode" />
+              <item name="smartWizard" type="462c0819:PsiDirectoryNode" />
+              <item name="dist" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="arrange" type="b2602c69:ProjectViewProjectNode" />
+              <item name="arrange" type="462c0819:PsiDirectoryNode" />
+              <item name="smalltest" type="462c0819:PsiDirectoryNode" />
+              <item name="smartWizard" type="462c0819:PsiDirectoryNode" />
+              <item name="dist" type="462c0819:PsiDirectoryNode" />
+              <item name="css" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="arrange" type="b2602c69:ProjectViewProjectNode" />
+              <item name="arrange" type="462c0819:PsiDirectoryNode" />
+              <item name="smalltest" type="462c0819:PsiDirectoryNode" />
+              <item name="smartWizard" type="462c0819:PsiDirectoryNode" />
+              <item name="dist" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="arrange" type="b2602c69:ProjectViewProjectNode" />
+              <item name="arrange" type="462c0819:PsiDirectoryNode" />
+              <item name="smalltest" type="462c0819:PsiDirectoryNode" />
+              <item name="smartWizard" type="462c0819:PsiDirectoryNode" />
+              <item name="dist" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
+              <item name="jquery.smartWizard.js" type="620a8d5e:NestingTreeNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -117,6 +163,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Workspack\arrange\smalltest\smartWizard" />
       <recent name="E:\Workspack\arrange\smalltest\ueditor" />
     </key>
   </component>
@@ -148,18 +195,18 @@
       <workItem from="1528611420138" duration="1444000" />
       <workItem from="1528702900155" duration="3893000" />
       <workItem from="1528958049578" duration="5108000" />
-      <workItem from="1529026027995" duration="12706000" />
+      <workItem from="1529026027995" duration="14801000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23151000" />
+    <option name="totallyTimeSpent" value="25246000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16220239" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17857143" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -351,8 +398,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/smalltest/jquery-ui/drag.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="75" column="0" lean-forward="true" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+        <state relative-caret-position="102">
+          <caret line="6" column="2" lean-forward="false" selection-start-line="6" selection-start-column="2" selection-end-line="6" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/smalltest/smartWizard/smartwizard.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="30" lean-forward="true" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="30" />
           <folding />
         </state>
       </provider>
