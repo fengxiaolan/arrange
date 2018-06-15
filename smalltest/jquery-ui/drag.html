@@ -49,5 +49,30 @@
         //折叠
         $( "#accordion" ).accordion();
     });
+
+    //获取title的内容
+    console.log(document.getElementsByTagName("title")[0]) // <title>jquery-ui drag</title>
+    console.log(document.title)   // jquery-ui drag
+
+    //title闪烁
+    var flashStep=0;  //交替变量
+    var flashTitleRun = false; //是否正在执行
+    function flashTitle()
+    {
+        flashTitleRun = true;
+        flashStep++;
+        if (flashStep==3) {flashStep=1;}
+        if (flashStep==1) {document.title="【您有新的消息】";}
+        if (flashStep==2) {document.title="【　　　　　　】";}
+        setTimeout("flashTitle()",500);  //循环
+    }
+    //调用这个执行标题闪烁，而不是直接调用flashTitle，保证多次调用只会执行一次。
+    function doFlashTitle(){
+        if(!flashTitleRun)//没有执行时，才执行
+            flashTitle();
+    }
+
+    doFlashTitle()
+
 </script>
 </html>
