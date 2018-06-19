@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>aplayer</title>
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js"></script>
+</head>
+<body>
+<div id="player1" class="aplayer"></div>
+</body>
+<script>
+    var ap = new APlayer({
+        element: document.getElementById('player1'),
+        narrow: false,
+        autoplay: true,
+        showlrc: true,
+        lrcType: 3,
+        music: {
+            name: '光るなら',
+            artist: 'Goose house',
+            url: 'https://moeplayer.b0.upaiyun.com/aplayer/hikarunara.mp3',
+            cover: 'https://moeplayer.b0.upaiyun.com/aplayer/hikarunara.jpg',
+            lrc: 'https://moeplayer.b0.upaiyun.com/aplayer/hikarunara.lrc',
+            theme: '#ebd0c2'
+        }
+    });
+    ap.init();
+</script>
+</html>
+
