@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <style>
+
+    </style>
+</head>
+<body>
+<section class="app">
+    <div class="app-content">
+        <section class="app-content">
+            <div class="app-content-body">
+                <div class="main-body" id="main-body" v-cloak>
+                    <div class="main-row">
+                        <ul id="myTab" class="tab-nav">
+                            <li v-for="(n_item,n_index) in collectTabMsg" :class="n_index==0?'active':''"
+                                :title="n_item.name"
+                                ref="tabNavLi" @click="clickNav(n_item.uuid,n_index)">
+                                <a :href="'#DSC'+(n_index+1)" data-toggle="tab">{{n_item.name}}</a>
+                            </li>
+                        </ul>
+                        <ul class="filter">
+                            <li>筛选：</li>
+                            <li class="f-li" v-if="tagTypeList.length > 0" v-for="(f_item,f_index) in tagTypeList"
+                                :data-flag="false"
+                                ref="filterLi" @click="filter(f_index,f_item)">{{f_item}}
+                            </li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane fade " v-if="collectTabMsg.length != 0"
+                                 v-for="(c_item,c_index) in collectTabMsg" :class="c_index==0?'in active':''"
+                                 :id="'DSC'+(c_index+1)">
+                                <div class="con-top">
+                                    <div class="con-top-msg con-top-left">
+                                        <svg :id="'svg'+c_index">
+                                            <defs>
+                                                <pattern :id="'pic'+c_index" width="100%" height="100%" patternContentUnits="objectBoundingBox">
+                                                    <image width="1" height="1"
+                                                           xlink:href="img/circle_parent_bg.png">
+                                                    </image>
+                                                </pattern>
+                                                <!--<radialGradient id="parent" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                                                    <stop offset="0%" style="stop-color:#03CEFD;stop-opacity:0"/>
+                                                    <stop offset="90%" style="stop-color:#1D8AF5;stop-opacity:1"/>
+                                                </radialGradient>
+                                                <linearGradient id="children0" x1="50%" x2="50%" y1="150%" y2="0%">
+                                                    <stop offset="0%" style="stop-color: #ADDC48;stop-opacity:1"/>
+                                                    <stop offset="100%" style="stop-color: #00DAAB;stop-opacity:1;"/>
+                                                </linearGradient>-->
+                                            </defs>
+                                        </svg>
+                                    </div>
+                                    <div class="con-top-msg con-top-right">
+                                        <div class="con-title">采集端详情<span class="view view-log" ref="view"
+                                                                          v-show="tagList" @click="link(0)">查看日志</span>
+                                        </div>
+                                        <div class="con-msg" v-if="tagList">
+                                            <div><span class="left-span">采集端技术类型：</span><span class="right-span">{{tagList.dbName}}/{{tagList.enumPoolName}}</span></div>
+                                            <div><span class="left-span">采集端名称：</span><span class="right-span">{{tagList.name?tagList.name:'暂无数据'}}</span></div>
+                                            <div><span class="left-span">采集端类型：</span><span class="right-span"><span class="in-out"
+                                                                                                                     :class="tagList.typeName=='输入端'?'inbg':'outbg'">{{tagList.typeName?tagList.typeName:'暂无数据'}}</span></span>
+                                            </div>
+                                            <div><span class="left-span">所属单位：</span><span class="right-span">{{tagList.unit?tagList.unit:'暂无数据'}}</span></div>
+                                            <div><span class="left-span">所属系统：</span><span class="right-span">{{tagList.system?tagList.system:'暂无数据'}}</span></div>
+                                            <div><span class="left-span">连接情况：</span><span class="right-span">{{tagList.status==1?'正常':'失联'}}</span></div>
+                                            <div class="center-title"><span>采集端技术参数</span></div>
+                                            <div v-if="tagList.data != null">
+                                                <div v-show="tagList.data.request_type"><span class="left-span"> 接口请求类型：</span><span class="right-span">{{tagList.data.request_type==1?'GET':'POST'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.api_addr"><span class="left-span">接口地址：</span><span class="right-span">{{tagList.data.api_addr?tagList.data.api_addr:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.connect_name"><span class="left-span">连接名称：</span><span class="right-span">{{tagList.data.connect_name?tagList.data.connect_name:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.port"><span class="left-span">端口号：</span><span class="right-span">{{tagList.data.port?tagList.data.port:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.db_name"><span class="left-span">数据库名称：</span><span class="right-span">{{tagList.data.db_name?tagList.data.db_name:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.crawler_db_id"><span class="left-span">爬虫端数据源ID：</span><span class="right-span">{{tagList.data.crawler_db_id?tagList.data.crawler_db_id:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.root_path"><span class="left-span">根路径：</span><span class="right-span">{{tagList.data.root_path?tagList.data.root_path:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.sid"><span class="left-span"> 服务名称（SID）：</span><span class="right-span">{{tagList.data.sid?tagList.data.sid:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.column_detail"><span class="left-span">数据字段信息：</span><span class="right-span">{{tagList.data.column_detail?tagList.data.column_detail:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.custom_sql"><span class="left-span">自定义SQL：</span><span class="right-span">{{tagList.data.custom_sql?tagList.data.custom_sql:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.table_remark"><span class="left-span">生成表注释：</span><span class="right-span">{{tagList.data.table_remark?tagList.data.table_remark:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.table_name"><span class="left-span">生成表名：</span><span class="right-span">{{tagList.data.table_name?tagList.data.table_name:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.ip_addr"><span class="left-span">ip地址：</span><span class="right-span">{{tagList.data.ip_addr?tagList.data.ip_addr:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.username">
+                                                    <span class="left-span">用户名：</span>
+                                                    <span class="right-span"> {{tagList.data.username?tagList.data.username:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.password"><span class="left-span">密码：</span>
+                                                    <span class="right-span">{{tagList.data.password?tagList.data.password:'暂无数据'}}</span>
+
+                                                </div>
+                                                <div v-show="tagList.data.remark">
+                                                    <span class="left-span">备注：</span>
+                                                    <span class="right-span">{{tagList.data.remark?tagList.data.remark:'暂无数据'}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="con-msg text-center m-t" v-else="!tagList">暂无数据！</div>
+                                    </div>
+                                </div>
+                                <div class="con-bottom">
+                                    <div class="con-bottom-msg con-bottom-left">
+                                        <div class="con-title">采集系统详情</div>
+                                        <div class="con-msg" v-if="dcmInfoVO != null">
+                                            <div><span class="left-span">采集系统名称：</span><span class="right-span">{{dcmInfoVO.dcmName}}</span></div>
+                                            <div><span class="left-span">IP地址：</span><span class="right-span">{{dcmInfoVO.dcmIp}}</span></div>
+                                            <div><span class="left-span">CPU利用率：</span><span class="right-span">{{dcmInfoVO.cpuUsed}}</span></div>
+                                            <div><span class="left-span">内存使用情况：</span><span class="right-span">{{dcmInfoVO.ramUsed}}</span></div>
+                                            <div><span class="left-span">网络利用率：</span><span class="right-span">{{dcmInfoVO.networkUsed}}</span></div>
+                                            <div><span class="left-span">磁盘使用情况：</span><span class="right-span">{{dcmInfoVO.diskUsed}}</span></div>
+                                        </div>
+                                        <div class="con-msg text-center m-t" v-else="!dcmInfoVO">暂无数据！</div>
+                                    </div>
+                                    <div class="con-bottom-msg con-bottom-right">
+                                        <div class="con-title warn">告警提示<span class="view view-all" ref="view"
+                                                                              v-show="dcmLogList.length != 0"
+                                                                              @click="link(1)">查看全部</span></div>
+                                        <table class="table no-bordered">
+                                            <thead>
+                                            <tr>
+                                                <th width="100">发生时间</th>
+                                                <th width="60">告警类型</th>
+                                                <th width="60">当前值</th>
+                                                <th width="300">告警描述</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr v-if="!dcmLogList.length">
+                                                <td colspan="4">暂无数据！</td>
+                                            </tr>
+                                            <tr v-if="t_index < 4" v-for="(t_item,t_index) in dcmLogList">
+                                                <td>{{t_item.createTime}}</td>
+                                                <td>{{t_item.type}}</td>
+                                                <td>{{t_item.value}}</td>
+                                                <td>{{t_item.describe}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer class="app-footer" v-include="/common/footer.html"></footer>
+</section>
+
+<!--告警提示填充模板-->
+<table class="hide">
+    <tbody id="tableTemp">
+    <tr>
+        <td class="table-fill-msg" data-name=""></td>
+        <td class="table-fill-msg" data-name=""></td>
+        <td class="table-fill-msg" data-name=""></td>
+        <td class="table-fill-msg" data-name=""></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+<script>
+
+</script>
+</html>

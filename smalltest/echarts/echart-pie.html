@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pie函数复用</title>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/echarts/4.1.0.rc2/echarts-en.min.js"></script>
+    <style>
+        .container{
+            width:100%;
+            height: 100%;
+        }
+
+        .container .row {
+            margin: 0;
+        }
+
+        .con{
+            height: 400px;
+        }
+
+        #pie1,#pie2,#pie3{
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+      <div class="row">
+          <div class="col-xs-6 col-md-4">
+              <div class="con">
+                <div id="pie1"></div>
+              </div>
+          </div>
+          <div class="col-xs-6 col-md-4">
+              <div class="con">
+                  <div id="pie2"></div>
+              </div>
+          </div>
+          <div class="col-xs-6 col-md-4">
+              <div class="con">
+                  <div id="pien"></div>
+              </div>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-xs-6 col-md-4">
+              <div class="con">
+                  <div id="pie3"></div>
+              </div>
+          </div>
+          <div class="col-xs-6 col-md-4">
+              <div class="con">
+                  <div id="pie4"></div>
+              </div>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-xs-6 col-md-4">
+              <div class="con">
+                  <div id="pictorialBar1"></div>
+              </div>
+          </div>
+          <div class="col-xs-6 col-md-4">
+              <div class="con">
+                  <div id="pictorialBar2"></div>
+              </div>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-xs-6 col-md-4">
+              <div class="con">
+                  <div id="pie5"></div>
+              </div>
+          </div>
+          <div class="col-xs-6 col-md-4">
+              <div class="con">
+                  <div id="pie6"></div>
+              </div>
+          </div>
+      </div>
+
+  </div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    var pie1Data = [
+        [
+            {value:30, name:'小型'},
+            {value:10, name:'特大型企业'},
+            {value:20, name:'大型企业'},
+            {value:25, name:'微型企业'},
+            {value:45, name:'中型企业'}
+        ],
+        [
+            {value:10, name:'专科'},
+            {value:8, name:'本科'},
+            {value:0.9, name:'研究生'},
+            {value:0.3, name:'博士'}
+        ]
+    ];
+    var pie1 = function(id,title,data,index){
+        var myChart = echarts.init(document.getElementById(id));
+        var color = [
+            ['#5EC2A7','#3BBCE8','#518CD3','#5EC2A7','#0596FB'],
+            ['#0596FB','#3BBCE8','#6799D3','#2DBB9B']
+        ];
+
+        var formatter = ['{b} {c}%', '{b} {c}万人 占比 {d}%']
+        var option = {
+            title: {
+                text: title,
+                textStyle:{
+                    color:'#F7F9FC',
+                    fontSize:24,
+                    fontWeight:'100'
+                },
+                left: 25,
+                top:40
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            color: color[index],
+            series:  [
+                {
+                    name: '',
+                    type: 'pie',
+                    radius: '55%',
+                    center: ['50%', '55%'],
+                    data: data,
+                    roseType: 'radius',
+                    label: {
+                        normal: {
+                            formatter: formatter[index],
+                            textStyle:{
+                                fontSize: 16
+                            }
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            length: 30,
+                            length2: 0,
+                            smooth: 0.1
+                        }
+                    },
+                    markPoint: {
+                        symbol: 'circle',
+                        symbolSize: 9
+                    }
+                }
+            ]
+        };
+        myChart.setOption(option)
+    };
+    //***************************************************************************************
+
+    var pie2Data = [
+        [
+            {value:38.1, name:'在职员工'},
+            {value:4.5, name:'劳务派遣'},
+            {value:3.2, name:'其他'}
+        ],
+        [
+            {value:150, name:'男'},
+            {value:140, name:'女'}
+        ]
+    ];
+
+    var pie2 = function(id,title,data,index){
+        var myChart = echarts.init(document.getElementById(id));
+        var color = [
+            [
+                ['#269F84','#32A0C5','#0480D6'],
+                ['#2DBB9B','#3BBCE8','#0596FB']
+            ],
+            [
+                ['#0480D6','#269F84'],
+                ['#0596FB','#2DBB9B']
+            ]
+        ];
+        var data2 = [];
+        $.each(data, function (idx,val) {
+            data2.push({value:val.value, name:''});
+        });
+        var formatter = ['{b} {c}万人','{b} {c}万人 占比 {d}%'];
+        var option = {
+            title: {
+                text: title,
+                textStyle:{
+                    color:'#F7F9FC',
+                    fontSize:24,
+                    fontWeight:'100'
+                },
+                left: 25,
+                top:40
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            series: [
+                {
+                    name:'',
+                    type:'pie',
+                    hoverAnimation: false,
+                    legendHoverLink:false,
+                    radius: ['25%', '30%'] ,
+                    center:['50%','55%'],
+                    label: {
+                        normal: {
+                            show:false,
+                            position: 'inner',
+                            textStyle:{
+                                fontSize:16
+                            }
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    tooltip: {
+                        show:false
+                    },
+                    color: color[index][0],
+                    data: data2
+                },
+                {
+                    name: '',
+                    type: 'pie',
+                    radius: ['30%', '55%'],
+                    center: ['50%', '55%'],
+                    label:{
+                        normal: {
+                            formatter: formatter[index],
+                            textStyle:{
+                                fontSize: 16
+                            }
+                        }
+                    },
+                    color: color[index][1],
+                    labelLine: {
+                        normal: {
+                            length: 0,
+                            length2: 50,
+                            smooth: 0.1
+                        }
+                    },
+                    markPoint: {
+                        symbol: 'circle',
+                        symbolSize: 9
+                    },
+                    data: pie2Data[index]
+                }
+            ]
+        };
+        myChart.setOption(option);
+    };
+    //***************************************************************************************
+
+    var pie3 = function(){
+        var myChart = echarts.init(document.getElementById('pien'));
+        var color = [
+            ['#5EC2A7','#3BBCE8'],
+            ['#5EC2A7','#3BBCE8'],
+            ['#0596FB','#3BBCE8']
+        ];
+
+        var data =  [
+            [
+                {value:150, name:'男'},
+                {value:140, name:'女'}
+            ],
+            [
+                {value:80, name:'男'},
+                {value:20, name:'女'}
+            ],
+            [
+                {value:40, name:'男'},
+                {value:60, name:'女'}
+            ],
+            [
+                {value:60, name:'男'},
+                {value:40, name:'女'}
+            ]
+        ];
+
+        var option = {
+            title: {
+                text: '资源格式比例',
+                textStyle:{
+                    color:'red',
+                    fontSize:24,
+                    fontWeight:'100'
+                },
+                left: 25,
+                top:40
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            series: [
+                {
+                    name:'',
+                    type:'pie',
+                    hoverAnimation: false,
+                    legendHoverLink:false,
+                    radius: ['20%', '28%'] ,
+                    center:['50%','55%'],
+                    label: {
+                        normal: {
+                            show:false,
+                            position: 'inner',
+                            textStyle:{
+                                fontSize:16
+                            }
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    tooltip: {
+                        show:false
+                    },
+                    color: color[0],
+                    data: data[0]
+                },
+                {
+                    name: '',
+                    type: 'pie',
+                    radius: ['30%', '38%'],
+                    center: ['50%', '55%'],
+                    label:{
+                        normal: {
+                            formatter: '{b}',
+                            textStyle:{
+                                fontSize: 16
+                            }
+                        }
+                    },
+                    color: color[1],
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    markPoint: {
+                        symbol: 'circle',
+                        symbolSize: 9
+                    },
+                    data: data[1]
+                },
+                {
+                    name: '',
+                    type: 'pie',
+                    radius: ['40%', '48%'],
+                    center: ['50%', '55%'],
+                    label:{
+                        normal: {
+                            formatter: '{b}',
+                            textStyle:{
+                                fontSize: 16
+                            }
+                        }
+                    },
+                    color: color[2],
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    markPoint: {
+                        symbol: 'circle',
+                        symbolSize: 9
+                    },
+                    data: data[2]
+                },
+                {
+                    name: '',
+                    type: 'pie',
+                    radius: ['50%', '58%'],
+                    center: ['50%', '55%'],
+                    label:{
+                        normal: {
+                            show: false
+                        }
+                    },
+                    color: color[1],
+                    labelLine: {
+                        normal: {
+                            length: 0,
+                            length2: 50,
+                            smooth: 0.1
+                        }
+                    },
+                    markPoint: {
+                        symbol: 'circle',
+                        symbolSize: 9
+                    },
+                    data: data[3]
+                }
+            ]
+        };
+        myChart.setOption(option);
+    };
+    //***************************************************************************************
+
+    var pictorialBar = function (id,title,ydata,icon,data1,data2,index) {
+        var myChart = echarts.init(document.getElementById(id));
+        var coordData = [];
+        var coordData2 =[];
+        for (var i = 0; i < data1.length; i++) {
+            coordData.push({
+                "coord": [Number(data1[i]) - 1, i]
+            });
+            coordData2.push({
+                "coord": [Number(data2[i]) - 1, i]
+            })
+        }
+        var option = {
+            title: {
+                text:title,
+                textStyle:{
+                    color:'#F7F9FC',
+                    fontSize:24,
+                    fontWeight:'100'
+                },
+                left:25,
+                top:40
+            },
+            legend: {
+                top: 50,
+                right:20,
+                textStyle:{
+                    color:'#519EEC',
+                    fontSize:16
+                },
+                data: icon
+            },
+            grid: {
+                top:'16%',
+                left: '20%',
+                right: '0%',
+                bottom: '2%'
+            },
+            tooltip: {
+                show:"true",
+                trigger: 'axis',
+                axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                    type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            xAxis:  {
+                show:false,
+                type: 'value',
+                axisTick : {show: false},
+                axisLine: {
+                    show:false
+                },
+                splitLine: {
+                    show: false
+                },
+                boundaryGap: true
+            },
+            yAxis: [
+                {
+                    type: 'category',
+                    axisTick : {show: false},
+                    axisLine: {
+                        show: false,
+                        lineStyle:{
+                            color:'#61ADED'
+                        }
+                    },
+                    nameGap:50,
+                    axisLabel : {
+                        interval : 0,
+                        margin:29,
+                        textStyle: {
+                            color:'#61ADED',
+                            fontSize:18,
+                        },
+                        formatter : function(params){
+                            var newParamsName = "";
+                            var paramsNameNumber = params.length;
+                            var provideNumber = 5;
+                            var rowNumber = Math.ceil(paramsNameNumber / provideNumber);
+                            if (paramsNameNumber > provideNumber) {
+                                for (var p = 0; p < rowNumber; p++) {
+                                    var tempStr = "";
+                                    var start = p * provideNumber;
+                                    var end = start + provideNumber;
+                                    if (p == rowNumber - 1) {
+                                        tempStr = params.substring(start, paramsNameNumber);
+                                    } else {
+                                        tempStr = params.substring(start, end) + "\n";
+                                    }
+                                    newParamsName += tempStr;
+                                }
+
+                            } else {
+                                newParamsName = params;
+                            }
+                            return newParamsName
+                        }
+                    },
+                    data: ydata
+                },
+                {
+                    type: 'category',
+                    axisLine: {show:false},
+                    axisTick: {show:false},
+                    axisLabel: {show:false},
+                    splitArea: {show:false},
+                    splitLine: {show:false},
+                    data: ydata
+                }
+            ],
+            series: [
+                {
+                    name: '',
+                    z:1,
+                    type: 'pictorialBar',
+                    yAxisIndex:1,
+                    barWidth:30,
+                    label: {
+                        normal: {
+                            show: true,
+                            position: ['50%','25%'],
+                            textStyle: {
+                                color: "#fff",
+                                fontSize: 14
+                            }
+                        }
+                    },
+                    itemStyle:{
+                        normal: {
+                            show: true,
+                            color: '#E47E37',
+                            // barBorderRadius:90,
+                            borderWidth:0,
+                            borderColor:'#333',
+                        }
+                    },
+                    symbolRepeat: false,
+                    symbolSize: ['100%', 33],
+                    symbolOffset: [-16.5, 0],
+                    symbolClip: true,
+                    symbolPosition: 'end',
+                    symbol: 'rect',
+                    markPoint: {
+                        data: coordData,
+                        symbolSize: [33, 33],
+                        symbolOffset: [-0.5, 0],
+                        z: 3,
+                        label: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        symbolClip: true,
+                        symbol: 'path://M 300 100 L 100 100 L 100 300 z',
+
+                    },
+                    data: data1
+                },
+                {
+                    name: '',
+                    z:100,
+                    type: 'pictorialBar',
+                    barWidth:30,
+                    label: {
+                        normal: {
+                            show: true,
+                            position: ['0%','25%'],
+                            textStyle: {
+                                color: "#fff",
+                                fontSize: 14
+                            },
+                            formatter : function(params){
+                                return params.value/2
+                            }
+                        }
+                    },
+                    itemStyle:{
+                        normal: {
+                            show: true,
+                            color: '#237DD9',
+                            // barBorderRadius:80,
+                            borderWidth:0,
+                            borderColor:'#333'
+                        }
+                    },
+                    symbolRepeat: false,
+                    symbolSize: ['100%', 33],
+                    symbolOffset: [-16.5, 0],
+                    symbolClip: true,
+                    symbol: 'rect',
+                    markPoint: {
+                        data: coordData2,
+                        symbolSize: [33, 33],
+                        symbolOffset: [-0.5, 0],
+                        label: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: '#237DD9',
+                                opacity: 1
+                            }
+                        },
+                        symbolClip: true,
+                        symbol: 'path://M 300 100 L 100 100 L 100 300 z',
+                        // animationDelay:100
+                        // animationDuration:1200
+                        // animation:false
+                        // animationDurationUpdate :1000
+                    },
+                    data: data2
+                }
+            ]
+        };
+        myChart.setOption(option);
+    };
+
+    var pictorialBar1 = function (id,title,index) {
+        var myChart = echarts.init(document.getElementById(id));
+        var myData = [
+            ['生产','社会','办事','专业','中层'],
+            ['20 - 30岁','30 - 40岁','40 - 50岁','50 - 60岁']
+        ];
+        var lineData = [
+            [25,25,25,25,25],
+            [25,25,25,25]
+        ];
+        var timeLineData = [0,1];
+        var thisYearData = {
+            0: [11.7, 12.3, 7.5, 10.4, 3.9],
+            1: [12.1, 19, 10.5, 4.2]
+        };
+        var option = {
+            baseOption: {
+                timeline: {
+                    show: false,
+                    top: 0,
+                    data: []
+                },
+                title: {
+                    text: title,
+                    textStyle:{
+                        color:'#F7F9FC',
+                        fontSize:24,
+                        fontWeight:'100'
+                    },
+                    left: 25,
+                    top:40
+                },
+                grid: [
+                    {
+                        show: false,
+                        left: '5%',
+                        top: '12%',
+                        bottom: '8%',
+                        containLabel: true,
+                        width: '0%'
+                    }, {
+                        show: false,
+                        left: '12%',
+                        top: '18%',
+                        bottom: '8%',
+                        width: '10%'
+                    }, {
+                        show: false,
+                        right: '25%',
+                        top: '12%',
+                        bottom: '8%',
+                        containLabel: true,
+                        width: '62%'
+                    }
+                ],
+                xAxis:[
+                    {
+                        type: 'value',
+                        inverse: true,
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        position: 'top',
+                        axisLabel: {
+                            show: false
+                        },
+                        splitLine: {
+                            show: false
+                        }
+                    }, {
+                        gridIndex: 1,
+                        show: false
+                    }, {
+                        gridIndex: 2,
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        position: 'top',
+                        axisLabel: {
+                            show: false
+                        },
+                        splitLine: {
+                            show: false
+                        }
+                    }
+                ],
+                yAxis:[
+                    {
+                        type: 'category',
+                        inverse: true,
+                        position: 'right',
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLabel: {
+                            show: false
+                        },
+                        data: myData[index]
+                    }, {
+                        gridIndex: 1,
+                        type: 'category',
+                        inverse: true,
+                        position: 'left',
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLabel: {
+                            show: true,
+                            textStyle: {
+                                color: '#61ADED',
+                                fontSize: 26,
+                                align: 'center',
+                                verticalAlign: 'middle'
+                            }
+
+                        },
+                        data: myData[index].map(function(value) {
+                            return {
+                                value: value,
+                                textStyle: {
+                                    align: 'center'
+                                }
+                            }
+                        })
+                    }, {
+                        gridIndex: 2,
+                        type: 'category',
+                        inverse: true,
+                        position: 'left',
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLabel: {
+                            show: false
+
+                        },
+                        data: myData[index]
+                    }
+                ]
+            },
+            options:[
+                {series: [
+                        {
+                            type: 'pictorialBar',
+                            xAxisIndex: 2,
+                            yAxisIndex: 2,
+                            symbol: 'rect',
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgba(54,215,182,0.27)'
+                                }
+                            },
+                            barWidth: 10,
+                            symbolRepeat: true,
+                            symbolSize: 14,
+                            data: lineData[index],
+                            barGap: '-100%',
+                            barCategoryGap: 0,
+                            label: {
+                                normal: {
+                                    show: true,
+                                    formatter: function(series) {
+                                        return thisYearData[index][series.dataIndex] + ' 万人'
+                                    },
+                                    position: 'right',
+                                    textStyle: {
+                                        color: '#ffffff',
+                                        fontSize: 20,
+                                    },
+                                    offset: [5, -12],
+                                }
+                            }
+                        }
+                        ,
+                        {
+                            type: 'pictorialBar',
+                            xAxisIndex: 2,
+                            yAxisIndex: 2,
+                            symbol: 'rect',
+                            barWidth: 10,
+                            itemStyle: {
+                                normal: {
+                                    color: '#0788F5'
+                                }
+                            },
+                            symbolRepeat: true,
+                            symbolSize: 14,
+                            data: thisYearData[index],
+                            animationEasing: 'elasticOut',
+                            animationDelay: function(dataIndex, params) {
+                                return params.index * 30 * 1.1;
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+        myChart.setOption(option);
+    };
+
+    // pie1('pie1', '企业规模', pie1Data[0], 0);
+    // pie1('pie2', '从业人员学历', pie1Data[1], 1);
+    //
+    // pie2('pie3', '从业人员', pie2Data[0], 0);
+    // pie2('pie4', '从业人员性别', pie2Data[1], 1);
+
+    // pie3();
+
+    // pictorialBar1('pictorialBar1', '从业人员结构', 0);
+    // pictorialBar1('pictorialBar2', '从业人员年龄', 1);
+
+    pictorialBar('pie1','部门排名',['基社','两委办','统筹局','国土','环保'],['信息资源', '数据项'],[887,997,1261,1609,2724],[88*2,110*2,118*2,138*2,331*2],0);
+    pictorialBar('pie2','处室排名',['知识产权庭','城市综合执法一大队','司法信访处','城市综合执法二大队','旅游发展处'],['信息资源', '数据项'],[202,182,184,946,556],[27*2,28*2,29*2,44*2,51*2],1);
+
+</script>
+</html>

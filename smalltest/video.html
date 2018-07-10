@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,10 +21,10 @@
            autoplay loop >
         你的浏览器不支持！
     </video>
-</div>
+</div> 
 
 <div>
-    <video id="video2" class="v2">
+    <video id="video2" class="v2" autoplay loop>
         <source src="http://192.168.13.140:7000/videos/00a6efeddfc6bd61b308daa2b6297732.mp4" type="video/mp4">
         你的浏览器不支持！
     </video>
@@ -39,19 +39,19 @@
 <script>
 
     //video1
-      $("#video1").mouseenter(function () {
+      /*$("#video1").mouseenter(function () {
           $("#video1").get(0).pause();
       })
 
       $("#video1").mouseleave(function () {
           $("#video1").get(0).play();
-      })
+      })*/
 
 
 
 
     //video2
-      $("#video2").mouseenter(function () {
+     /* $("#video2").mouseenter(function () {
           $("#video2").get(0).pause();
       })
 
@@ -61,7 +61,7 @@
 
       $("#video2").on('ended', function(){
           $("#video2").get(0).play();
-      })
+      })*/
 
     //失败都不会自动播放
       // $(document).ready(function(){

@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a8419627-3abf-4a9e-b7ca-5901abf4b4b8" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/smalltest/smartWizard/smartwizard.html" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/smalltest/d3.html" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/smalltest/smartWizard/smartwizard.html" afterPath="$PROJECT_DIR$/smalltest/smartWizard/smartwizard.html" />
+      <change beforePath="$PROJECT_DIR$/smalltest/video.html" afterPath="$PROJECT_DIR$/smalltest/video.html" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -17,11 +19,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="smartwizard.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/smalltest/smartWizard/smartwizard.html">
+      <file leaf-file-name="aplayer.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/smalltest/aplayer/aplayer.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="4" column="30" lean-forward="true" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="30" />
+            <state relative-caret-position="272">
+              <caret line="16" column="21" lean-forward="false" selection-start-line="16" selection-start-column="21" selection-end-line="16" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="aplayerdemo.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/smalltest/aplayer/aplayerdemo.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2788">
+              <caret line="164" column="8" lean-forward="false" selection-start-line="164" selection-start-column="8" selection-end-line="165" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -65,6 +77,9 @@
         <option value="$PROJECT_DIR$/smalltest/jquery-ui/drag.html" />
         <option value="$PROJECT_DIR$/smalltest/smartwizard.html" />
         <option value="$PROJECT_DIR$/smalltest/smartWizard/smartwizard.html" />
+        <option value="$PROJECT_DIR$/smalltest/aplayer.html" />
+        <option value="$PROJECT_DIR$/smalltest/aplayer/aplayerdemo.html" />
+        <option value="$PROJECT_DIR$/smalltest/aplayer/aplayer.html" />
       </list>
     </option>
   </component>
@@ -95,6 +110,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -112,45 +128,12 @@
               <item name="arrange" type="b2602c69:ProjectViewProjectNode" />
               <item name="arrange" type="462c0819:PsiDirectoryNode" />
               <item name="smalltest" type="462c0819:PsiDirectoryNode" />
-              <item name="smartWizard" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="arrange" type="b2602c69:ProjectViewProjectNode" />
-              <item name="arrange" type="462c0819:PsiDirectoryNode" />
-              <item name="smalltest" type="462c0819:PsiDirectoryNode" />
-              <item name="smartWizard" type="462c0819:PsiDirectoryNode" />
-              <item name="dist" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="arrange" type="b2602c69:ProjectViewProjectNode" />
-              <item name="arrange" type="462c0819:PsiDirectoryNode" />
-              <item name="smalltest" type="462c0819:PsiDirectoryNode" />
-              <item name="smartWizard" type="462c0819:PsiDirectoryNode" />
-              <item name="dist" type="462c0819:PsiDirectoryNode" />
-              <item name="css" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="arrange" type="b2602c69:ProjectViewProjectNode" />
-              <item name="arrange" type="462c0819:PsiDirectoryNode" />
-              <item name="smalltest" type="462c0819:PsiDirectoryNode" />
-              <item name="smartWizard" type="462c0819:PsiDirectoryNode" />
-              <item name="dist" type="462c0819:PsiDirectoryNode" />
-              <item name="js" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="arrange" type="b2602c69:ProjectViewProjectNode" />
-              <item name="arrange" type="462c0819:PsiDirectoryNode" />
-              <item name="smalltest" type="462c0819:PsiDirectoryNode" />
-              <item name="smartWizard" type="462c0819:PsiDirectoryNode" />
-              <item name="dist" type="462c0819:PsiDirectoryNode" />
-              <item name="js" type="462c0819:PsiDirectoryNode" />
-              <item name="jquery.smartWizard.js" type="620a8d5e:NestingTreeNode" />
+              <item name="aplayer" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -163,6 +146,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Workspack\arrange\smalltest\aplayer" />
       <recent name="E:\Workspack\arrange\smalltest\smartWizard" />
       <recent name="E:\Workspack\arrange\smalltest\ueditor" />
     </key>
@@ -195,16 +179,17 @@
       <workItem from="1528611420138" duration="1444000" />
       <workItem from="1528702900155" duration="3893000" />
       <workItem from="1528958049578" duration="5108000" />
-      <workItem from="1529026027995" duration="14801000" />
+      <workItem from="1529026027995" duration="14942000" />
+      <workItem from="1529373306833" duration="2853000" />
+      <workItem from="1529464019290" duration="96000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25246000" />
+    <option name="totallyTimeSpent" value="28336000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17857143" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -236,11 +221,33 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/smalltest/aplayer/aplayer.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/smalltest/aplayer/aplayerdemo.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2788">
+          <caret line="164" column="8" lean-forward="false" selection-start-line="164" selection-start-column="8" selection-end-line="165" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/smalltest/smartWizard/smartwizard.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="12" lean-forward="true" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/smalltest/slick.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="476">
           <caret line="28" column="14" lean-forward="false" selection-start-line="28" selection-start-column="14" selection-end-line="28" selection-end-column="14" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -248,7 +255,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="646">
           <caret line="38" column="21" lean-forward="true" selection-start-line="38" selection-start-column="21" selection-end-line="38" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -256,7 +262,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="4" lean-forward="false" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="89" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -264,7 +269,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
           <caret line="11" column="7" lean-forward="true" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -360,7 +364,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="646">
           <caret line="38" column="21" lean-forward="false" selection-start-line="38" selection-start-column="21" selection-end-line="38" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -368,7 +371,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="4" lean-forward="false" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="89" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -376,7 +378,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="6" column="4" lean-forward="false" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="89" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -384,7 +385,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1428">
           <caret line="84" column="50" lean-forward="false" selection-start-line="84" selection-start-column="44" selection-end-line="84" selection-end-column="50" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -392,7 +392,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="20" column="26" lean-forward="true" selection-start-line="19" selection-start-column="33" selection-end-line="20" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -400,14 +399,28 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="2" lean-forward="false" selection-start-line="6" selection-start-column="2" selection-end-line="6" selection-end-column="64" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/smalltest/smartWizard/smartwizard.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="30" lean-forward="true" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="30" />
+        <state relative-caret-position="187">
+          <caret line="11" column="12" lean-forward="false" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/smalltest/aplayer/aplayerdemo.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2788">
+          <caret line="164" column="8" lean-forward="false" selection-start-line="164" selection-start-column="8" selection-end-line="165" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/smalltest/aplayer/aplayer.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="21" lean-forward="false" selection-start-line="16" selection-start-column="21" selection-end-line="16" selection-end-column="21" />
           <folding />
         </state>
       </provider>
