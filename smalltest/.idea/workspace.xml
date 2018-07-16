@@ -14,7 +14,7 @@
       <file leaf-file-name="enterprise.js" pinned="false" current-in-tab="false">
         <entry file="file://E:/working/gaoxin/gaoxin-govcomb-bscreen/src/main/resources/static/enterprise/enterprise.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
+            <state relative-caret-position="748">
               <caret line="44" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
               <folding>
                 <element signature="e#7444#14642#0" expanded="false" />
@@ -26,7 +26,7 @@
       <file leaf-file-name="echart-china.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/echarts/echart-china.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="28">
+            <state relative-caret-position="629">
               <caret line="37" column="0" lean-forward="false" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="75" />
               <folding>
                 <element signature="e#8162#9019#0" expanded="false" />
@@ -40,17 +40,46 @@
         <entry file="file://$PROJECT_DIR$/echarts/echart-world.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="51">
-              <caret line="3" column="26" lean-forward="true" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="26" />
+              <caret line="3" column="26" lean-forward="false" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="26" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="table.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="table.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/echarts/table.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="185">
               <caret line="58" column="17" lean-forward="false" selection-start-line="58" selection-start-column="17" selection-end-line="58" selection-end-column="17" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="canvas-pro.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/canvas-pro.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="52">
+              <caret line="12" column="56" lean-forward="false" selection-start-line="12" selection-start-column="56" selection-end-line="12" selection-end-column="56" />
+              <folding>
+                <element signature="n#style#0;n#canvas#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="e#1388#11170#0" expanded="false" />
+                <element signature="e#11204#11249#0" expanded="false" />
+                <element signature="e#11277#11336#0" expanded="false" />
+                <element signature="e#11358#11391#0" expanded="false" />
+                <element signature="e#11463#11767#0" expanded="false" />
+                <element signature="e#11842#12104#0" expanded="false" />
+                <element signature="e#12468#12610#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="protect.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protect.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="17" lean-forward="false" selection-start-line="0" selection-start-column="17" selection-end-line="0" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -82,6 +111,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -112,6 +142,8 @@
         <option value="$PROJECT_DIR$/echarts/echart-china.html" />
         <option value="$PROJECT_DIR$/echarts/echart-world.html" />
         <option value="$PROJECT_DIR$/echarts/table.html" />
+        <option value="$PROJECT_DIR$/canvas-pro.html" />
+        <option value="$PROJECT_DIR$/protect.js" />
       </list>
     </option>
   </component>
@@ -128,10 +160,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="464" />
-    <option name="y" value="2" />
-    <option name="width" value="771" />
-    <option name="height" value="727" />
+    <option name="x" value="151" />
+    <option name="y" value="70" />
+    <option name="width" value="1095" />
+    <option name="height" value="744" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -164,16 +196,16 @@
           <select />
         </subPane>
       </pane>
-      <pane id="AndroidView" />
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="AndroidView" />
       <pane id="PackagesPane" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="E:/working/gaoxin/gaoxin-govcomb-bscreen" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
   </component>
   <component name="RecentsManager">
@@ -295,15 +327,17 @@
       <workItem from="1531147853112" duration="3465000" />
       <workItem from="1531185986253" duration="7150000" />
       <workItem from="1531203759573" duration="6728000" />
-      <workItem from="1531225875720" duration="2890000" />
+      <workItem from="1531225875720" duration="3571000" />
+      <workItem from="1531732298675" duration="366000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="47218000" />
+    <option name="totallyTimeSpent" value="48265000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -317,7 +351,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15506808" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15733737" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -353,6 +387,59 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://E:/working/gaoxin/gaoxin-govcomb-bscreen/src/main/resources/static/enterprise/enterprise.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="748">
+          <caret line="44" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding>
+            <element signature="e#7444#14642#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/echarts/echart-china.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="629">
+          <caret line="37" column="0" lean-forward="false" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="75" />
+          <folding>
+            <element signature="e#8162#9019#0" expanded="false" />
+            <element signature="e#9033#9997#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/echarts/echart-world.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="26" lean-forward="true" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/echarts/echarts.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="4" lean-forward="false" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="115" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/echarts/echart-lines.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2397">
+          <caret line="141" column="29" lean-forward="false" selection-start-line="141" selection-start-column="29" selection-end-line="141" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/echarts/table.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="986">
+          <caret line="58" column="17" lean-forward="false" selection-start-line="58" selection-start-column="17" selection-end-line="58" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://E:/working/gaoxin/gaoxin-govcomb-bscreen/src/main/resources/static/enterprise/enterprise.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="748">
@@ -436,13 +523,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://E:/working/gaoxin-govcomb-bscreen/src/main/resources/static/enterprise/enterprise.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-799">
-          <caret line="67" column="53" lean-forward="false" selection-start-line="67" selection-start-column="47" selection-end-line="67" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://E:/working/gaoxin-govcomb-bscreen/src/main/resources/static/enterprise/enterprise.js" />
     <entry file="file://$PROJECT_DIR$/echarts/echart-lines.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2397">
@@ -461,7 +542,7 @@
     </entry>
     <entry file="file://E:/working/gaoxin/gaoxin-govcomb-bscreen/src/main/resources/static/enterprise/enterprise.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
+        <state relative-caret-position="748">
           <caret line="44" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
           <folding>
             <element signature="e#7444#14642#0" expanded="false" />
@@ -471,7 +552,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/echarts/echart-china.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="28">
+        <state relative-caret-position="629">
           <caret line="37" column="0" lean-forward="false" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="75" />
           <folding>
             <element signature="e#8162#9019#0" expanded="false" />
@@ -483,7 +564,7 @@
     <entry file="file://$PROJECT_DIR$/echarts/echart-world.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
-          <caret line="3" column="26" lean-forward="true" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="26" />
+          <caret line="3" column="26" lean-forward="false" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="26" />
           <folding />
         </state>
       </provider>
@@ -503,6 +584,31 @@
         <state relative-caret-position="185">
           <caret line="58" column="17" lean-forward="false" selection-start-line="58" selection-start-column="17" selection-end-line="58" selection-end-column="17" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protect.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="17" lean-forward="false" selection-start-line="0" selection-start-column="17" selection-end-line="0" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/canvas-pro.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="52">
+          <caret line="12" column="56" lean-forward="false" selection-start-line="12" selection-start-column="56" selection-end-line="12" selection-end-column="56" />
+          <folding>
+            <element signature="n#style#0;n#canvas#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="e#1388#11170#0" expanded="false" />
+            <element signature="e#11204#11249#0" expanded="false" />
+            <element signature="e#11277#11336#0" expanded="false" />
+            <element signature="e#11358#11391#0" expanded="false" />
+            <element signature="e#11463#11767#0" expanded="false" />
+            <element signature="e#11842#12104#0" expanded="false" />
+            <element signature="e#12468#12610#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
