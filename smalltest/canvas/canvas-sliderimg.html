@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>实现拼图效果</title>
+    <style>
+        .success{
+            color: green;
+        }
+        .fail{
+            color: red;
+        }
+        .hide{
+            display: none;
+        }
+        .active{
+            background: blue;
+        }
+        .verRefresh{
+            width: 25px;
+            height: 25px;
+            position: absolute;
+            background: yellow;
+        }
+        .verSlider{
+            position: relative;
+            width: 285px;
+            height: 30px;
+            border:1px solid #999;
+            box-shadow: 2px 2px 3px #666;
+        }
+        .verSlider p{
+            position: absolute;
+            line-height: 30px;
+            left: 35px;
+            margin: 0;
+        }
+        .verSliderBlock{
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            left: 0;
+            background: orange;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="verification">
+    <div class="verPicture">
+        <!-- 图片未加载时显示提示 -->
+        <div class="verLoading">正在加载 ...</div>
+        <!-- 刷新按钮 -->
+        <div class="verRefresh" title="刷新"></div>
+        <!-- 存放图片元素 -->
+        <canvas id="verCanvas" width="285" height="145"></canvas>
+    </div>
+    <div class="verSlider">
+        <p>向右滑动滑块填充拼图</p>
+        <!-- 滑块 -->
+        <div class="verSliderBlock"></div>
+    </div>
+</div>
+</body>
+
+<script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script>
+    /*
+    * 加载一张整图，用canvas切割缺口，缺口位置在固定范围内随机
+    * 点击刷新按钮重新加载和切割
+    * 滑块响应拖动，实时更新缺口位置
+    * 拖动结束时计算位置是否匹配，允许一定误差
+    * */
+    var imgs = [
+        'https://up.enterdesk.com/edpic_360_360/95/09/41/9509416fdc1977f25a915995a0d3356f.jpg',
+        'https://up.enterdesk.com/edpic_360_360/2a/30/f7/2a30f739e4e2b90804de72e8800d07e9.jpg',
+        'https://up.enterdesk.com/edpic_360_360/c6/b5/f2/c6b5f233e0f9ee87cef7313ab51d2a12.jpg',
+        'https://up.enterdesk.com/edpic_360_360/f0/35/7e/f0357e72c853b86c908b229392ffba19.jpg',
+        'https://up.enterdesk.com/edpic_360_360/4b/dc/27/4bdc27f77b6757009175c4bb011fffc2.jpg'
+    ];// 备用的验证图片
+    var imgSrc = imgs[parseInt(Math.random() * 5)]; //随机一个图片地址
+    var slider = $(".verSliderBlock")[0];
+    var canvas = $("#verCanvas")[0];
+    var context = canvas.getContext("2d");
+    var img = document.createElement('img');
+    var rightDistance; //记录正确的移动距离
+    var topDistance; //记录缺口离顶部的距离
+    var slideFlag = false; //标记滑块是否处于移动状态
+    var origin = 0; //标记移动起始位置的x坐标
+
+    // distance标记移动的距离，值改变时触发滑块移动和canvas重绘
+    //defineProperty直接在一个对象上定义一个新属性,或者修改一个对象的现有属性, 并返回这个对象。
+    Object.defineProperty(window, "distance", {
+        set: function(distance) {
+            this.value = distance;
+            if (distance > 0 && distance < 246) {
+                $(slider).css("left", distance);
+                draw(distance);
+            } else if (distance <= 0) {
+                $(slider).css("left", 0);
+                draw(0);
+            } else {
+                $(slider).css("left", 247);
+                draw(247);
+            }
+        },
+        get: function() {
+            return this.value;
+        }
+    });
+    initCanvas(imgSrc);
+
+    // 刷新事件
+    function verRefresh() {
+        unbindSlide();
+        imgSrc = imgs[parseInt(Math.random() * 5)];
+        slideFlag = false;
+        distance = 0;
+        origin = 0;
+        $(".verSlider p").html("向右滑动滑块填充拼图").removeClass();
+        initCanvas(imgSrc);
+    }
+    $(".verRefresh").click(verRefresh);
+
+    // 判断位置是否正确，用于滑动结束时
+    function judgeDistance() {
+        if (distance > rightDistance - 3 && distance < rightDistance + 3) {
+            $(slider).css("left", 247);
+            $(".verSlider p").html("验证成功").removeClass("hide").addClass("success");
+            setTimeout(function() {
+                console.log("success")
+            }, 1000)
+        } else {
+            distance = 0;
+            $(".verSlider p").html("验证失败").removeClass("hide").addClass("fail");
+            setTimeout(verRefresh, 1000)
+        }
+    }
+
+    /**** 滑动监听 ****/
+
+    function onmousedown(e) {
+        slideFlag = true;
+        $(slider).addClass("active");
+        origin = e.x;
+    }
+
+    function onmousemove(e) {
+        if (slideFlag) {
+            // 隐藏滑动提示文字
+            $(".verSlider p").addClass("hide");
+            //计算位置
+            distance = e.x - origin;
+        }
+    }
+
+    function onmouseup(e) {
+        if (slideFlag) {
+            slideFlag = false;
+            distance = e.x - origin;
+            $(slider).removeClass("active");
+            judgeDistance()
+        }
+    }
+
+    function bindSlide() {
+        slider.addEventListener("mousedown", onmousedown);
+        document.addEventListener("mousemove", onmousemove, true);
+        document.addEventListener("mouseup", onmouseup, true);
+    }
+
+    function unbindSlide() {
+        slider.removeEventListener("mousedown", onmousedown);
+        document.removeEventListener("mousemove", onmousemove, true);
+        document.removeEventListener("mouseup", onmouseup, true);
+    }
+
+    /**** canvas对象 ****/
+    function initCanvas(img_src) {
+        $(".verLoading").show();
+        img.src = img_src;
+        img.onload = function() {
+            $(".verLoading").hide();
+            bindSlide(slider);
+            // 获取随机位置
+            rightDistance = parseInt(Math.random() * 100 + 145);
+            topDistance = parseInt(Math.random() * 80 + 10);
+            draw();
+        };
+    }
+
+    function draw(left) {
+        context.clearRect(0, 0, canvas.width, canvas.height)
+        // 绘制整图和半透明缺口
+        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+        context.globalAlpha = 0.9;
+        context.fillStyle = "#fff";
+        context.fillRect(rightDistance, topDistance, 35, 35);
+        context.globalAlpha = 0.5;
+        context.strokeStyle = "#000";
+        context.lineWidth = 1;
+        context.strokeRect(rightDistance, topDistance, 35, 35);
+        // 绘制脱离的缺口
+        context.globalAlpha = 1;
+        context.shadowBlur = 10;
+        context.shadowColor = "#fff";
+        context.strokeStyle = "#fff";
+        context.strokeRect(left || 2, topDistance, 35, 35);
+        context.drawImage(img, rightDistance, topDistance, 35, 35, left || 2, topDistance, 35, 35);
+    }
+</script>
+</html>
