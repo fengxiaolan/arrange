@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>filereader</title>
+  <style>
+    .dropbox{
+      width: 200px;
+      height: 200px;
+      border: 1px dashed #9c9c9c;
+    }
+    .area{
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      line-height: 200px;
+    }
+    #preview{
+      width: 50px;
+      height: 50px;
+    }
+    #preview img{
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="dropbox" class="dropbox">
+    <div class="area">拖动图片到这里</div>
+  </div>
+  <div id="preview"></div>
+
+</body>
+<script>
+  /**
+  * FileReader 对象允许Web应用程序异步读取存储在用户计算机上的文件（或原始数据缓冲区）的内容，
+   * 使用 File 或 Blob 对象指定要读取的文件或数据
+  * 其中File对象可以是来自用户在一个<input>元素上选择文件后返回的FileList对象,也可以来自拖放操作生成的 DataTransfer对象,
+  * 还可以是来自在一个HTMLCanvasElement上执行mozGetAsFile()方法后返回结果
+   *
+   *base64字符串作为内容的DataURI将一个文件嵌入到另外一个文档里
+   * 预览图片的src使用了”data:image/png;base64,xxxxxxxxxxxxx”这种形式的字符串（base64），
+   * 这种字符串叫做DataURI对象，允许将一个小文件进行编码后嵌入到另外一个文档里，格式为：
+   *data:[<MIME type>][;charset=<charset>][;base64],<encoded data>
+  * 这个字符串可以分为三部分，即声明：参数+数据，逗号左边的是各种参数，右边的是数据。
+  * */
+  var dropbox = document.querySelector("#dropbox");
+  var preview = document.querySelector("#preview");
+
+  dropbox.addEventListener("dragenter", function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }, false);
+
+  dropbox.addEventListener("dragover", function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }, false);
+
+  dropbox.addEventListener("drop", function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    var dt = e.dataTransfer;
+    var files = dt.files;
+
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      var imageType = new RegExp("^image\/");
+      if (!imageType.test(file.type)) continue;
+
+      // 填充选择的图片到展示区
+      var img = document.createElement("img");
+      img.classList.add("obj");
+      img.file = file;
+      preview.appendChild(img);
+
+      // 读取File对象中的内容
+      var reader = new FileReader();
+      reader.onload = (function (aImg) {
+        return function (e) {
+          aImg.src = e.target.result;
+        };
+      })(img);
+      reader.readAsDataURL(file);
+    }
+  }, false);
+</script>
+</html>

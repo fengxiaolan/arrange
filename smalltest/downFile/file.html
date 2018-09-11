@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>file</title>
+</head>
+<body>
+ <input type="file" id="fileInput" name="file" multiple="multiple" accept="image/*">
+
+</body>
+<script>
+/**
+ *  File 接口提供有关文件的信息，并允许网页中的JavaScript访问其内容。
+* 通常情况下，File对象是来自用户在一个 <input> 元素上选择文件后返回的FileList对象，也可以是来自由拖放操作生成的 DataTransfer对象
+*用户在选择一个或者多个文件后，可以通过File API访问这些File对象，这些对象被包含在一个FileList对象中。所有type为file的input都有一个files属性，通过Element.files可以返回FileList对象。
+* */
+var fileInput = document.querySelector("#fileInput");
+fileInput.addEventListener("change", function (event) {
+  var file = fileInput.files[0];
+  console.log("file",file);
+  console.log("filelist",fileInput.files);
+}, false);
+
+//换算单位
+function bytesToSize(bytes) {
+  if (bytes === 0) return '0 B';
+  var k = 1024,
+    sizes = ['B','KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  // Math.log() 返回数字的自然对数 log(b)/log(a)=loga(b)) 换底公式 log以a为底b的对数
+  // Math.floor(x) -- 向下取整，返回小于或等于x的值
+  // Math.pow(x,y) -- 返回以x的y次幂，等同于x^y的数值表达式
+  var i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+}
+console.log("tosize", bytesToSize(520000))
+
+</script>
+</html>

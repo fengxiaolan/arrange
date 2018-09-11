@@ -35,6 +35,10 @@
 没法在页面加载完成的时候播放音频或视频。
 这是Chrome 66的新特性，不过chrome之前很多浏览器都这么做了
 -->
+<!-- 解决方法:在浏览器输入  chrome://flags/#autoplay-policy 
+
+第一个选项 Autoplay policy  设置为 no user gesture is required
+-->
 
 <script>
 
@@ -51,7 +55,7 @@
 
 
     //video2
-     /* $("#video2").mouseenter(function () {
+      $("#video2").mouseenter(function () {
           $("#video2").get(0).pause();
       })
 
@@ -61,7 +65,7 @@
 
       $("#video2").on('ended', function(){
           $("#video2").get(0).play();
-      })*/
+      })
 
     //失败都不会自动播放
       // $(document).ready(function(){

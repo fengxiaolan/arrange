@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>formdata</title>
+</head>
+<body>
+<form id="uploadForm" enctype="multipart/form-data">
+  <input id="file" type="file" name="file"/>
+  <button id="upload" type="button">upload</button>
+</form>
+
+</body>
+<script>
+  /**
+  * 通过HTML表单创建FormData对象提交上传（base64）
+   * new FormData (form? : HTMLFormElement) ------------form 参数可选，是一个HTML表单元素，可以包含任何形式的表单控件,包括文件输入框。
+   * append() 给当前FormData对象添加一个键/值对
+   * void append(DOMString 键, Blob 值, [可选] DOMString 文件名);
+  * void append(DOMString 键, DOMString 值);
+  * */
+  var fd = new FormData(); // 构造FromData对象
+  var blob = dataURItoBlob(dataURI); // 将base64转为二进制blob对象
+  fd.append('file', blob);
+  $.ajax({
+    type: 'POST',
+    url: '/upload',
+    data: fd,
+    processData: false, // 不会将 data 参数序列化字符串,必须false
+    contentType: false, // 根据表单 input 提交的数据使用其默认的 contentType，必须false
+    xhr: function() {
+      var xhr = new window.XMLHttpRequest();
+      xhr.upload.addEventListener("progress", function(evt) {
+        if (evt.lengthComputable) {
+          var percentComplete = evt.loaded / evt.total;
+          console.log('进度', percentComplete);
+        }
+      }, false);
+
+      return xhr;
+    }
+  }).success(function (res) {
+    // 拿到提交的结果
+  }).error(function (err) {
+    console.error(err);
+  });
+</script>
+</html>

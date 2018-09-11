@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>toblob</title>
+</head>
+<body>
+
+</body>
+<script>
+  /**
+   * 实际上上文的File对象只是 Blob 对象的一个更具体的版本，Blob对象 存储着大量的二进制数据，并且 Blob 的 size 和 type 属性，都会被 File 对象所继承。同样FileReader对象也可以从Blob对象中读取数据
+  * Blob构造函数，接受两个参数。第一个参数是一个包含实际数据的数组，第二个参数是数据的类型，这两个参数都不是必需的。数组元素可以是任意多个的ArrayBuffer，ArrayBufferView (typed array)， Blob，或者 DOMString对象。例如：
+   *var blob = new Blob(arr, { "type" : "text/xml" }); // the blob
+   *DataURI（base64）对象转blob对象（二进制）
+  * */
+  function dataURItoBlob(dataURI) {
+    var byteString = atob(dataURI.split(',')[1]);
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], {type: mimeString});
+  }
+  // atob() 将base64解码
+  // btoa() 将字符串转码为base64
+  var str = 'javascript';
+  window.btoa(str)
+  //转码结果 "amF2YXNjcmlwdA=="
+  window.atob("amF2YXNjcmlwdA==")
+  //解码结果 "javascript"
+</script>
+</html>
