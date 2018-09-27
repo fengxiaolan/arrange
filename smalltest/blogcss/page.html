@@ -1,0 +1,368 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>cnblog 一些样式</title>
+    <script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+    <style>
+        img {
+            border: 0;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+        }
+ /*旋转*/
+        /*最外层容器样式*/
+        .wrap {
+            width: 100px;
+            height: 100px;
+            margin: 150px;
+            position: relative;
+        }
+
+        /*包裹所有容器样式*/
+        .cube {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto;
+            transform-style: preserve-3d;
+            transform: rotateX(-30deg) rotateY(-80deg);
+            animation: rotate linear 20s infinite;
+        }
+
+        @-webkit-keyframes rotate {
+            from {
+                transform: rotateX(0deg) rotateY(0deg);
+            }
+            to {
+                transform: rotateX(360deg) rotateY(360deg);
+            }
+        }
+
+        .cube div {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            opacity: 0.8;
+            transition: all .4s;
+        }
+
+        /*定义所有图片样式*/
+        .pic {
+            width: 200px;
+            height: 200px;
+        }
+
+        .cube .out_front {
+            transform: rotateY(0deg) translateZ(100px);
+        }
+
+        .cube .out_back {
+            transform: translateZ(-100px) rotateY(180deg);
+        }
+
+        .cube .out_left {
+            transform: rotateY(-90deg) translateZ(100px);
+        }
+
+        .cube .out_right {
+            transform: rotateY(90deg) translateZ(100px);
+        }
+
+        .cube .out_top {
+            transform: rotateX(90deg) translateZ(100px);
+        }
+
+        .cube .out_bottom {
+            transform: rotateX(-90deg) translateZ(100px);
+        }
+
+        /*定义小正方体样式*/
+        .cube span {
+            display: block;
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            top: 50px;
+            left: 50px;
+        }
+
+        .cube .in_pic {
+            width: 100px;
+            height: 100px;
+        }
+
+        .cube .in_front {
+            transform: rotateY(0deg) translateZ(50px);
+        }
+
+        .cube .in_back {
+            transform: translateZ(-50px) rotateY(180deg);
+        }
+
+        .cube .in_left {
+            transform: rotateY(-90deg) translateZ(50px);
+        }
+
+        .cube .in_right {
+            transform: rotateY(90deg) translateZ(50px);
+        }
+
+        .cube .in_top {
+            transform: rotateX(90deg) translateZ(50px);
+        }
+
+        .cube .in_bottom {
+            transform: rotateX(-90deg) translateZ(50px);
+        }
+
+        /*鼠标移入后样式*/
+        .cube:hover .out_front {
+            transform: rotateY(0deg) translateZ(200px);
+        }
+
+        .cube:hover .out_back {
+            transform: translateZ(-200px) rotateY(180deg);
+        }
+
+        .cube:hover .out_left {
+            transform: rotateY(-90deg) translateZ(200px);
+        }
+
+        .cube:hover .out_right {
+            transform: rotateY(90deg) translateZ(200px);
+        }
+
+        .cube:hover .out_top {
+            transform: rotateX(90deg) translateZ(200px);
+        }
+
+        .cube:hover .out_bottom {
+            transform: rotateX(-90deg) translateZ(200px);
+        }
+
+/* 分享 打赏*/
+        .myRewards {position:fixed; _position:absolute; right:0; top:2%; z-index:10000; padding-left:20px; width:0px; overflow:hidden; box-sizing: content-box;}
+        .myRewards ul,.myRewards li{margin:0;padding:0;}
+        .myRewards a{ color:#000; text-decoration:none; outline:0 none;}
+        .myRewards-main{ width:240px; height:332px; font:12px/1.5 "microsoft yahei",tahoma,arial,sans-serif;; color:#000; background-color:#fff; border:1px solid #dbdbdb; border-right:none;}
+
+        .btn-myRewards{ position:absolute; left:0; top:50%; margin-top:-30px; width:25px; height:40px;}
+        .btn-myRewards .topay{display:block;background:#f00;width:80%;height:138%;border-top-left-radius:3px;;border-bottom-left-radius:3px;color: #B4D8F5; font-size: 13px;text-align: center;padding: 2px 0;font-weight:bold;}
+
+        .myR-h,.myR-bot{ margin:0; height:26px; line-height:26px; background-color:#e7e7e7;}
+        .myRewards-main .myR-h{ padding:0 0 0 6px; font-size:14px; font-weight:normal; background-image:none;}
+        .myRewards-main .myR-bot{ padding-right:6px; font-size:12px; text-align:right;}
+        .myR-bot a:hover{ text-decoration:underline;}
+        .myRewardsbox{ font-size:0; background-color:#eeeeee; width:240px;}
+        .myRewards-list{ display:inline-block; *display:inline; *zoom:1; vertical-align:middle; width:90px; font-size:12px;}
+        .myRewards-list ul{ list-style:none;}
+        .myRewards-list ul.not-full{border-top:1px solid #dfdfdf;}
+        .myRewards-list li{ display:block; height:56px; -webkit-transition:background-color .2s linear; transition:background-color .2s linear;}
+        .myRewards-list a{ position:relative; display:block; padding-left:40px; height:55px; line-height:55px; font-size:12px; border-bottom:1px solid #cccccc;}
+        .myRewards-list a.fifth{border-bottom: none;}
+        .myRewards-list a img{ position:absolute; left:6px; top:13px; width:30px; height:30px;}
+        .myRewards-list .myR-on{ border-right:none;}
+        .myRewards-list .myR-on a,
+        .myRewards-list .myR-on a:hover{ background-color:#fff;}
+        .myRewards-detail{ display:inline-block; *display:inline; *zoom:1; vertical-align:middle; width:150px; height:280px; font-size:12px; background-color:#fff;}
+        .myRewards-ubox{ padding:14px 0 0 10px;}
+        .myRewards-code-tit{ margin:0 0 20px; width:132px; height:30px; line-height:30px; font-size:12px; text-align:center; }
+        .myRewards-code{ margin:15px 10px 25px 5px; padding:5px; width:106px; height:106px; box-sizing: content-box;border:4px solid #0f0;border-radius:5px;}
+        .myRewards-code img{ width:106px; height:106px;}
+        .myRewards-account{ font-size:12px; word-break:break-all; text-align:center;}
+
+ /* 圆圈加载*/
+        #circle{background-color:rgba(0,0,0,0);border:5px solid rgba(247, 14, 42, 1);opacity:.9;border-right:5px solid rgba(0,0,0,0);border-left:5px solid rgba(0,0,0,0);border-radius:50px;box-shadow:0 0 35px #808080;width:80px;height:80px;margin:0 auto;position:fixed;left:7px;bottom:50px;
+          -moz-animation:spinPulse 20s infinite linear;
+          -webkit-animation:spinPulse 20s infinite linear;
+          -o-animation:spinPulse 20s infinite linear;
+          -ms-animation:spinPulse 20s infinite linear;}
+        #circle1{background-color:rgba(0,0,0,0);border:6px solid rgba(31, 62, 230, 0.9);opacity:.9;border-left:6px solid rgba(0,0,0,0);border-right:6px solid rgba(0,0,0,0);border-radius:50px;box-shadow:0 0 15px #202020;width:60px;height:60px;margin:0 auto;position:fixed;left:15px;bottom:59px;
+          -moz-animation:spinoffPulse 20s infinite linear;
+          -webkit-animation:spinoffPulse 20s infinite linear;
+          -o-animation:spinoffPulse 20s infinite linear;
+          -ms-animation:spinoffPulse 20s infinite linear;}
+        #circletext{font-weight: bold;color: #fff000;text-align: center; font-size: 12px; width:60px;height:30px;line-height:15px;margin:0 auto;position:fixed;left:20px;bottom:77px;}
+
+        @-moz-keyframes spinPulse{0%{-moz-transform:rotate(160deg);opacity:0;box-shadow:0 0 1px #505050;}30%{-moz-transform:rotate(120deg);opacity:1;}100%{-moz-transform:rotate(-320deg);opacity:0;}}
+        @-moz-keyframes spinoffPulse{0%{-moz-transform:rotate(0deg);}100%{-moz-transform:rotate(360deg);}}
+        @-webkit-keyframes spinPulse{0%{-webkit-transform:rotate(160deg);opacity:0;box-shadow:0 0 1px #505050;}30%{-webkit-transform:rotate(120deg);opacity:1;}100%{-webkit-transform:rotate(-320deg);opacity:0;}}
+        @-webkit-keyframes spinoffPulse{0%{-webkit-transform:rotate(0deg);}100%{-webkit-transform:rotate(360deg);}}
+        @-o-keyframes spinPulse{0%{-o-transform:rotate(160deg);opacity:0;box-shadow:0 0 1px #505050;}30%{-o-transform:rotate(120deg);opacity:1;}100%{-o-transform:rotate(-320deg);opacity:0;}}
+        @-o-keyframes spinoffPulse{0%{-o-transform:rotate(0deg);}100%{-o-transform:rotate(360deg);}}
+        @-ms-keyframes spinPulse{0%{-ms-transform:rotate(160deg);opacity:0;box-shadow:0 0 1px #505050;}30%{-ms-transform:rotate(120deg);opacity:1;}100%{-ms-transform:rotate(-320deg);opacity:0;}}
+        @-ms-keyframes spinoffPulse{0%{-ms-transform:rotate(0deg);}100%{-ms-transform:rotate(360deg);}}
+
+        @media screen and (max-width: 500px) {
+          .postDesc{visibility:hidden;}
+          #circle,#circle1,#circletext{display:none;}
+        }
+
+
+    </style>
+</head>
+<body>
+<div>
+  <div class="wrap">
+    <!--包裹所有元素的容器-->
+    <div class="cube">
+        <!--前面图片 -->
+        <div class="out_front">
+            <img src="https://i.loli.net/2018/05/03/5aeb0eef73838.jpg" class="pic">
+        </div>
+        <!--后面图片 -->
+        <div class="out_back">
+            <img src="https://i.loli.net/2018/05/03/5aeb0f2fb9a83.jpg" class="pic">
+        </div>
+        <!--左面图片 -->
+        <div class="out_left">
+            <img src="https://i.loli.net/2018/05/03/5aeb0f55411f0.jpg" class="pic">
+        </div>
+        <!--右面图片 -->
+        <div class="out_right">
+            <img src="https://i.loli.net/2018/05/03/5aeb0f79a1124.jpg" class="pic">
+        </div>
+        <!--上面图片 -->
+        <div class="out_top">
+            <img src="https://i.loli.net/2018/05/03/5aeb0f98a8b66.jpg" class="pic">
+        </div>
+        <!--下面图片 -->
+        <div class="out_bottom">
+            <img src="https://i.loli.net/2018/05/03/5aeb0fdd51b7e.jpg" class="pic">
+        </div>
+
+        <!--小正方体 -->
+        <span class="in_front">
+                <img src="https://i.loli.net/2018/05/03/5aeb100223dd0.jpg" class="in_pic">
+            </span>
+        <span class="in_back">
+                 <img src="https://i.loli.net/2018/05/03/5aeb101c2c24b.jpg" class="in_pic">
+            </span>
+        <span class="in_left">
+                <img src="https://i.loli.net/2018/05/03/5aeb1038127b5.jpg" class="in_pic">
+            </span>
+        <span class="in_right">
+                <img src="https://i.loli.net/2018/05/03/5aeb0dce1ca55.jpg" class="in_pic">
+            </span>
+        <span class="in_top">
+                <img src="https://i.loli.net/2018/05/03/5aeb1057bb167.jpg" class="in_pic">
+            </span>
+        <span class="in_bottom">
+                <img src="https://i.loli.net/2018/05/03/5aeb107514579.jpg" class="in_pic">
+            </span>
+    </div>
+
+</div>
+</div>
+
+<div>
+  <div id="myRewards" class="myRewards" style="width: 0px;">
+    <a class="btn-myRewards" href="javascript:;">
+      <span class="topay">扫一扫</span>
+    </a>
+    <div class="myRewards-main">
+      <h1 class="myR-h">喜欢请打赏</h1>
+      <div class="myRewardsbox">
+        <div class="myRewards-list">
+          <ul class="not-full">
+            <li class="myR-on">
+              <a href="javascript:;">支付宝<img class="png" src="http://static.tctip.com/img/alipay.png" alt="支付宝"></a>
+            </li>
+            <li class="">
+              <a href="javascript:;">微信<img class="png" src="http://static.tctip.com/img/weixin.png" alt="微信"></a>
+            </li>
+            <li class="">
+              <a href="javascript:;">公众号<img class="png" src="http://static.tctip.com/img/weixin.png" alt="微信公众号"></a>
+            </li>
+          </ul>
+        </div>
+        <div class="myRewards-detail">
+          <div class="myRewards-ubox">
+            <p class="myRewards-code-tit">扫描二维码</p>
+            <div class="myRewards-code"><img src="http://images.cnblogs.com/cnblogs_com/yinn/1078847/o_zhifubao.png"></div>
+            <p class="myRewards-account">支付宝打赏</p>
+          </div>
+        </div>
+      </div>
+      <p class="myR-bot">
+         <a href="https://github.com/greedying/tctip" target="_blank">了解更多</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div id="circle"></div>
+  <div id="circle1"></div>
+  <div id="circletext">欢迎你</div>
+</div>
+
+</body>
+
+<script>
+  /* 鼠标特效 */
+  var a_idx = 0;
+  jQuery(document).ready(function($) {
+    $("body").click(function(e) {
+      var a = new Array("❤富强❤","❤民主❤","❤文明❤","❤和谐❤","❤自由❤","❤平等❤","❤公正❤","❤法治❤","❤爱国❤","❤敬业❤","❤诚信❤","❤友善❤");
+      var $i = $("<span></span>").text(a[a_idx]);
+      a_idx = (a_idx + 1) % a.length;
+      var x = e.pageX,
+        y = e.pageY;
+      $i.css({
+        "z-index": 999999999999999999999999999999999999999999999999999999999999999999999,
+        "top": y - 20,
+        "left": x,
+        "position": "absolute",
+        "font-weight": "bold",
+        "color": "rgb("+~~(255*Math.random())+","+~~(255*Math.random())+","+~~(255*Math.random())+")"
+      });
+      //~是按位取反运算,~~是取反两次 在这里~~的作用是去掉小数部分
+      $("body").append($i);
+      $i.animate({
+          "top": y - 180,
+          "opacity": 0
+        },
+        1500,
+        function() {
+          $i.remove();
+        });
+    });
+  });
+
+
+  //扫一扫
+  $(".btn-myRewards").hover(function(){
+    $(".myRewards").css("width","240px");
+  });
+  $(".myRewards").mouseleave(function(){
+    $(".myRewards").css("width","0");
+  });
+  $(".myRewards-main").mouseleave(function(){
+    $(".myRewards").css("width","0");
+  });
+
+  $(".not-full li:first").hover(function(){
+    $(this).addClass("myR-on").siblings().removeClass("myR-on");
+    $(".myRewards-account").html("支付宝打赏");
+    $(".myRewards-code img").attr("src","http://images.cnblogs.com/cnblogs_com/yinn/1078847/o_zhifubao.png");
+  });
+
+  $(".not-full li:last").hover(function(){
+    $(this).addClass("myR-on").siblings().removeClass("myR-on");
+    $(".myRewards-account").html("关注公众号");
+    $(".myRewards-code img").attr("src","http://images.cnblogs.com/cnblogs_com/yinn/1089307/o_gzhao.jpg");
+  });
+  $(".not-full li:nth-child(2)").hover(function(){
+    $(this).addClass("myR-on").siblings().removeClass("myR-on");
+    $(".myRewards-account").html("微信打赏");
+    $(".myRewards-code img").attr("src","http://images.cnblogs.com/cnblogs_com/yinn/1078832/o_weixin.png");
+  });
+
+  //圆圈
+
+
+</script>
+</html>
