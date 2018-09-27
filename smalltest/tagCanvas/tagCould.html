@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>video</title>
+    <script src="tagcanvas.js"></script>
+</head>
+<body>
+<div id="myCloudTag">
+    <canvas width="600" height="350" id="myTag">
+        <p>Anything in here will be replaced on browsers that support the canvas element</p>
+    </canvas>
+
+</div>
+<div id="tags">
+    <ul>
+        <li><a href="#" style="font-size:30px;">认证考试</a></li>
+        <li><a href="#">UMTS OMSTAR </a></li>
+        <li><a href="#">客户经理角色认知</a></li>
+        <li><a href="#">PM角色</a></li>
+        <li><a href="#">维修</a></li>
+        <li><a href="#">信息安全</a></li>
+        <li><a href="#">UMTS OMSTAR </a></li>
+        <li><a href="#">客户经理角色认知</a></li>
+        <li><a href="#">PM角色</a></li>
+        <li><a href="#">维修</a></li>
+    </ul>
+</div>
+
+</body>
+<script type="text/javascript">
+  window.onload = function() {
+    try {
+      TagCanvas.Start('myTag','tags',{
+        textColour: '#63cdff',
+        outlineColour: '#63cdff',
+        reverse: true,
+        depth: 0.8,
+        maxSpeed: 0.05
+      });
+    } catch(e) {
+      document.getElementById('myCloudTag').style.display = 'none';
+    }
+  };
+  function changeshape(s) {
+    var locks = { hcylinder: 'x', vcylinder: 'y', hring: 'x', vring: 'y', sphere: '' };
+    lock = locks[s] || '';
+    shape = s;
+    TagCanvas.initial = (lock == 'x' && [0,0.2]) || (lock == 'y' && [0.2,0]) || [0.2,0.2];
+    restart();
+  }
+  changeshape('vcylinder')
+
+</script>
+
+</html>
