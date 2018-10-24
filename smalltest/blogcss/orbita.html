@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>css模拟行星公转</title>
+<style>
+  /*指针时钟*/
+    .clock-wrap{
+        position: relative;
+        width: 210px;
+        height: 151px;
+        background: url(http://misc.360buyimg.com/product/home/1.0.0/css/i/homebg.png) no-repeat 0 -136px;
+    }
+
+    .clock{
+        position: absolute;
+        left: 72px;
+        top: 31px;
+        width: 43px;
+        height: 43px;
+        border-radius: 50%;
+        border: 7px solid white;
+    }
+
+    .clock::before{
+        content: ' ';
+        position: absolute;
+        left: 18px;
+        top: 18px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: white;
+    }
+
+    .clock-h{
+        position: absolute;
+        top: 5px;
+        left: 19px;
+        height: 19px;
+        width: 5px;
+        background-color: white;
+        transform-origin: 2.5px 16.5px;
+        -webkit-transform-origin: 2.5px 16.5px;
+    }
+
+    .clock-m{
+        position: absolute;
+        left: 5px;
+        top: 19px;
+        width: 19px;
+        height: 5px;
+        background: 0 0;
+        border-radius: 2px;
+    }
+
+    .clock-m::after{
+        content: "";
+        width: 5px;
+        height: 21px;
+        position: absolute;
+        left: 14px;
+        top: -17px;
+        background-color: white;
+        border-radius: 2px;
+        transform-origin: 2.5px 19.5px;
+        -webkit-transform-origin: 2.5px 19.5px;
+        animation: tick-tock 20s  steps(60,end)  infinite;
+        -webkit-animation: tick-tock 20s steps(60,end) infinite;
+        /*steps来过渡360deg分成60步完成 steps(60, end)*/
+    }
+
+    @keyframes tick-tock{
+        to{
+            transform: rotate(360deg);
+        }
+    }
+
+    @-webkit-keyframes tick-tock{
+        to{
+            transform: rotate(360deg);
+        }
+    }
+
+    .clock-s{
+        position: absolute;
+        width: 5px;
+        height: 28px;
+        left: 19px;
+        top: -6px;
+        transform-origin: 2.5px 27.5px;
+        -webkit-transform-origin: 2.5px 27.5px;
+        animation: tick-tock 10s linear infinite;
+        -webkit-animation: tick-tock 10s linear infinite;
+    }
+
+    .clock-s::after{
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 5px;
+        height: 5px;
+        background-color: #5e5252;
+        border-radius:50%;
+    }
+
+</style>
+<style>
+  /*行星公转*/
+  body{
+    background-color: black;
+  }
+  .planet{
+    width: 800px;
+    height: 600px;
+    background-color: black;
+    position: relative;
+    border: 1px solid white;
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+  }
+  .planet div{
+    position: absolute;
+  }
+  .sun{
+    left: 350px;
+    top: 250px;
+    width: 100px;
+    height: 100px;
+    background: url(http://images2015.cnblogs.com/blog/818663/201510/818663-20151013205656257-1729257972.png) 0 0 no-repeat;
+  }
+  .earth{
+    top: 0;
+    left: 370px;
+    width: 60px;
+    height: 60px;
+    background: url(http://images2015.cnblogs.com/blog/818663/201510/818663-20151013205943538-1279197333.png) 0 0 no-repeat;
+    /*旋转元素的基点位置:*/
+    transform-origin: 30px 400px;
+    animation: rotation 8s linear infinite;
+
+  }
+  .moveY{
+    /*animation: moveY 4s ease-in-out infinite alternate;*/
+  }
+  @keyframes moveY{
+    to{
+      transform: translateY(-200px);
+    }
+  }
+  @keyframes rotation{
+    to{
+      /*transform: rotate(360deg)*/
+      transform: rotate(1turn);
+    }
+  }
+  .track{
+    width: 740px;
+    height: 540px;
+    left: 30px;
+    top: 30px;
+    border: 1px solid darkgrey;
+    border-radius: 50%;
+  }
+
+</style>
+</head>
+<body>
+<!--指针时钟-->
+<div class='clock-wrap'>
+    <div class='clock'>
+        <div class='clock-h'></div>
+        <div class='clock-m'></div>
+        <div class='clock-s'></div>
+    </div>
+</div>
+
+<!--行星公转-->
+<div class='planet'>
+  <div class='origin-circle'></div>
+  <div class='sun'></div>
+  <div class='track'></div>
+  <div class='moveY'>
+    <div class='earth'></div>
+  </div>
+</div>
+
+</body>
+<script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+</html>

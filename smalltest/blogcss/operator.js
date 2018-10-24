@@ -80,16 +80,7 @@ GenerateContentList();
 
 
 
-
-
-
-
-
-
-
-
-
-
+//扫一扫侧边栏
 $(".btn-myRewards").hover(function(){
   $(".myRewards").css("width","240px");
 })
@@ -116,3 +107,28 @@ $(".not-full li:nth-child(2)").hover(function(){
   $(".myRewards-account").html("微信打赏");
   $(".myRewards-code img").attr("src","http://images.cnblogs.com/cnblogs_com/yinn/1078832/o_weixin.png");
 })
+
+
+
+//返回顶部
+
+$(function() {
+  // hide #back-top first
+  $("#back-top").hide();
+  // fade in #back-top
+  $(window).scroll(function() {
+    if ($(this).scrollTop() > 500) {
+      $('#back-top').fadeIn();
+    } else {
+      $('#back-top').fadeOut();
+    }
+  });
+  // scroll body to 0px on click
+  $('#back-top a').click(function() {
+    $('body,html').animate({
+      scrollTop: 0
+    }, 800);
+    return false;
+  });
+});
+

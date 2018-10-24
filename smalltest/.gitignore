@@ -1,0 +1,7 @@
+node_modules/
+/managenode-web/
+npm-debug.log*
+.vscode
+# config/local.js
+.idea
+dist.rar

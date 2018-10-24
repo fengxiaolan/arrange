@@ -1,0 +1,295 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>cloth</title>
+    <script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+
+</head>
+<body>
+<div>
+    <div class="clound"></div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/92/three.js"></script>
+
+<script>
+  /** @namespace */
+  var THREEx	= THREEx 		|| {};
+
+  /**
+   * Update renderer and camera when the window is resized
+   *
+   * @param {Object} renderer the renderer to update
+   * @param {Object} Camera the camera to update
+   */
+  THREEx.WindowResize	= function(renderer, camera){
+    var callback	= function(){
+      // notify the renderer of the size change
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      // update the camera
+      camera.aspect	= window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    }
+    // bind the resize event
+    window.addEventListener('resize', callback, false);
+    // return .stop() the function to stop watching window resize
+    return {
+      /**
+       * Stop watching window resize
+       */
+      stop	: function(){
+        window.removeEventListener('resize', callback);
+      }
+    };
+  }
+
+
+
+  /**
+   * @author alteredq / http://alteredqualia.com/
+   * @author mr.doob / http://mrdoob.com/
+   */
+
+  Detector = {
+
+    canvas : !! window.CanvasRenderingContext2D,
+    webgl : ( function () { try { return !! window.WebGLRenderingContext && !! document.createElement( 'canvas' ).getContext( 'experimental-webgl' ); } catch( e ) { return false; } } )(),
+    workers : !! window.Worker,
+    fileapi : window.File && window.FileReader && window.FileList && window.Blob,
+
+    getWebGLErrorMessage : function () {
+
+      var domElement = document.createElement( 'div' );
+
+      domElement.style.fontFamily = 'monospace';
+      domElement.style.fontSize = '13px';
+      domElement.style.textAlign = 'center';
+      domElement.style.background = '#eee';
+      domElement.style.color = '#000';
+      domElement.style.padding = '1em';
+      domElement.style.width = '475px';
+      domElement.style.margin = '5em auto 0';
+
+      if ( ! this.webgl ) {
+
+        domElement.innerHTML = window.WebGLRenderingContext ? [
+          'Sorry, your graphics card doesn\'t support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">WebGL</a>'
+        ].join( '\n' ) : [
+          'Sorry, your browser doesn\'t support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">WebGL</a><br/>',
+          'Please try with',
+          '<a href="http://www.google.com/chrome">Chrome 10</a>, ',
+          '<a href="http://www.mozilla.com/en-US/firefox/all-beta.html">Firefox 4</a> or',
+          '<a href="http://nightly.webkit.org/">Safari 6</a>'
+        ].join( '\n' );
+
+      }
+
+      return domElement;
+
+    },
+
+    addGetWebGLMessage : function ( parameters ) {
+
+      var parent, id, domElement;
+
+      parameters = parameters || {};
+
+      parent = parameters.parent !== undefined ? parameters.parent : document.body;
+      id = parameters.id !== undefined ? parameters.id : 'oldie';
+
+      domElement = Detector.getWebGLErrorMessage();
+      domElement.id = id;
+
+      //parent.appendChild( domElement );
+
+    }
+
+  };
+
+  $(document).ready(function() {
+    function p(a) {
+      this.movable = !0;
+      this.positionPrev = this.position = a;
+      this.mass = 1;
+      this.acc = new THREE.Vector3(0,0,0)
+    }
+    function k() {
+      this.h = this.w = 50;
+      this.particles = [];
+      this.particles.length = this.w * this.h;
+      this.constraints = [];
+      for (var a = 0; a < this.w; a++)
+        for (var b = 0; b < this.h; b++)
+          this.particles[b * this.w + a] = new p(new THREE.Vector3(a / this.w,b / this.h,0));
+      for (a = 0; a < this.w; a++)
+        for (b = 0; b < this.h; b++)
+          a < this.w - 1 && this.constraints.push([this.getParticle(a, b), this.getParticle(a + 1, b), (new THREE.Vector3).subVectors(this.getParticle(a, b).position, this.getParticle(a + 1, b).position).length()]),
+          b < this.h - 1 && this.constraints.push([this.getParticle(a, b), this.getParticle(a, b + 1), (new THREE.Vector3).subVectors(this.getParticle(a, b).position, this.getParticle(a, b + 1).position).length()]),
+          a < this.w - 1 && b < this.h - 1 && this.constraints.push([this.getParticle(a, b), this.getParticle(a + 1, b + 1), (new THREE.Vector3).subVectors(this.getParticle(a, b).position, this.getParticle(a + 1, b + 1).position).length()]),
+          a < this.w - 1 && b < this.h - 1 && this.constraints.push([this.getParticle(a + 1, b), this.getParticle(a, b + 1), (new THREE.Vector3).subVectors(this.getParticle(a + 1, b).position, this.getParticle(a, b + 1).position).length()]);
+      for (a = 0; a < this.w; a++)
+        for (b = 0; b < this.h; b++)
+          a < this.w - 2 && this.constraints.push([this.getParticle(a, b), this.getParticle(a + 2, b), (new THREE.Vector3).subVectors(this.getParticle(a, b).position, this.getParticle(a + 2, b).position).length()]),
+          b < this.h - 2 && this.constraints.push([this.getParticle(a, b), this.getParticle(a, b + 2), (new THREE.Vector3).subVectors(this.getParticle(a, b).position, this.getParticle(a, b + 2).position).length()]),
+          a < this.w - 2 && b < this.h - 2 && this.constraints.push([this.getParticle(a, b), this.getParticle(a + 2, b + 2), (new THREE.Vector3).subVectors(this.getParticle(a, b).position, this.getParticle(a + 2, b + 2).position).length()]),
+          a < this.w - 2 && b < this.h - 2 && this.constraints.push([this.getParticle(a + 2, b), this.getParticle(a, b + 2), (new THREE.Vector3).subVectors(this.getParticle(a + 2, b).position, this.getParticle(a, b + 2).position).length()]);
+      for (a = 0; a < this.w; a++)
+        this.getParticle(a, this.h - 1).movable = !1
+    }
+    function t() {
+      requestAnimationFrame(t);
+      for (var a = 0; a < c.particles.length; a++)
+        d.vertices[a] = c.particles[a].position;
+      d.computeFaceNormals();
+      d.verticesNeedUpdate = !0;
+      d.normalsNeedUpdate = !0;
+      l.render(e, h);
+      a = new THREE.Vector3(0,-.2,0);
+      c.addForce(a.multiplyScalar(q));
+      c.windForce(new THREE.Vector3(g.x / 1E3,g.y / 1E3,g.z / 1E3));
+      f.position.setZ(Math.sin(Date.now() / 1E3));
+      for (a = 0; a < c.particles.length; a++)
+        c.particles[a].timeStep();
+      for (var b = 0; b < u; b++)
+        for (a = 0; a < c.constraints.length; a++)
+          c.satisfyConstraint(c.constraints[a]);
+      for (a = 0; a < c.particles.length; a++)
+        b = new THREE.Vector3,
+          b.subVectors(c.particles[a].position, f.position),
+        b.length() < n && (b.normalize().multiplyScalar(n),
+          c.particles[a].position.copy(f.position).add(b));
+      v.update()
+    }
+    var m, e, h, l, v, r, q, c, u, f, n, g, d;
+    q = .36;
+    u = 15;
+    g = new THREE.Vector3(0,0,1);
+    p.prototype.addForce = function(a) {
+      this.acc = this.acc.add(a.divideScalar(this.mass))
+    }
+    ;
+    p.prototype.timeStep = function() {
+      if (this.movable) {
+        var a = this.position.clone()
+          , b = new THREE.Vector3(0,0,0);
+        b.subVectors(a, this.positionPrev);
+        b.multiplyScalar(.99).add(this.position);
+        b.add(this.acc.multiplyScalar(q));
+        this.positionPrev = a;
+        this.position = b;
+        this.acc.set(0, 0, 0)
+      }
+    }
+    ;
+    k.prototype.getParticle = function(a, b) {
+      return this.particles[b * this.w + a]
+    }
+    ;
+    k.prototype.addForce = function(a) {
+      for (var b = 0; b < this.particles.length; b++)
+        this.particles[b].addForce(a)
+    }
+    ;
+    k.prototype.addWindForceTriangle = function(a, b, c, d) {
+      var e;
+      e = (new THREE.Vector3).subVectors(b.position, a.position);
+      var f = (new THREE.Vector3).subVectors(c.position, a.position);
+      e = e.cross(f);
+      f = e.normalize();
+      d = e.multiplyScalar(f.dot(d));
+      a.addForce(d);
+      b.addForce(d);
+      c.addForce(d)
+    }
+    ;
+    k.prototype.windForce = function(a) {
+      for (var b = 0; b < this.w - 1; b++)
+        for (var c = 0; c < this.h - 1; c++)
+          this.addWindForceTriangle(this.getParticle(b + 1, c), this.getParticle(b, c), this.getParticle(b, c + 1), a),
+            this.addWindForceTriangle(this.getParticle(b + 1, c + 1), this.getParticle(b + 1, c), this.getParticle(b, c + 1), a)
+    }
+    ;
+    k.prototype.satisfyConstraint = function(a) {
+      var b = new THREE.Vector3(0,0,0);
+      b.subVectors(a[1].position, a[0].position);
+      if (0 != b.length()) {
+        var c = new THREE.Vector3(0,0,0)
+          , c = b.multiplyScalar(1 - a[2] / b.length());
+        a[0].movable && (a[0].position = a[0].position.add(c.multiplyScalar(.5)));
+        a[1].movable && (a[1].position = a[1].position.sub(c.multiplyScalar(.5)))
+      }
+    }
+    ;
+    (function() {
+        m = document.createElement("div");
+        $(".clound").append(m);
+        var a = document.createElement("canvas");
+        a.width = 32;
+        a.height = window.innerHeight;
+        var b = a.getContext("2d")
+          , g = b.createLinearGradient(0, 0, 0, a.height);
+        g.addColorStop(0, "#1e4877");
+        g.addColorStop(.5, "#4584b4");
+        b.fillStyle = g;
+        b.fillRect(0, 0, a.width, a.height);
+        m.style.backgroundImage = "url(" + a.toDataURL("image/png") + ")";
+        m.style.backgroundSize = "32px 100%";
+        m.style.backgroundRepeat = "repeat-x";
+        e = new THREE.Scene;
+        a = window.innerWidth;
+        b = window.innerHeight;
+        h = new THREE.PerspectiveCamera(45,a / b,.1,2E4);
+        e.add(h);
+        h.position.set(-2, 0, 2);
+        h.lookAt(e.position);
+        l = Detector.webgl ? new THREE.WebGLRenderer({
+          antialias: !0
+        }) : new THREE.CanvasRenderer;
+        l.setSize(a, b);
+        m.appendChild(l.domElement);
+        THREEx.WindowResize(l, h);
+        v = new THREE.OrbitControls(h,l.domElement);
+        c = new k;
+        d = new THREE.Geometry;
+        d.dynamic = !0;
+        for (a = 0; a < c.particles.length; a++)
+          d.vertices.push(c.particles[a].position);
+        for (a = 0; a < c.w - 1; a++)
+          for (b = 0; b < c.h - 1; b++)
+            color = 0 < a % 2 ? new THREE.Color(10092288) : new THREE.Color(3342387),
+              d.faces.push(new THREE.Face3(b * c.w + a + 1,b * c.w + a,(b + 1) * c.w + a)),
+              d.faces[d.faces.length - 1].color = color,
+              d.faces.push(new THREE.Face3((b + 1) * c.w + a + 1,b * c.w + a + 1,(b + 1) * c.w + a)),
+              d.faces[d.faces.length - 1].color = color;
+        d.computeFaceNormals();
+        a = new THREE.MeshLambertMaterial({
+          wireframe: !1,
+          vertexColors: !0,
+          side: THREE.DoubleSide
+        });
+        a = new THREE.Mesh(d,a);
+        a.castShadow = !0;
+        a.receiveShadow = !0;
+        a.position.x = -.1;
+        e.add(a);
+        n = .2;
+        f = new THREE.Mesh(new THREE.SphereGeometry(n,20,20),new THREE.MeshPhongMaterial({
+          color: 16711680
+        }));
+        f.position = new THREE.Vector3(.6,.6,0);
+        f.receiveShadow = !0;
+        f.castShadow = !0;
+        e.add(f);
+        light = new THREE.PointLight(16777215);
+        light.position = new THREE.Vector3(.1,4,4);
+        e.add(light);
+        r = new THREE.PointLight(16777215);
+        r.position = new THREE.Vector3(.1,4,-4);
+        e.add(r)
+      }
+    )();
+    t()
+  });
+
+</script>
+</html>
