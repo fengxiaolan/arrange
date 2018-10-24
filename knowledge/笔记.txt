@@ -1,0 +1,24 @@
+服务密码572536
+
+学习笔记
+七牛存储器
+https://developer.qiniu.com/
+antv画图插件
+https://antv.alipay.com/zh-cn/g2/3.x/demo/line/series.html
+viser画图插件(可选择框架)
+https://viserjs.github.io/demo.html
+css一些特效
+http://caibaojian.com/30-seconds-of-css/#mouse-cursor-gradient-tracking
+pdf电子书
+http://www.360doc.com/content/17/1229/16/22458035_717439954.shtml
+前端面试知识
+https://yuchengkai.cn/docs/zh/
+
+
+ 1.加入项目熟悉项目，不要畏惧，其实你很不错
+ 2.多看源码前端要很精通，后端要熟悉，加油
+ 3.随时建立社交关系
+      
+do more--- do better-- do exercise 
+
+
