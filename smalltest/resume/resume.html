@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My简历</title>
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <style type="text/css">
+        /*rest*/
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        img{border:none;}
+        .clearfix:after {
+          content: ".";
+          display: block;
+          height: 0;
+          clear: both;
+          overflow: hidden;
+          visibility: hidden;
+        }
+        i{
+          color: #4b7aad;
+          font-size: 18px;
+        }
+        /*loading*/
+        .main-loading{
+          position: fixed;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 100%;
+          height: 100%;
+          background: #ccc;
+          z-index: 99;
+        }
+        .loading-con{
+          position: absolute;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          margin: auto;
+          width: 96px;
+          height: 96px;
+        }
+        .loading-circle{
+            width: 80px;
+          height: 80px;
+          border-top: 8px solid #11994b;
+          border-right: 8px solid #f2a808;
+          border-bottom: 8px solid #2399e7;
+          border-left: 8px solid #c0392b;
+          -webkit-border-radius: 50%;
+          border-radius: 50%;
+          -webkit-animation: spin 1s infinite linear;
+          -moz-animation: spin 1s infinite linear;
+          animation: spin 1s infinite linear;
+        }
+        @keyframes spin {
+          0% {
+              transform: rotate(0deg);
+          }
+          100% {
+              transform: rotate(360deg);
+          }
+        }
+        /*container*/
+        .container{
+          width: 94%;
+          padding: 20px;
+          margin: 50px auto;
+          border-radius: 5px;
+          border: 1px solid #eee;
+          box-shadow: 2px 2px 8px rgba(0,0,0,0.1), -2px -2px 8px rgba(0,0,0,0.1);
+        }
+        /*left*/
+        .left-pannel{
+          float: left;
+          padding-right: 20px;
+          border-right: 1px dashed #666;
+        }
+        .expect p{
+          color: #4b7aad;
+          font-size: 18px;
+        }
+        .person-msg{
+          border-top: 1px solid #666;
+        }
+        .person-msg .msg-title{
+          color: #4b7aad;
+          font-size: 18px;
+        }
+
+        /*main-con*/
+        .main-con{
+          float: left;
+        }
+		.main-title{
+		  color: #4b7aad;
+		  font-size: 18px;
+		}
+
+    </style>
+</head>
+<body>
+  <div class="main-loading">
+    <div class="loading-con">
+      <div class="loading-circle"></div>
+    </div>
+  </div>
+  <div class="container clearfix">
+    <div class="row">
+      <div class="col-sm-4 col-md-3 left-pannel">
+        <div class="logo">
+          <div class="myname"></div>
+        </div>
+        <div class="expect">
+         <p>求职: web前端开发</p>
+         <p>期望薪资: 6k-7k</p>
+        </div>
+        <div class="person-msg">
+          <div class="msg-title">
+            <i class="fa fa-paperclip"></i>
+            联系方式
+          </div>
+          <ul>
+              <!--<i class="fa fa-hand-o-left"></i>手
+              <i class="fa fa-phone-square"></i>电话
+              <i class="fa  fa-calendar-times-o"></i>工作年限
+              <i class="fa fa-bar-chart"></i>bar
+              <i class="fa fa-list"></i>bar
+              <i class="fa fa-paperclip"></i>书签
+              <i class="fa fa-clock-o"></i>时间
+              <i class="fa fa-envelope"></i>信息
+              <i class="fa fa-map-marker"></i>地址
+              <i class="fa fa-mortar-board"></i>学历
+              <i class="fa fa-university"></i>学校
+              <i class="fa fa-book"></i>专业
+              <i class="fa fa-github"></i>github
+              <i class="fa fa-code"></i>code
+              <i class="fa fa-rss-square"></i>博客-->
+            <li>
+              <i class="fa fa-clock-o"></i>1年工作经验
+            </li>
+			<li>
+              <i class="fa fa-phone-square"></i>15881272563
+            </li>
+			<li>
+              <i class="fa fa-envelope"></i>fengxiaolanblog@163.com
+            </li>
+            <li>
+              <i class="fa fa-github"></i>https://github.com/fengxiaolan
+            </li>
+            <li>
+              <i class="fa fa-rss-square"></i>https://www.cnblogs.com/xiaolanschool
+            </li>
+            <li>
+              <i class="fa fa-university"></i>攀枝花学院
+            </li>
+            <li>
+              <i class="fa fa-book"></i>信息与计算科学
+            </li>
+            <li>
+              <i class="fa  fa-calendar-times-o"></i>23岁
+            </li>
+            <li>
+              <i class="fa fa-map-marker"></i>遂宁
+            </li>
+
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-8 col-md-9 main-con">
+	    <div class="detail-box">
+		  <div class="main-title">
+			  <i class="fa fa-list"></i>
+			  专业技能
+			  <i class="fa fa-hand-o-left"></i>
+		  </div>
+		  <ul>
+			  <li>
+			  熟悉使用HTML5
+			  </li>
+		  </ul>
+		</div>
+    </div>
+    </div>
+  </div>
+
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script>
+    $('.main-loading').show();
+    $('.container').hide();
+    setInterval(function () {
+      $('.main-loading').hide();
+      $('.container').show(1000);
+    },1500);
+</script>
+</html>

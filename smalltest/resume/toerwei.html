@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>在线制作二维码</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.2/css/swiper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.2/js/swiper.min.js"></script>
+    <script src='http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js'></script>
+    <script src="http://cdn.staticfile.org/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+    <style>
+        #qrcode{
+            width: 256px;
+            height: 256px;
+        }
+    </style>
+</head>
+<body>
+<div class="two-dimensionCode-state text-center">
+    <div class="form-group">
+        可截图分享或用手机扫描二维码查看
+    </div>
+    <div id="qrcode"></div>
+
+</div>
+
+</body>
+
+<script>
+  var path="https://fengxiaolan.github.io/cat.html";
+  var realPath = toUtf8(path);
+  $("#qrcode").qrcode({
+    text : realPath,  //设置二维码内容
+    render : "canvas",//设置渲染方式
+    width : 256,     //设置宽度,默认生成的二维码大小是 256×256
+    height : 256,     //设置高度
+    typeNumber : -1,      //计算模式
+    correctLevel : 0,//纠错等级
+    background : "#ffffff",//背景颜色
+    foreground : "#000000", //前景颜色
+    // src:
+  });
+  // $("#qrcode").qrcode('https://fengxiaolan.github.io/cat.html');
+  function toUtf8(str) {
+    var out, i, len, c;
+    out = "";
+    len = str.length;
+    for(i = 0; i < len; i++) {
+      c = str.charCodeAt(i);
+      if ((c >= 0x0001) && (c <= 0x007F)) {
+        out += str.charAt(i);
+      } else if (c > 0x07FF) {
+        out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+        out += String.fromCharCode(0x80 | ((c >>  6) & 0x3F));
+        out += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+      } else {
+        out += String.fromCharCode(0xC0 | ((c >>  6) & 0x1F));
+        out += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+      }
+    }
+    return out;
+  }
+</script>
+</html>
