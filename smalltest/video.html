@@ -71,5 +71,43 @@
       // $(document).ready(function(){
       //    $("#video1").trigger('mouseenter')
       // })
+
+
+
+
+
+
+
+
+
+
+var arr = {
+api: null,
+db:{num: "0.0", size: "0"},
+file: {num: "0",size: 9}
+}
+function operator (type, arg) {
+  for(var val in arr){
+    //if(arr[val] == null){
+	//return 0;
+    //}
+    if(val == type && arr[val] != null){
+     return arr[type][arg];
+    }else {
+     return 0;
+    }
+  }
+}
+
+//operator('api','num')
+//operator('db','size')
+//operator('db','num')
+//operator('file','num')
+
+console.log(operator('db','size'))
+console.log(operator('api','num'))
+console.log(operator('db','num'))
+console.log(operator('file','num'))
+console.log(operator('file','size'))
 </script>
 </html>

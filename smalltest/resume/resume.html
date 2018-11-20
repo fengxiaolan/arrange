@@ -23,6 +23,12 @@
           color: #4b7aad;
           font-size: 18px;
         }
+        ul li{
+          list-style: none;
+        }
+        i{
+          margin-right: 5px;
+        }
         /*loading*/
         .main-loading{
           position: fixed;
@@ -46,7 +52,7 @@
           height: 96px;
         }
         .loading-circle{
-            width: 80px;
+          width: 80px;
           height: 80px;
           border-top: 8px solid #11994b;
           border-right: 8px solid #f2a808;
@@ -101,7 +107,19 @@
 		  color: #4b7aad;
 		  font-size: 18px;
 		}
-
+      .proname{
+        font-size: 16px;
+      }
+      .proname::before{
+        content: "";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin-right: 5px;
+        margin-bottom: 3px;
+        border-radius: 50%;
+        background: #4b7abf;
+      }
     </style>
 </head>
 <body>
@@ -123,39 +141,39 @@
         <div class="person-msg">
           <div class="msg-title">
             <i class="fa fa-paperclip"></i>
-            联系方式
+            意向
           </div>
           <ul>
-              <!--<i class="fa fa-hand-o-left"></i>手
-              <i class="fa fa-phone-square"></i>电话
-              <i class="fa  fa-calendar-times-o"></i>工作年限
-              <i class="fa fa-bar-chart"></i>bar
-              <i class="fa fa-list"></i>bar
-              <i class="fa fa-paperclip"></i>书签
-              <i class="fa fa-clock-o"></i>时间
-              <i class="fa fa-envelope"></i>信息
-              <i class="fa fa-map-marker"></i>地址
-              <i class="fa fa-mortar-board"></i>学历
-              <i class="fa fa-university"></i>学校
-              <i class="fa fa-book"></i>专业
-              <i class="fa fa-github"></i>github
-              <i class="fa fa-code"></i>code
-              <i class="fa fa-rss-square"></i>博客-->
+            <li>
+              <i class="fa fa-university"></i>到岗时间:一周内
+            </li>
+            <li>
+              <i class="fa fa-university"></i>工作类型:全职
+            </li>
+          </ul>
+          <ul>
             <li>
               <i class="fa fa-clock-o"></i>1年工作经验
             </li>
-			<li>
+			      <li>
               <i class="fa fa-phone-square"></i>15881272563
             </li>
-			<li>
+			      <li>
               <i class="fa fa-envelope"></i>fengxiaolanblog@163.com
             </li>
             <li>
-              <i class="fa fa-github"></i>https://github.com/fengxiaolan
+              <i class="fa fa-github"></i>github
             </li>
             <li>
-              <i class="fa fa-rss-square"></i>https://www.cnblogs.com/xiaolanschool
+              <i class="fa fa-rss-square"></i>博客
             </li>
+
+          </ul>
+          <div class="msg-title">
+            <i class="fa fa-paperclip"></i>
+            个人信息
+          </div>
+          <ul>
             <li>
               <i class="fa fa-university"></i>攀枝花学院
             </li>
@@ -163,29 +181,80 @@
               <i class="fa fa-book"></i>信息与计算科学
             </li>
             <li>
-              <i class="fa  fa-calendar-times-o"></i>23岁
+              <i class="fa fa-book"></i>学历/学位:本科
+            </li>
+            <li>
+              <i class="fa fa-calendar-times-o"></i>23岁
             </li>
             <li>
               <i class="fa fa-map-marker"></i>遂宁
             </li>
-
+          </ul>
+          <div class="msg-title">
+            <i class="fa fa-paperclip"></i>
+            个人评价
+          </div>
+          <ul>
+            <li>
+              <i class="fa fa-university"></i>爱好前端
+            </li>
           </ul>
         </div>
       </div>
       <div class="col-sm-8 col-md-9 main-con">
-	    <div class="detail-box">
-		  <div class="main-title">
-			  <i class="fa fa-list"></i>
-			  专业技能
-			  <i class="fa fa-hand-o-left"></i>
-		  </div>
-		  <ul>
-			  <li>
-			  熟悉使用HTML5
-			  </li>
-		  </ul>
-		</div>
-    </div>
+	      <div class="detail-box">
+          <div class="main-title">
+            <i class="fa fa-list"></i>
+            专业技能
+            <i class="fa fa-hand-o-left"></i>
+          </div>
+          <ul>
+            <li>
+            熟悉使用HTML5
+            </li>
+        </ul>
+		    </div>
+        <div class="detail-box">
+          <div class="main-title">
+            <i class="fa fa-list"></i>
+            项目经验
+            <i class="fa fa-hand-o-left"></i>
+          </div>
+          <ul>
+            <li>
+              <p class="proname">数据处理系统</p>
+              <p>系统</p>
+              <p><span>项目描述:</span>xxxxx</p>
+              <p><span>负责模块:</span>xxxxx</p>
+              <p><span>技术栈:</span>xxxxx</p>
+            </li>
+            <li>
+              <p class="proname">花溪招商系统</p>
+              <p><span>项目描述:</span>xxxxx</p>
+              <p><span>负责模块:</span>xxxxx</p>
+              <p><span>技术栈:</span>xxxxx</p>
+            </li>
+            <li>
+              <p>内江数据共享系统</p>
+              <p><span>项目描述:</span>xxxxx</p>
+              <p><span>负责模块:</span>xxxxx</p>
+              <p><span>技术栈:</span>xxxxx</p>
+            </li>
+          </ul>
+        </div>
+        <div class="detail-box">
+          <div class="main-title">
+            <i class="fa fa-list"></i>
+            工作经历
+            <i class="fa fa-hand-o-left"></i>
+          </div>
+          <ul>
+            <li>
+             2018/4 ---至今
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 

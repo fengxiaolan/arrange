@@ -1,72 +1,57 @@
 ﻿<html>
 <head>
     <meta charset="UTF-8">
-    <script src="//g.alicdn.com/bizcharts/io-asserts/3.1.2/react16.0.0.production.min.js"></script>
-    <script src="//g.alicdn.com/bizcharts/io-asserts/3.1.2/react-dom16.0.0.production.min.js"></script>
-    <script src="//unpkg.com/babel-core@5.8.38/browser.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/bizcharts@3.2.2/umd/BizCharts.min.js"> </script>
-    <script type="text/javascript" src="//gw.alipayobjects.com/os/antv/assets/data-set/0.8.6/data-set.min.js"></script>
+    <script src="http://g.alicdn.com/bizcharts/io-asserts/3.1.2/react16.0.0.production.min.js"></script>
+    <script src="http://g.alicdn.com/bizcharts/io-asserts/3.1.2/react-dom16.0.0.production.min.js"></script>
+    <script src="http://unpkg.com/babel-core@5.8.38/browser.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/npm/bizcharts@3.2.2/umd/BizCharts.min.js"> </script>
+    <script type="text/javascript" src="http://gw.alipayobjects.com/os/antv/assets/data-set/0.8.6/data-set.min.js"></script>
 
 
 </head>
 <body>
 <div id="mountNode" ></div>
 <script type="text/babel">
-  const { Chart, Geom, Axis, Tooltip, Coord, Label, Legend, View, Guide, Shape } = window.BizCharts;
-  const { DataView } = DataSet;
-  const { Html } = Guide;
+  const { Chart, Axis, Geom, Tooltip, Coord, Legend, Guide, Html, Label } = window.BizCharts;
   const data = [
-    { item: '事例一', count: 40 },
-    { item: '事例二', count: 21 },
-    { item: '事例三', count: 17 },
-    { item: '事例四', count: 13 },
-    { item: '事例五', count: 9 }
-  ];
-  const dv = new DataView();
+    {id: 1, country: "中国", population: 1},
+    {id: 2, country: "aa", population: 3},
+    {id: 3, country: "bb", population: 0},
+    {id: 4, country: "cc", population: 5},
+    ];
+  const ds = new DataSet();
+  const dv = ds.createView().source(data);
   dv.source(data).transform({
-    type: 'percent',
-    field: 'count',
-    dimension: 'item',
-    as: 'percent'
+    type: "fold",
+    fields: "population",
   });
-  const cols = {
-    percent: {
-      formatter: val => {
-        val = (val * 100) + '%';
-        return val;
-      }
-    }
-  }
   ReactDOM.render((
-    <Chart height={window.innerHeight} data={dv} scale={cols} padding={[ 80, 100, 80, 80 ]} forceFit>
-      <Coord type={'theta'} radius={0.75} innerRadius={0.6} />
-      <Axis name="percent" />
-      <Legend position='right' offsetY={-window.innerHeight / 2 + 120} offsetX={-100} />
-      <Tooltip
-        showTitle={false}
-        itemTpl='<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}</li>'
-      />
-      <Guide >
-        <Html position ={[ '50%', '50%' ]} html='<div style="color:#8c8c8c;font-size:1.16em;text-align: center;width: 10em;">主机<br><span style="color:#262626;font-size:2.5em">200</span>台</div>' alignX='middle' alignY='middle'/>
-      </Guide>
-      <Geom
-        type="intervalStack"
-        position="percent"
-        color='item'
-        tooltip={['item*percent',(item, percent) => {
-          percent = percent * 100 + '%';
-          return {
-            name: item,
-            value: percent
-          };
-        }]}
-        style={{lineWidth: 1,stroke: '#fff'}}
-      >
-        <Label content='percent' formatter={(val, item) => {
-          return item.point.item + ': ' + val;}} />
+    <Chart height={150} data={data} width={400}>
+      <Coord transpose />
+      <Axis name="country" label={{offset: 5}} />
+      <Axis name="population" />
+      <Legend name="country" position="top" offsetY={0} offsetX={0} />
+      <Tooltip />
+      <Geom type="interval" position="country*population"  color={["country", ["#7f8da9", "#fec514", "#db4c3c", "#daf0fd"]]} size={20}>
+        <Label content="population" />
       </Geom>
     </Chart>
   ), document.getElementById("mountNode"));
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
