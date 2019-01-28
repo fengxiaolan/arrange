@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>snake贪吃蛇20行代码</title>
+    <script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<style>
+    body {
+        display: flex;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<body>
+<div>
+    <canvas id="snake" width="400" height="400" style="background-color:black">浏览器暂不支持</canvas>
+</div>
+</body>
+<script>
+    var snake = [41, 40],
+        direction = 1,
+        food = 43,
+        n,
+        box = document.getElementById('snake').getContext('2d');
+
+    function draw(seat, color) {
+        box.fillStyle = color;
+        box.fillRect(seat % 20 * 20 + 1, ~~(seat / 20) * 20 + 1, 18, 18);
+    }  
+
+    document.onkeydown = function(evt) {
+        direction = snake[1] -snake[0] == (n = [-1, -20, 1, 20][(evt || event).keyCode - 37] || direction) ? direction : n;
+    }      
+
+    !function() {
+        snake.unshift(n == snake[0] + direction);
+        if(snake.indexOf(n, 1) > 0 || n < 0 || n > 399 || direction == 1 && n % 20 == 0 && direction == -1 && n % 20 == 19){
+            return alert("GAME OVER!");
+        }
+        draw(n, "lime");
+        if(n == food) {
+            while(snake,indexOf(food = ~~(Math.random() * 400)) > 0);
+            draw(food, "yellow");
+        } else {
+            draw(snake.pop(), "black");
+        }
+        setTimeout(arguments.callee, 150);
+    }();
+</script>
+</html>

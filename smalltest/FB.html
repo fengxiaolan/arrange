@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+
+    </body>
+    <script>
+        function fizzBuzz(num) {
+            if (num % 3 == 0 && num % 5 == 0) {           
+                console.log("fizzbuzz")
+                return "fizzbuzz";
+            } else if(num % 5 == 0) {             
+                console.log("buzz")
+                return "buzz"
+            } else if(num % 3 == 0){             
+                console.log("fizz")
+                return "fizz"
+            } else{
+                console.log("其他")
+            }
+        }
+
+
+        fizzBuzz(25);
+        // 15
+        // 25
+        // 9
+
+
+    </script>
+</html>
+
