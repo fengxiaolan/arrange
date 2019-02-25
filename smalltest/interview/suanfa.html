@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>一些技巧算法</title>
+    </head>
+    <body>
+            参考:https://www.cnblogs.com/kubidemanong/p/10409712.html
+    </body>
+    <script>
+    //巧用数组下标
+    function arrindex(arr) { 
+        var temp = {};
+        for (var i = 0; i < arr.length; i++) {
+           temp[arr[i]]++;
+        }
+        //顺序打印
+        for (var i = 0; i < 21; i++) {
+            for (var j = 0; j < temp[i]; j++) {
+                console.log("i", i);
+            }
+        }
+    }
+    var arr = [12,2,5,8,10,15,18,19,6];
+    arrindex(arr);
+
+
+    // 巧用取余防止越界;避免用判断语句和重置为pos为0
+    const N = 10;
+    var pos = 0;
+    for (var i = 0; i < N; i++) {
+        //使用数组arr[pos]   (我们假设刚开始的时候pos < N)
+        pos = (pos + 1) % N;
+    }
+
+
+    // 巧用移位运算
+   /**
+    n / 2 等价于 n >> 1
+    n / 4 等价于 n >> 2
+    n / 8 等价于 n >> 3
+    n % 2 == 1 等价余  n & 1
+    */
+
+
+   // 确保字符串的每个单词首字母都大写，其余部分小写
+   function titleCase(str) {
+      // 转成小写并分割成字符串数组
+       var arrstr = str.toLowerCase().split(" ");
+       for(var i = 0; i < arrstr.length; i++) {
+           arrstr[i] = arrstr[i][0].toUpperCase() + arrstr[i].slice(1);
+       }
+     //  转成字符串
+       var newstring = arrstr.join(" ");
+       return newstring;
+   }
+   console.log(titleCase('i am Carnia'))
+
+
+
+   //如果给定的字符串是回文，返回true，反之，返回false
+   //回文：如果一个字符串忽略标点符号、大小写和空格，正着读和反着读一模一样，那么这个字符串就是palindrome(回文)    
+    function palindrome(str) {
+        // 去掉标点符号,转化小写
+        var str1 = str.replace(/[^0-9a-zA-Z]/g,"").toLowerCase();
+        // 字符串翻转
+        var str2 = str1.split("").reverse().join("");
+        if(str1 === str2){
+            return true;
+        } else {
+            return false;
+        }
+    }
+   console.log(palindrome("aBc,./1d42--==EFG0 00 h0-';'00gfE';./. 24d 1cBA"))
+
+
+
+  // 编写一个 JavaScript凼数parseQueryString ，它的用途是把 URL 参数解析为一个对象
+    function parseQueryString(url) {
+        var pos = url.indexOf("?");
+        var object = {};
+        if(pos != -1) {
+            var urlstring = url.slice(pos + 1);
+            var urlarr = urlstring.split("&");
+        }
+        var keyvalue = [];
+        for(var i = 0; i< urlarr.length; i++){
+            keyvalue = urlarr[i].split("=");
+            object[keyvalue[0]] = keyvalue[1];
+        }
+        return object;
+    }
+    console.log(parseQueryString("546456?a=1&b=2"));
+
+
+
+    // "123456789876543212345678987654321..."的第n位是什么？  
+    var k="1234567898765432";//最小循环节
+    function getNum(n){
+        console.log(k.charAt(n%k.length-1));
+    }
+    getNum(10);
+
+
+   // 计算出字符串中出现次数最多的字符是什么，出现了多少次？
+   // 去重
+   function norepeat(str){
+       var newstr = '';
+       newstr = str.split("").filter(function(ele,idx,self){
+           return self.indexOf(ele) === idx; //输出第一次出现的字符
+       })
+       return newstr;
+   }
+   function countchar(str) {
+       var count = 0,
+           char = ''; 
+       var arr = [];
+       arr = norepeat(str);
+       for(var i = 0; i< arr.length; i++) {
+           var n = (str.split(arr[i])).length - 1; //出现的次数
+           if(count < n){
+               count = n;
+               char = arr[i];
+           }
+       }  
+       console.log("count:"+count+",char:"+char)
+   }
+   countchar('aaasdaddddddddddaf')
+
+
+
+
+   //计算字符串出现的字符以及次数
+   
+   function countchar1(str){
+       var obj = {};
+       var arr = str.split("");
+       for(var i = 0; i< arr.length; i++){
+           if(!obj[arr[i]]){
+                obj[arr[i]]= 1;
+           } else {
+                obj[arr[i]]++;
+           }
+       }
+       console.log(obj);
+   }
+   countchar1('aaasdaddddddddddaf')
+
+
+
+  // 实现对一个数字每3位加一个逗号，如输入100000， 输出100,000（不考虑负数，小数）
+    var arr=[];
+    function main(num) {
+        if (num=== null) return;
+        var n = parseInt(num).toString(); 
+        s(n);
+    }
+    function s(num){
+        if(num.length>3){
+            arr[arr.length]=num.slice(-3);
+            s(num.slice(0,-3));
+        } else{
+            arr[arr.length]=num;
+        }
+    }
+   main(123456789);
+   console.log(arr.reverse().join(","));
+
+    </script>
+</html>
+

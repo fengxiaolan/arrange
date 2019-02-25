@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            *{
+                margin:0;
+                padding:0;
+            }
+            body{
+                background:#000;
+                overflow:hidden;
+            }
+            .heart{
+                position:absolute;
+                left:0;
+                right:0;
+                top:0;
+                bottom:0;
+                width:200px;
+                height:260px;
+                margin: auto;
+                transform-style:preserve-3d;
+                perspective:800px;
+                animation:rot 15s linear infinite;
+            }
+            @keyframes rot{
+                from{transform:rotateY(0deg) rotateX(0deg)}
+                to{transform:rotateY(360deg) rotateX(360deg)}
+            }
+            .rib{
+                position:absolute;
+                width:200px;
+                height:260px;
+                border:solid red;
+                border-width:1px 1px 0 0;
+                border-radius:100% 100% 0/40% 100% 0;
+                transition: all 1s;
+            }
+            
+            
+
+
+            .cube{
+                position:absolute;
+                left:0;
+                right:0;
+                top:0;
+                bottom:0;
+                margin:auto;
+                width:100px;
+                height:100px;
+                color:red;
+                transform-style:preserve-3d;
+                transform:translateZ(50px);
+            }
+            .cube div{
+                position:absolute;
+                width:100px;
+                height:100px;
+            }
+            .cube div:nth-child(1){
+                left:0;
+                top:-100px;
+                transform-origin:bottom;
+                transform:rotateX(90deg);
+            }
+            .cube div:nth-child(2){
+                left:0;
+                top:100px;
+                transform-origin:top;
+                transform:rotateX(-90deg);
+            }
+            .cube div:nth-child(3){
+                left:-100px;
+                top:0px;
+                transform-origin:right;
+                transform:rotateY(-90deg);
+            }
+            .cube div:nth-child(4){
+                left:100px;
+                top:0px;
+                transform-origin:left;
+                transform:rotateY(90deg);
+            }
+            .cube div:nth-child(5){
+                left:0;
+                top:0px;
+            }
+            .cube div:nth-child(6){
+                left:0;
+                top:0px;
+                transform:translateZ(-100px);
+            }
+
+
+            
+            </style>
+    </head>
+    <body>
+    <div class="heart">
+        <div class="cube">
+            <div>
+                <img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2256160164,2873615387&fm=27&gp=0.jpg" width="100" height="100" alt="">
+            </div>
+            <div>
+                <img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2256160164,2873615387&fm=27&gp=0.jpg" width="100" height="100" alt="">
+            </div>
+            <div>
+                <img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2256160164,2873615387&fm=27&gp=0.jpg" width="100" height="100" alt="">
+            </div>
+            <div>
+                <img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2256160164,2873615387&fm=27&gp=0.jpg" width="100" height="100" alt="">
+            </div>
+            <div>
+                <img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2256160164,2873615387&fm=27&gp=0.jpg" width="100" height="100" alt="">
+            </div>
+            <div>
+                <img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2256160164,2873615387&fm=27&gp=0.jpg" width="100" height="100" alt="">
+            </div>
+        </div>
+        
+    </div>
+
+    </body>
+    <script>
+        var heart = document.getElementsByClassName("heart")[0];
+        for (var i = 0; i < 36; i++) {
+            var oDiv = document.createElement("div");
+            oDiv.className = "rib";
+            // 画36条心形曲线
+            oDiv.style.transform = "rotateY(" + 10 * i + "deg) rotateZ(45deg) translateX(30px)";
+            var n = 0;
+            setInterval(function() {
+                if (n < 36) {
+                    document.getElementsByClassName('rib')[n].style.borderColor = getRandomColor();
+                    n = n + 1;
+                } else {
+                    n = 0;
+                }
+            },1000)
+            console.log(n)
+            heart.appendChild(oDiv);
+        }
+
+        // 随机色
+        var getRandomColor = function(){    
+        return  '#' +    
+            (function(color){    
+            return (color +=  '0123456789abcdef'[Math.floor(Math.random()*16)])    
+            && (color.length == 6) ?  color : arguments.callee(color);    
+        })('');    
+        }
+    </script>
+</html>
+
+
+
+
+
