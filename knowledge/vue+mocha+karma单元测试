@@ -1,0 +1,248 @@
+*********************************************************
+build文件里添加: webpack.test.js文件
+  代码如下:
+     'use strict'
+// This is the webpack config used for unit tests.
+
+const utils = require('./utils')
+const webpack = require('webpack')
+const merge = require('webpack-merge')
+const baseWebpackConfig = require('./webpack.base.conf')
+
+const webpackConfig = merge(baseWebpackConfig, {
+  mode: 'none',
+  // use inline sourcemap for karma-sourcemap-loader
+  module: {
+    rules: utils.styleLoaders()
+  },
+  devtool: '#inline-source-map',
+  resolveLoader: {
+    alias: {
+      // necessary to to make lang="scss" work in test when using vue-loader's ?inject option
+      // see discussion at https://github.com/vuejs/vue-loader/issues/724
+      'scss-loader': 'sass-loader'
+    }
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': require('../config/test.env')
+    }),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true
+    })
+  ]
+})
+
+// no need for app entry during tests
+delete webpackConfig.entry
+
+module.exports = webpackConfig
+
+*******************************************************
+在config文件里添加: test.env.js
+    代码如下:
+     'use strict'
+const merge = require('webpack-merge')
+const devEnv = require('./dev.env')
+
+module.exports = merge(devEnv, {
+  NODE_ENV: '"test"'
+})
+
+
+***************************************************************
+package.json安装相关包:
+   @vue/test-utils babel-plugin-istanbul babel-preset-env babel-preset-stage-3 chai karma karma-chai karma-chrome-
+launcher karma-coverage karma-mocha karma-sourcemap-loader karma-spec-reporter karma-webpack mocha
+  (注意)1. vue-loader 需要由15.5.0 替换成14.2.2
+       2. scripts添加命令: "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run"
+       
+******************************************************************
+.babel文件添加:
+    "env": {
+      "test": {
+        "plugins": [ "istanbul"]
+      }
+    }
+*******************************************************************
+webpack.base.js添加:
+    {
+        test: /\.(js)$/,
+        exclude: /node_modules/,
+        include: /src|packages/,
+        enforce: 'post',
+        use: [{
+          loader: "istanbul-instrumenter-loader",
+          options: {
+            esModules: true
+          },
+        }]
+      },
+   
+
+*******************************************************************
+使用:
+根目录下添加test文件:
+  spec
+  index.js
+  karma.conf.js
+ 
+  -------------------------------------
+  karma.conf.js代码如下
+     var webpackConfig = require('../../build/webpack.test.conf.js')
+
+module.exports = function (config) {
+  config.set({
+    basePath: "",
+    // 浏览器 PhantomJS和Chrome
+    browsers: ['Chrome'],
+    // 测试框架 表示可以在测试文件中不需引入即可使用两个库的全局方法
+    frameworks: ['mocha'],
+    //karma插件
+    // plugins : [
+    //   'karma-phantomjs-launcher',
+    //   'karma-chrome-launcher',
+    //   'karma-mocha',
+    //   'karma-webpack',
+    //   'karma-sourcemap-loader',
+    //   'karma-coverage-istanbul-reporter'
+    // ],
+    // 测试报告
+    reporters: ['spec', 'coverage'],
+    // 测试入口文件,源代码和测试代码加载进来
+    // files: ['./index.js'],
+    files: ['./specs/*.spec.js'],
+    // files: [
+    //   // { pattern: './index.js', watched: false },
+    //   { pattern: './specs/*.test.js', watched: false },
+    // ],
+    // 预处理器 karma-webpack
+    preprocessors: {
+      // './index.js': ['webpack', 'sourcemap'],
+      // './specs/*.test.js': [ 'webpack', 'sourcemap'],
+      './specs/*.spec.js': [ 'webpack', 'sourcemap'],
+    },
+    //排除加载
+    exclude: [
+    ],
+    singleRun: true,
+    // Webpack配置
+    webpack: webpackConfig,
+    // Webpack中间件
+    webpackMiddleware: {
+      noInfo: true
+    },
+    //测试覆盖率报告
+    coverageReporter: {
+      dir: './coverage',
+      reporters: [
+        { type: 'lcov', subdir: '.' },
+        { type: 'text-summary' }
+      ]
+    },
+    // 客户端的配置提供了超时时间
+    client: {
+      mocha: {
+        timeout: 4000
+      }
+    }
+  })
+}
+--------------------------------------------
+index.js代码如下:
+   import Vue from 'vue'
+
+Vue.config.productionTip = false
+
+// require all test files (files that ends with .spec.js)
+const testsContext = require.context('./specs', true, /\.spec$/)
+testsContext.keys().forEach(testsContext)
+
+// require all src files except main.js for coverage.
+// you can also change this to match only the subset of files that
+// you want coverage for.
+const srcContext = require.context('../src/scopes/project', true, /^\.\/(?!main(\.js)?$)/)
+// const srcContext = require.context('../src/scopes/project/outputValuePlanManage', true, /^\.\/(style$) /)
+srcContext.keys().forEach(srcContext)
+
+-------------------------------------------------
+spec下写测试用例
+eg:counter.spec.js如下:
+  import Vue from 'vue' // 导入Vue用于生成Vue实例
+import Counter from '../../../src/scopes/project/demoModules/counter/counter.vue' // 导入组件
+
+import { expect } from 'chai'
+import { shallowMount, mount, render} from '@vue/test-utils'
+
+// 测试脚本里面应该包括一个或多个describe块，称为测试套件（test suite）
+describe('Counter.vue', () => {
+  it('创建组件当点击时候', () => {
+    const wrapper = shallowMount(Counter)
+    wrapper.find('button').trigger('click')
+    expect(wrapper.find('div').text()).contains('1')
+  });
+
+  // it('组件是否含有button', () => {
+  //   const wrapper = mount(Counter)
+  //   expect(wrapper.contains('button')).to.be.true
+  // });
+  //
+  // it('data 是否是函数', () => {
+  //   expect(typeof Counter.data).to.equal('function')
+  // });
+
+  it('组件是否含有button', () => {
+    const wrapper = mount(Counter)
+    expect(wrapper.contains('button')).to.be.true;
+    wrapper.setData({formData: {
+        text: '优秀',
+        test: 'good'
+    }})
+  });
+
+
+  it('should render correct contents', () => {
+    const Constructor = Vue.extend(Counter)
+    const vm = new Constructor().$mount()
+    expect(vm.$el.querySelector('h2').textContent)
+      .to.be.equal('Essential Links')
+  })
+
+  it('should render correct contents', () => {
+        const Constructor = Vue.extend(Counter)
+         const vm = new Constructor().$mount()
+       // 判断页面中是否有msg所渲染出来的内容
+       // 等价document.querySelector('.hello h1')
+       expect(vm.$el.querySelector('.hello h1').textContent)
+        .to.equal('Welcome to Your Vue.js App')
+  })
+
+  // it('renders a div', async () => {
+  //   const $route = { path: 'http://www.example-path.com' }
+  //   const wrapper = await render(Foo, {
+  //     mocks: {
+  //       $route
+  //     }
+  //   })
+  //   expect(wrapper.text()).to.contain($route.path)
+  // });
+
+  // it('renders a div', async () => {
+  //   const wrapper = await render(Counter)
+  //   expect(wrapper.text()).to.be.contain('<div></div>')
+  // });
+
+  describe('其他操作', () => {
+    it('数组不含有的元素返回为-1', function(){
+      expect([1,2,3].indexOf(5)).to.be.equal(-1)
+    });
+    it('数组含有2', function(){
+      expect([1,2,3]).to.include(2)
+    });
+    it('数组长度为3', function(){
+      expect([1, 2, 3]).to.have.lengthOf(3)
+    });
+  });
+});
+
+
