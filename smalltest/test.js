@@ -1,10 +1,4 @@
 
-/**
- * @Created by chinaWiserv
- * @User : lisiqin
- * @Date : 2018/5/29
- * @Describe : 无.
- */
 (function() {
     require(['jquery', 'vue','swiper','util'], function ($, Vue, Swiper, u) {
         new Vue({
